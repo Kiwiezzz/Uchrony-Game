@@ -34,8 +34,9 @@ int main() {
     // ¡Crear el jugador ahora es así de simple!
     Player player;
     player.setPosition(400.f, 300.f); // Establece su posición inicial
-    player.getSprite().setScale(1.5f, 1.5f);
-    backgroundSprite.setScale(0.78f, 0.6f);
+    player.getSprite().setScale(2.0f, 2.0f);
+    backgroundSprite.setScale(1.0f, 1.0f);
+    backgroundSprite.setPosition(0, 0);
 
     // Configurar el árbol (como antes)
     //arbolSprite.setPosition(300.f, 250.f);
@@ -77,6 +78,11 @@ int main() {
                     {
                         // ¡Solo le decimos al jugador A DÓNDE ir!
                         player.moveTo(clickPos);
+                    }
+                    else if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
+                         clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
+                         collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::Red){
+                            std::cout << "Zona prohibida!" << std::endl;
                     }
                 }
             }
@@ -135,8 +141,8 @@ int main() {
         //GameUtils::drawBoundingBox(window, player.getSprite(), sf::Color::Yellow); //Dibuja un cuadro alrededor de un objeto
 
         //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
-
-
+        GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f); // Marca la posición del jugador
+        GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f); // Marca la posición del mouse
         window.display();
     }
 
