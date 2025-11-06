@@ -25,9 +25,9 @@ int main() {
     sf::Image collisionImage;
     if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) { /* error */ } // <-- ARREGLADO
 
-    //sf::Texture arbolTexture;
-    //if (!arbolTexture.loadFromFile("assets/textures/arbol.png")) { /* error */ } // <-- ARREGLADO
-    //sf::Sprite arbolSprite(arbolTexture);
+    sf::Texture mesaTexture;
+    if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) { /* error */ } // <-- ARREGLADO
+    sf::Sprite mesaSprite(mesaTexture);
 
     // --- 3. Creación del Jugador y Objetos ---
     
@@ -39,13 +39,16 @@ int main() {
     backgroundSprite.setPosition(0, 0);
 
     // Configurar el árbol (como antes)
-    //arbolSprite.setPosition(300.f, 250.f);
-    //arbolSprite.setOrigin(arbolTexture.getSize().x / 2.f, arbolTexture.getSize().y);
-    //arbolSprite.setScale(0.3f, 0.3f);
+    mesaSprite.setPosition(397, 494);
+    mesaSprite.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
+    mesaSprite.setScale(1.0f, 1.0f);
+
+    
 
 
     // --- 4. Variables de Animación ---
     // ¡YA NO SE NECESITAN! El jugador y el animador las manejan.
+    bool isDebugPlacing = false; // ¿Estamos en modo "colocar objeto"?
 
     sf::Clock clock;
 
@@ -58,6 +61,17 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::D) { // 'D' para Debug
+                    isDebugPlacing = !isDebugPlacing; // Alterna el modo
+                    
+                    // Si apagamos el modo debug, limpia la consola
+                    if (!isDebugPlacing) {
+                        std::cout << std::endl << "Modo Debug DESACTIVADO." << std::endl;
+                    }
+                }
+            }
 
             if (event.type == sf::Event::MouseButtonPressed){
                 if (event.mouseButton.button == sf::Mouse::Left) {
@@ -117,7 +131,13 @@ int main() {
         // Él se encarga de su movimiento, colisión y animación.
         player.update(dt, collisionImage);
 
-
+        if (isDebugPlacing) {
+            // MODO DEBUG: Mueve la mesa con el mouse y muestra la posición
+            GameUtils::debugFollowMouse(mesaSprite, window, "Posicion Objeto:");
+        } else {
+            // MODO JUEGO: Actualiza al jugador normalmente
+            player.update(dt, collisionImage);
+        }
         // --- 7. Dibujado (Render) ---
         window.clear();
         window.draw(backgroundSprite);
@@ -125,7 +145,7 @@ int main() {
         // Y-Sorting (como antes, pero ahora usamos player.getSprite())
         std::vector<sf::Sprite*> renderList;
         renderList.push_back(&player.getSprite()); // Obtiene el sprite del jugador
-        //renderList.push_back(&arbolSprite);
+        renderList.push_back(&mesaSprite);
 
         std::sort(renderList.begin(), renderList.end(), 
             [](const sf::Sprite* a, const sf::Sprite* b) {
@@ -143,6 +163,9 @@ int main() {
         //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
         GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f); // Marca la posición del jugador
         GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f); // Marca la posición del mouse
+        //GameUtils::drawBoundingBox(window, mesaSprite, sf::Color::Green);
+        sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
+        //GameUtils::logPosition(clickPos, "Clic del mouse en");
         window.display();
     }
 

@@ -47,6 +47,40 @@ namespace GameUtils {
         window.draw(marker);
     }
 
+    /* @brief Imprime las coordenadas (x, y) de un vector en la consola.
+     * Útil para depurar posiciones de clics, jugador, etc.
+     * @param position El vector (x, y) a imprimir.
+     * @param prefix Un mensaje opcional para poner antes de las coordenadas.
+     */
+    inline void logPosition(sf::Vector2f position, const std::string& prefix = "Position") {
+        // Imprime en la consola/terminal
+        std::cout << prefix << ": (x=" << position.x << ", y=" << position.y << ")" << std::endl;
+    }
+
+    /**
+     * @brief Mueve un sprite para que siga al mouse Y REGISTRA la posición en la consola.
+     * ¡ADVERTENCIA! Debe llamarse CADA FOTOGRAMA (en el bucle principal, no en eventos).
+     * Usará '\r' para sobrescribir la misma línea de la consola y evitar spam.
+     * @param sprite El sprite que se moverá (¡pasado por referencia!).
+     * @param window La ventana para obtener la posición del mouse.
+     * @param prefix Un mensaje opcional para el log.
+     */
+    inline void debugFollowMouse(sf::Sprite& sprite, sf::RenderWindow& window, const std::string& prefix = "Debug Pos") {
+        // 1. Obtener la posición del mouse
+        sf::Vector2f mousePos = getMouseWorldPosition(window);
+        
+        // 2. Mover el sprite
+        sprite.setPosition(mousePos);
+        
+        // 3. Registrar en la consola
+        // Usamos (int) para un log más limpio y '\r' para sobrescribir la línea
+        std::cout << prefix << ": (x=" << static_cast<int>(mousePos.x) 
+                  << ", y=" << static_cast<int>(mousePos.y) << ")    \r";
+        
+        // flush() asegura que la consola se actualice inmediatamente
+        std::cout.flush(); 
+    }
+
     /**
      * @brief Dibuja el rectángulo de colisión (Bounding Box) de un sprite.
      * Increíblemente útil para depurar colisiones e interacciones.
