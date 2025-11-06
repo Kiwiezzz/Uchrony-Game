@@ -17,11 +17,11 @@ class Player {
 public:
     // El constructor ahora inicializa el animador
     Player() 
-        : m_animator(m_sprite, PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT), // Pasa el sprite al animador
+        : m_animator(m_sprite, PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT), 
           m_speed(PLAYER_SPEED), m_isMoving(false), m_lastDirection(ROW_P_IDLE_DOWN) {
         
         // Carga la textura (¡podrías pasar el path como argumento!)
-        if (!m_texture.loadFromFile("player_spritesheet.png")) {
+        if (!m_texture.loadFromFile("assets/textures/player_spritesheet.png")) { // <-- ARREGLADO
             std::cerr << "Error: No se pudo cargar player_spritesheet.png" << std::endl;
         }
         

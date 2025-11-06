@@ -5,8 +5,8 @@
 #include <algorithm>
 
 // ¡Nuestros nuevos archivos!
-#include "GameUtilities.hpp" // (Asumiendo que también usas el de la pregunta anterior)
-#include "Player.hpp"
+#include "Utils/GameUtilities.hpp" // <- Ruta desde la carpeta 'Include'
+#include "Entities/Player.hpp"
 
 // --- Las constantes del jugador se han movido a Player.hpp ---
 
@@ -19,26 +19,28 @@ int main() {
     // --- 2. Carga de Recursos ---
 
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("suelo.png")) { /* error */ }
+    if (!backgroundTexture.loadFromFile("assets/textures/suelo.png")) { /* error */ } // <-- ARREGLADO
     sf::Sprite backgroundSprite(backgroundTexture);
 
     sf::Image collisionImage;
-    if (!collisionImage.loadFromFile("escenario_colision.png")) { /* error */ }
+    if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) { /* error */ } // <-- ARREGLADO
 
-    sf::Texture arbolTexture;
-    if (!arbolTexture.loadFromFile("arbol.png")) { /* error */ }
-    sf::Sprite arbolSprite(arbolTexture);
+    //sf::Texture arbolTexture;
+    //if (!arbolTexture.loadFromFile("assets/textures/arbol.png")) { /* error */ } // <-- ARREGLADO
+    //sf::Sprite arbolSprite(arbolTexture);
 
     // --- 3. Creación del Jugador y Objetos ---
     
     // ¡Crear el jugador ahora es así de simple!
     Player player;
     player.setPosition(400.f, 300.f); // Establece su posición inicial
+    player.getSprite().setScale(1.5f, 1.5f);
+    backgroundSprite.setScale(0.78f, 0.6f);
 
     // Configurar el árbol (como antes)
-    arbolSprite.setPosition(300.f, 250.f);
-    arbolSprite.setOrigin(arbolTexture.getSize().x / 2.f, arbolTexture.getSize().y);
-    arbolSprite.setScale(0.3f, 0.3f);
+    //arbolSprite.setPosition(300.f, 250.f);
+    //arbolSprite.setOrigin(arbolTexture.getSize().x / 2.f, arbolTexture.getSize().y);
+    //arbolSprite.setScale(0.3f, 0.3f);
 
 
     // --- 4. Variables de Animación ---
@@ -56,7 +58,7 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.type == sf::Event::MouseButtonPressed){
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     
                     // ¡Usa nuestra utilidad!
@@ -64,19 +66,43 @@ int main() {
                     sf::Vector2i clickPos_i(clickPos.x, clickPos.y);
 
                     // --- Lógica de Interacción (ejemplo) ---
-                    if (arbolSprite.getGlobalBounds().contains(clickPos)) {
-                         std::cout << "Clic en el arbol!" << std::endl;
-                    }
+                    // if (arbolSprite.getGlobalBounds().contains(clickPos)) {
+                    //     std::cout << "Clic en el arbol!" << std::endl;
+                    // }
+
                     // Comprobación de colisión del suelo
-                    else if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
-                             clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
-                             collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::White) 
+                    if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
+                         clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
+                         collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::White) 
                     {
                         // ¡Solo le decimos al jugador A DÓNDE ir!
                         player.moveTo(clickPos);
                     }
                 }
             }
+
+            // if (event.type == sf::Event::MouseButtonPressed) {
+            //     if (event.mouseButton.button == sf::Mouse::Left) {
+                    
+            //         // ¡Usa nuestra utilidad!
+            //         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
+            //         sf::Vector2i clickPos_i(clickPos.x, clickPos.y);
+
+            //         // --- Lógica de Interacción (ejemplo) ---
+            //         if (arbolSprite.getGlobalBounds().contains(clickPos)) {
+            //             std::cout << "Clic en el arbol!" << std::endl;
+            //         }
+
+            //         // Comprobación de colisión del suelo
+            //         else if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
+            //                  clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
+            //                  collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::White) 
+            //         {
+            //             // ¡Solo le decimos al jugador A DÓNDE ir!
+            //             player.moveTo(clickPos);
+            //         }
+            //     }
+            // }
         }
 
         // --- 6. Lógica de Actualización (Update) ---
@@ -93,7 +119,7 @@ int main() {
         // Y-Sorting (como antes, pero ahora usamos player.getSprite())
         std::vector<sf::Sprite*> renderList;
         renderList.push_back(&player.getSprite()); // Obtiene el sprite del jugador
-        renderList.push_back(&arbolSprite);
+        //renderList.push_back(&arbolSprite);
 
         std::sort(renderList.begin(), renderList.end(), 
             [](const sf::Sprite* a, const sf::Sprite* b) {
@@ -106,8 +132,9 @@ int main() {
         }
         
         // --- Dibujado de Utilidades (Opcional, para depurar) ---
-        GameUtils::drawBoundingBox(window, player.getSprite(), sf::Color::Yellow);
-        GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
+        //GameUtils::drawBoundingBox(window, player.getSprite(), sf::Color::Yellow); //Dibuja un cuadro alrededor de un objeto
+
+        //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
 
 
         window.display();
