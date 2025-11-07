@@ -61,21 +61,43 @@ public:
                 m_isMoving = false;
                 m_position = m_targetPosition;
                 playIdleAnimation(); // Llegamos, pon la animación de 'parado'
-            } else {
+            } 
+            else 
+            {
                 sf::Vector2f normDir = direction / distance;
                 sf::Vector2f nextPos = m_position + normDir * movementStep;
-                int nextX = static_cast<int>(nextPos.x);
-                int nextY = static_cast<int>(nextPos.y);
 
-                if (nextX >= 0 && nextX < (int)collisionImage.getSize().x &&
-                    nextY >= 0 && nextY < (int)collisionImage.getSize().y &&
-                    collisionImage.getPixel(nextX, nextY) == sf::Color::White) {
-                    
-                    m_position = nextPos; // Mueve al jugador
-                    playWalkAnimation(normDir); // Reproduce la anim. de caminar
-                
-                } else {
-                    m_isMoving = false; // Chocamos, detente
+                // 1. Define el ancho de tu colisión.
+                // Tu sprite tiene 64px de ancho, escalado x2 = 128px.
+                // El origen está en el centro (32*2 = 64px).
+                // Usemos un 80% de ese ancho para no atascarnos.
+                float collisionHalfWidth = (PLAYER_FRAME_WIDTH / 2.f) * m_sprite.getScale().x * 0.8f;
+
+                // 2. Define los 3 puntos de colisión
+                int cX = static_cast<int>(nextPos.x); // Centro (pies)
+                int cY = static_cast<int>(nextPos.y); // Centro (pies)
+                int lX = static_cast<int>(nextPos.x - collisionHalfWidth); // Izquierda
+                int rX = static_cast<int>(nextPos.x + collisionHalfWidth); // Derecha
+
+                // 3. Comprueba que los 3 puntos estén dentro de los límites
+                bool centerInBounds = cX >= 0 && cX < (int)collisionImage.getSize().x && cY >= 0 && cY < (int)collisionImage.getSize().y;
+                bool leftInBounds   = lX >= 0 && lX < (int)collisionImage.getSize().x && cY >= 0 && cY < (int)collisionImage.getSize().y;
+                bool rightInBounds  = rX >= 0 && rX < (int)collisionImage.getSize().x && cY >= 0 && cY < (int)collisionImage.getSize().y;
+
+                // 4. Comprueba el color si están dentro de los límites
+                if (centerInBounds && leftInBounds && rightInBounds &&
+                    collisionImage.getPixel(cX, cY) == sf::Color::White &&
+                    collisionImage.getPixel(lX, cY) == sf::Color::White &&
+                    collisionImage.getPixel(rX, cY) == sf::Color::White)
+                {
+                    // 5. ¡CAMINO LIBRE! Mueve al jugador
+                    m_position = nextPos;
+                    playWalkAnimation(normDir);
+                }
+                else
+                {
+                    // 6. ¡COLISIÓN! Detén el movimiento
+                    m_isMoving = false;
                     playIdleAnimation();
                 }
             }
