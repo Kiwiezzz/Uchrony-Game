@@ -19,8 +19,16 @@ int main() {
     if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) {}
 
     sf::Texture mesaTexture;
-    if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) { /* error */ } // <-- ARREGLADO
+    if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) {}
     sf::Sprite mesaSprite(mesaTexture);
+
+    sf::Texture mesaTexture_2;
+    if (!mesaTexture_2.loadFromFile("assets/textures/mesa_2.png")) {}
+    sf::Sprite mesaSprite_2(mesaTexture_2);
+
+    sf::Texture bottellaTexture;
+    if (!bottellaTexture.loadFromFile("assets/textures/botella.png")) {}
+    sf::Sprite botellaSprite(bottellaTexture);
 
     //Creación de Entidades 
     Player player;
@@ -32,6 +40,13 @@ int main() {
     mesaSprite.setPosition(397, 494);
     mesaSprite.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
     mesaSprite.setScale(1.0f, 1.0f);
+
+    mesaSprite_2.setPosition(743, 354);
+    mesaSprite_2.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
+    mesaSprite_2.setScale(1.0f, 1.0f);
+
+    botellaSprite.setPosition(597, 185);
+
 
 
     bool isDebugPlacing = false; // ¿Estamos en modo "colocar objeto"?
@@ -67,7 +82,7 @@ int main() {
                     sf::Vector2i clickPos_i(clickPos.x, clickPos.y);
 
                     // --- Lógica de Interacción (ejemplo) ---
-                    // if (arbolSprite.getGlobalBounds().contains(clickPos)) {
+                    // if (mesaSprite.getGlobalBounds().contains(clickPos)) {
                     //     std::cout << "Clic en el arbol!" << std::endl;
                     // }
 
@@ -90,7 +105,7 @@ int main() {
 
         if (isDebugPlacing) {
             // MODO DEBUG
-            GameUtils::debugFollowMouse(mesaSprite, window, "Posicion Objeto:");
+            GameUtils::debugFollowMouse(botellaSprite, window, "Posicion Objeto:");
         } else {
             // MODO JUEGO
             player.update(dt, collisionImage);
@@ -103,7 +118,10 @@ int main() {
 
         std::vector<sf::Sprite*> renderList;
         renderList.push_back(&player.getSprite()); 
+        renderList.push_back(&botellaSprite);
         renderList.push_back(&mesaSprite);
+        renderList.push_back(&mesaSprite_2);
+        
 
         std::sort(renderList.begin(), renderList.end(), 
             [](const sf::Sprite* a, const sf::Sprite* b) {
@@ -113,6 +131,9 @@ int main() {
 
         for (sf::Sprite* sprite : renderList) {
             window.draw(*sprite);
+            if (sprite == &mesaSprite_2) {
+                window.draw(botellaSprite);
+            }
         }
         
         //Funciones de depuración:
@@ -121,7 +142,7 @@ int main() {
         //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
         GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f); // Marca la posición del jugador
         GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f); // Marca la posición del mouse
-        //GameUtils::drawBoundingBox(window, mesaSprite, sf::Color::Green);
+        GameUtils::drawBoundingBox(window, botellaSprite, sf::Color::Yellow);
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
         //GameUtils::logPosition(clickPos, "Clic del mouse en");
         window.display();
