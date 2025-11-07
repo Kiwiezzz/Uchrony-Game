@@ -7,7 +7,7 @@
 #include "Entities/Player.hpp"
 
 int main() {
-
+  
     sf::RenderWindow window(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animación");
     window.setFramerateLimit(60);
 
