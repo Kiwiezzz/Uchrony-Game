@@ -1,0 +1,3 @@
+/Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/build/CMakeFiles/UchronyGame_Executable.dir
+/Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/build/CMakeFiles/edit_cache.dir
+/Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/build/CMakeFiles/rebuild_cache.dir
