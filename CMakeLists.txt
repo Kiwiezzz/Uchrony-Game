@@ -8,7 +8,7 @@ find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
 
 # Define el ejecutable del juego
 add_executable(UchronyGame_Executable
-    src/main.cpp
+    src/demo.cpp
 )
 
 # Agregar directorio de headers

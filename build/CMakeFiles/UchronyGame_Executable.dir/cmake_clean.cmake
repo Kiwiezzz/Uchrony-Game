@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o"
-  "CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o.d"
+  "CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o"
+  "CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o.d"
   "UchronyGame_Executable"
   "UchronyGame_Executable.pdb"
 )

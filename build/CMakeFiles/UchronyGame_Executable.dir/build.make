@@ -72,28 +72,28 @@ include CMakeFiles/UchronyGame_Executable.dir/flags.make
 CMakeFiles/UchronyGame_Executable.dir/codegen:
 .PHONY : CMakeFiles/UchronyGame_Executable.dir/codegen
 
-CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o: CMakeFiles/UchronyGame_Executable.dir/flags.make
-CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o: /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/main.cpp
-CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o: CMakeFiles/UchronyGame_Executable.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o -MF CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o.d -o CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o -c /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/main.cpp
+CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o: CMakeFiles/UchronyGame_Executable.dir/flags.make
+CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o: /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/demo.cpp
+CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o: CMakeFiles/UchronyGame_Executable.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o -MF CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o.d -o CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o -c /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/demo.cpp
 
-CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/main.cpp > CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.i
+CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/demo.cpp > CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.i
 
-CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/main.cpp -o CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.s
+CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/roz/Documents/GitHub/uchrony-game/Uchrony-Game/src/demo.cpp -o CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.s
 
 # Object files for target UchronyGame_Executable
 UchronyGame_Executable_OBJECTS = \
-"CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o"
+"CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o"
 
 # External object files for target UchronyGame_Executable
 UchronyGame_Executable_EXTERNAL_OBJECTS =
 
-UchronyGame_Executable: CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o
+UchronyGame_Executable: CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o
 UchronyGame_Executable: CMakeFiles/UchronyGame_Executable.dir/build.make
 UchronyGame_Executable: /opt/homebrew/opt/sfml@2/lib/libsfml-graphics.2.6.2.dylib
 UchronyGame_Executable: /opt/homebrew/opt/sfml@2/lib/libsfml-window.2.6.2.dylib

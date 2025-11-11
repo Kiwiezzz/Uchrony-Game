@@ -129,29 +129,29 @@ UchronyGame_Executable/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/build
 .PHONY : UchronyGame_Executable/fast
 
-src/main.o: src/main.cpp.o
-.PHONY : src/main.o
+src/demo.o: src/demo.cpp.o
+.PHONY : src/demo.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.o
+.PHONY : src/demo.cpp.o
 
-src/main.i: src/main.cpp.i
-.PHONY : src/main.i
+src/demo.i: src/demo.cpp.i
+.PHONY : src/demo.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.i
+.PHONY : src/demo.cpp.i
 
-src/main.s: src/main.cpp.s
-.PHONY : src/main.s
+src/demo.s: src/demo.cpp.s
+.PHONY : src/demo.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/UchronyGame_Executable.dir/build.make CMakeFiles/UchronyGame_Executable.dir/src/demo.cpp.s
+.PHONY : src/demo.cpp.s
 
 # Help Target
 help:
@@ -162,9 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... UchronyGame_Executable"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/demo.o"
+	@echo "... src/demo.i"
+	@echo "... src/demo.s"
 .PHONY : help
 
 
