@@ -5,47 +5,39 @@
 #include <algorithm>
 #include "Utils/GameUtilities.hpp" 
 #include "Entities/Player.hpp"
+#include "SpriteInfo.hpp"
+
 
 int main() {
   
     sf::RenderWindow window(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animacion");
     window.setFramerateLimit(60);
 
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("assets/textures/suelo.png")) {} 
-    sf::Sprite backgroundSprite(backgroundTexture);
+    SpriteInfo background("assets/textures/suelo.png");
 
     sf::Image collisionImage;
     if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) {}
 
-    sf::Texture mesaTexture;
-    if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) {}
-    sf::Sprite mesaSprite(mesaTexture);
+    SpriteInfo mesa("assets/textures/mesa.png");
 
-    sf::Texture mesaTexture_2;
-    if (!mesaTexture_2.loadFromFile("assets/textures/mesa_2.png")) {}
-    sf::Sprite mesaSprite_2(mesaTexture_2);
+    SpriteInfo mesa2("assets/textures/mesa_2.png");
 
-    sf::Texture bottellaTexture;
-    if (!bottellaTexture.loadFromFile("assets/textures/botella.png")) {}
-    sf::Sprite botellaSprite(bottellaTexture);
+    SpriteInfo botella("assets/textures/botella.png");
 
     //Creación de Entidades 
     Player player;
     player.setPosition(400.f, 300.f); // Establece su posición inicial
     player.getSprite().setScale(2.0f, 2.0f);
-    backgroundSprite.setScale(1.0f, 1.0f);
-    backgroundSprite.setPosition(0, 0);
 
-    mesaSprite.setPosition(397, 494);
-    mesaSprite.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
-    mesaSprite.setScale(1.0f, 1.0f);
+    mesa.sprite.setPosition(397, 494);
+    mesa.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa.sprite.setScale(1.0f, 1.0f);
 
-    mesaSprite_2.setPosition(743, 354);
-    mesaSprite_2.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
-    mesaSprite_2.setScale(1.0f, 1.0f);
+    mesa2.sprite.setPosition(743, 354);
+    mesa2.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa2.sprite.setScale(1.0f, 1.0f);
 
-    botellaSprite.setPosition(597, 185);
+    botella.sprite.setPosition(597, 185);
 
 
 
@@ -82,7 +74,7 @@ int main() {
                     sf::Vector2i clickPos_i(clickPos.x, clickPos.y);
 
                     // --- Lógica de Interacción (ejemplo) ---
-                    // if (mesaSprite.getGlobalBounds().contains(clickPos)) {
+                    // if (mesa.getGlobalBounds().contains(clickPos)) {
                     //     std::cout << "Clic en el arbol!" << std::endl;
                     // }
 
@@ -105,7 +97,7 @@ int main() {
 
         if (isDebugPlacing) {
             // MODO DEBUG
-            GameUtils::debugFollowMouse(botellaSprite, window, "Posicion Objeto:");
+            GameUtils::debugFollowMouse(botella.sprite, window, "Posicion Objeto:");
         } else {
             // MODO JUEGO
             player.update(dt, collisionImage);
@@ -113,14 +105,14 @@ int main() {
 
         //Funciones de renderizado:
         window.clear();
-        window.draw(backgroundSprite);
+        window.draw(background.sprite);
 
 
         std::vector<sf::Sprite*> renderList;
-        renderList.push_back(&player.getSprite()); 
-        renderList.push_back(&botellaSprite);
-        renderList.push_back(&mesaSprite);
-        renderList.push_back(&mesaSprite_2);
+        renderList.push_back(&(player.getSprite())); 
+        renderList.push_back(&(botella.sprite));
+        renderList.push_back(&(mesa.sprite));
+        renderList.push_back(&(mesa.sprite));
         
 
         std::sort(renderList.begin(), renderList.end(), 
@@ -131,8 +123,8 @@ int main() {
 
         for (sf::Sprite* sprite : renderList) {
             window.draw(*sprite);
-            if (sprite == &mesaSprite_2) {
-                window.draw(botellaSprite);
+            if (sprite == &(mesa.sprite)) {
+                window.draw(botella.sprite);
             }
         }
         
@@ -142,7 +134,7 @@ int main() {
         //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
         GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f); // Marca la posición del jugador
         GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f); // Marca la posición del mouse
-        GameUtils::drawBoundingBox(window, botellaSprite, sf::Color::Yellow);
+        GameUtils::drawBoundingBox(window, botella.sprite, sf::Color::Yellow);
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
         //GameUtils::logPosition(clickPos, "Clic del mouse en");
         window.display();
