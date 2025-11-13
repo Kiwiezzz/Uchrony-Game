@@ -1,0 +1,1 @@
+//Configuracion general del juego Ej: resolucion, titulo, etc.
