@@ -3,21 +3,50 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include "Utils/GameUtilities.hpp" 
+#include "Utils/GameUtilities.hpp"
 #include "Entities/Player.hpp"
+#include "Utils/NavGrid.hpp"
+#include "Utils/Pathfinder.hpp"
+#include "Utils/Collision.hpp"
+
+/*
+ * demo.cpp
+ * -------
+ * Demo mínimo que muestra:
+ * - Carga de recursos (texturas, imagen de colisión)
+ * - Construcción de una `NavGrid` a partir de una imagen de colisión
+ * - Uso del `Pathfinder` para generar rutas al hacer click
+ * - Un bucle principal con manejo de eventos, actualización y render
+ *
+ * Notas:
+ * - Las rutas relativas a `assets/` esperan que el ejecutable se lance
+ *   desde la raíz del proyecto (o que la carpeta `assets/` esté visible
+ *   desde el directorio de trabajo).
+ */
 
 int main() {
-  
+
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animacion");
     window.setFramerateLimit(60);
 
+    // Background
     sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("assets/textures/suelo.png")) {} 
+    if (!backgroundTexture.loadFromFile("assets/textures/suelo.png")) {
+        std::cerr << "Failed to load image \"assets/textures/suelo.png\". Reason: Unable to open file" << std::endl;
+    }
     sf::Sprite backgroundSprite(backgroundTexture);
 
+    // La colision mantiene la misma logica de una imagen de colision pero con la diferencia de que ahora
+    // la clase NavGrid se encarga de interpretar la imagen de colision para generar una colision de tipo
+    // rejilla adecuada para el pathfinding.
     sf::Image collisionImage;
-    if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) {}
+    if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) {
+        std::cerr << "Error: No se pudo cargar assets/textures/escenario_colision.png" << std::endl;
+        return -1;
+    }
 
+    // Carga de objetos
     sf::Texture mesaTexture;
     if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) {}
     sf::Sprite mesaSprite(mesaTexture);
@@ -30,100 +59,96 @@ int main() {
     if (!bottellaTexture.loadFromFile("assets/textures/botella.png")) {}
     sf::Sprite botellaSprite(bottellaTexture);
 
-    //Creación de Entidades 
+    //Uso de NavGrid y Pathfinder
+    NavGrid navGrid(16); // tamaño de celda en píxeles
+    if (!navGrid.buildFromImage(collisionImage)) {
+        std::cerr << "Error: NavGrid::buildFromImage falló. Imagen inválida o tamaño incorrecto." << std::endl;
+        return -1;
+    }
+    Pathfinder pathfinder;
+
+
     Player player;
-    player.setPosition(400.f, 300.f); // Establece su posición inicial
+    player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
+
     backgroundSprite.setScale(1.0f, 1.0f);
     backgroundSprite.setPosition(0, 0);
 
     mesaSprite.setPosition(397, 494);
     mesaSprite.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
-    mesaSprite.setScale(1.0f, 1.0f);
 
     mesaSprite_2.setPosition(743, 354);
     mesaSprite_2.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
-    mesaSprite_2.setScale(1.0f, 1.0f);
 
     botellaSprite.setPosition(597, 185);
 
-
-
-    bool isDebugPlacing = false; // ¿Estamos en modo "colocar objeto"?
+    bool isDebugPlacing = false; // Modo para colocar y seguir objetos con el mouse
 
     sf::Clock clock;
 
-    //Bucle del juego principal
+    //Game loop
     while (window.isOpen()) {
         sf::Time dt = clock.restart();
-
-        //Manejo de Eventos (inputs)
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
-
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::D) { // 'D' para Debug
-                    isDebugPlacing = !isDebugPlacing; // Alterna el modo
-                    
-                    // Si apagamos el modo debug, limpia la consola
-                    if (!isDebugPlacing) {
-                        std::cout << std::endl << "Modo Debug DESACTIVADO." << std::endl;
-                    }
-                }
             }
 
-            if (event.type == sf::Event::MouseButtonPressed){
+            // Eventos de mouse
+            // Manejo de click izquierdo: intentamos generar una ruta
+            if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
-                    
-                    // Obtener la posición del clic en coordenadas del mundo
+                    // Obtener posición del mouse en coordenadas del mundo
                     sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
-                    sf::Vector2i clickPos_i(clickPos.x, clickPos.y);
 
-                    // --- Lógica de Interacción (ejemplo) ---
-                    // if (mesaSprite.getGlobalBounds().contains(clickPos)) {
-                    //     std::cout << "Clic en el arbol!" << std::endl;
-                    // }
-
-                    if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
-                         clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
-                         collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::White) 
+                    // Evento especial: si clicamos en la mesa, mostramos un mensaje
+                    if (mesaSprite.getGlobalBounds().contains(clickPos)) {
+                        std::cout << "Clic en la mesa!" << std::endl;
+                    } 
+                    else 
                     {
-                        player.moveTo(clickPos);
-                    }
-                    else if (clickPos_i.x >= 0 && clickPos_i.x < (int)collisionImage.getSize().x &&
-                         clickPos_i.y >= 0 && clickPos_i.y < (int)collisionImage.getSize().y &&
-                         collisionImage.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::Red){
+                        //Si no hay un evento en especial, procedemos a calcular la ruta
+                        Point start = navGrid.worldToGrid(player.getPosition());
+                        Point end = navGrid.worldToGrid(Vec2f(clickPos.x, clickPos.y));
+
+                        if (navGrid.isWalkable(end)) {
+                            std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
+                            if (!path.empty()) {
+                                // Pasar la ruta al jugador para que la siga
+                                player.setPath(path, navGrid);
+                            } else {
+                                std::cout << "No se encontro ruta!" << std::endl;
+                            }
+                        } 
+                        //Zona de la puerta no caminable
+                        else {
                             std::cout << "Zona prohibida!" << std::endl;
+                        }
                     }
                 }
             }
         }
 
-        player.update(dt, collisionImage);
-
+        // trigger de debug para colocar objetos con el mouse
         if (isDebugPlacing) {
-            // MODO DEBUG
             GameUtils::debugFollowMouse(botellaSprite, window, "Posicion Objeto:");
         } else {
-            // MODO JUEGO
-            player.update(dt, collisionImage);
+            player.update(dt);
         }
 
-        //Funciones de renderizado:
+        // Dibujo de sprites por orden en eje Y
         window.clear();
         window.draw(backgroundSprite);
 
-
         std::vector<sf::Sprite*> renderList;
-        renderList.push_back(&player.getSprite()); 
+        renderList.push_back(&player.getSprite());
         renderList.push_back(&botellaSprite);
         renderList.push_back(&mesaSprite);
         renderList.push_back(&mesaSprite_2);
-        
 
-        std::sort(renderList.begin(), renderList.end(), 
+        std::sort(renderList.begin(), renderList.end(),
             [](const sf::Sprite* a, const sf::Sprite* b) {
                 return a->getPosition().y < b->getPosition().y;
             }
@@ -135,16 +160,12 @@ int main() {
                 window.draw(botellaSprite);
             }
         }
-        
-        //Funciones de depuración:
 
-        //GameUtils::drawBoundingBox(window, player.getSprite(), sf::Color::Yellow); //Dibuja un cuadro alrededor de un objeto
-        //GameUtils::drawBoundingBox(window, arbolSprite, sf::Color::Green);
-        GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f); // Marca la posición del jugador
-        GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f); // Marca la posición del mouse
+        //Funciones de depuracion visual
+        GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f);
+        GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f);
         GameUtils::drawBoundingBox(window, botellaSprite, sf::Color::Yellow);
-        sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
-        //GameUtils::logPosition(clickPos, "Clic del mouse en");
+
         window.display();
     }
 

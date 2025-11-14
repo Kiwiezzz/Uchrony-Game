@@ -4,18 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <string>
-
-/*
- * GameUtilities.hpp
- * Un conjunto de funciones de utilidad "solo-encabezado" para SFML.
- * Inclúyelo en tu main.cpp con #include "GameUtilities.hpp"
- *
- * Todas las funciones están dentro del namespace 'GameUtils', así que
- * llámalas usando: GameUtils::nombreFuncion(...)
- *
- * Usamos 'inline' para evitar errores de "múltiples definiciones"
- * al incluir este archivo en varios lugares.
- */
 namespace GameUtils {
 
     /**
@@ -31,7 +19,6 @@ namespace GameUtils {
 
     /**
      * @brief Dibuja un marcador visual (círculo) en una posición específica.
-     * ¡Perfecto para tu solicitud de "marcar la posición donde doy click"!
      * @param window La ventana donde se dibujará.
      * @param position La posición (x, y) donde dibujar el marcador.
      * @param color El color del marcador (por defecto, Rojo).
@@ -47,33 +34,18 @@ namespace GameUtils {
         window.draw(marker);
     }
 
-    /* @brief Imprime las coordenadas (x, y) de un vector en la consola.
-     * Útil para depurar posiciones de clics, jugador, etc.
-     * @param position El vector (x, y) a imprimir.
-     * @param prefix Un mensaje opcional para poner antes de las coordenadas.
-     */
+    // Registro de posición en consola para depuración
     inline void logPosition(sf::Vector2f position, const std::string& prefix = "Position") {
-        // Imprime en la consola/terminal
         std::cout << prefix << ": (x=" << position.x << ", y=" << position.y << ")" << std::endl;
     }
 
-    /**
-     * @brief Mueve un sprite para que siga al mouse Y REGISTRA la posición en la consola.
-     * ¡ADVERTENCIA! Debe llamarse CADA FOTOGRAMA (en el bucle principal, no en eventos).
-     * Usará '\r' para sobrescribir la misma línea de la consola y evitar spam.
-     * @param sprite El sprite que se moverá (¡pasado por referencia!).
-     * @param window La ventana para obtener la posición del mouse.
-     * @param prefix Un mensaje opcional para el log.
-     */
+    /*Esta es la funcion que se encarga de mover un sprite a la posicion del mouse*/
     inline void debugFollowMouse(sf::Sprite& sprite, sf::RenderWindow& window, const std::string& prefix = "Debug Pos") {
-        // 1. Obtener la posición del mouse
+
         sf::Vector2f mousePos = getMouseWorldPosition(window);
         
-        // 2. Mover el sprite
         sprite.setPosition(mousePos);
         
-        // 3. Registrar en la consola
-        // Usamos (int) para un log más limpio y '\r' para sobrescribir la línea
         std::cout << prefix << ": (x=" << static_cast<int>(mousePos.x) 
                   << ", y=" << static_cast<int>(mousePos.y) << ")    \r";
         
@@ -81,13 +53,7 @@ namespace GameUtils {
         std::cout.flush(); 
     }
 
-    /**
-     * @brief Dibuja el rectángulo de colisión (Bounding Box) de un sprite.
-     * Increíblemente útil para depurar colisiones e interacciones.
-     * @param window La ventana donde se dibujará.
-     * @param sprite El sprite del cual obtener el GlobalBounds.
-     * @param color El color del rectángulo (por defecto, Verde).
-     */
+    // Dibuja el bounding box de un sprite para depuración (hitbox visual)
     inline void drawBoundingBox(sf::RenderWindow& window, const sf::Sprite& sprite, sf::Color color = sf::Color::Green) {
         sf::FloatRect bounds = sprite.getGlobalBounds();
         sf::RectangleShape box;
@@ -111,25 +77,16 @@ namespace GameUtils {
         return sprite.getGlobalBounds().contains(mousePos);
     }
 
-    // --- Funciones de Matemáticas Vectoriales ---
+    //Funciones vectoriales básicas
 
-    /**
-     * @brief Calcula la distancia entre dos puntos (vectores).
-     * @param v1 El primer punto.
-     * @param v2 El segundo punto.
-     * @return La distancia (float).
-     */
+    //devuelve un nuevo vecto AB
     inline float getDistance(sf::Vector2f v1, sf::Vector2f v2) {
         float dx = v2.x - v1.x;
         float dy = v2.y - v1.y;
         return std::sqrt(dx * dx + dy * dy);
     }
 
-    /**
-     * @brief Calcula la magnitud (longitud) de un vector.
-     * @param v El vector.
-     * @return La longitud (float).
-     */
+    // Devuelve la longitud (Magnitud) de un vector
     inline float getVectorLength(sf::Vector2f v) {
         return std::sqrt(v.x * v.x + v.y * v.y);
     }
@@ -148,6 +105,6 @@ namespace GameUtils {
         return v; // Devuelve el vector cero si la longitud es cero
     }
 
-} // fin del namespace GameUtils
+}
 
-#endif // GAMEUTILITIES_HPP
+#endif 
