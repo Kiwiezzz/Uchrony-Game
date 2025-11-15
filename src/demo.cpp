@@ -1,4 +1,4 @@
-#include <SFML/Graphics.hpp>
+/*#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -93,8 +93,6 @@ int main() {
             }
         }
 
-        player.update(dt, collisionImage);
-
         if (isDebugPlacing) {
             // MODO DEBUG
             GameUtils::debugFollowMouse(botella.sprite, window, "Posicion Objeto:");
@@ -141,4 +139,4 @@ int main() {
     }
 
     return 0;
-}
+}/**/

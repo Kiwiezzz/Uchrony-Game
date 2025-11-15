@@ -2,6 +2,10 @@
 
 #include "Animator.hpp" // ¡Usamos nuestro animador!
 
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+
 // Definimos constantes aquí para que sean fáciles de encontrar
 const int PLAYER_FRAME_WIDTH = 64;
 const int PLAYER_FRAME_HEIGHT = 64;

@@ -8,4 +8,6 @@ LSFM_STUFF = -lsfml-graphics -lsfml-window -lsfml-system
 MY_FLAGS = -std=c++17
 
 demo: $(INCL_FILES) $(INCL_FILES2) $(SRC_FILES) $(SRC_FILES2)
-	g++ $(SRC_FILES) $(MY_FLAGS) -o demo -I Include $(LSFM_STUFF)
+	g++ $(SRC_FILES) $(MY_FLAGS) -o demo -I Include $(LSFM_STUFF) -g
+
+## El -g es para que se pueda debugear
