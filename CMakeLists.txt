@@ -4,15 +4,17 @@ cmake_minimum_required(VERSION 3.10)
 project(UchronyGame LANGUAGES CXX)
 
 # Busca la librería SFML
-find_package(SFML 2.6.2 COMPONENTS system window graphics REQUIRED)
+find_package(SFML 2 COMPONENTS system window graphics audio REQUIRED)
 
 # Define el ejecutable del juego
 add_executable(UchronyGame_Executable
-   #src/demo.cpp
-    src/Entities/Player.cpp     # <--- AÑADIDO
-    src/Utils/NavGrid.cpp     # <--- AÑADIDO
-    src/Utils/Pathfinder.cpp  # <--- AÑADIDO
-    src/Utils/Collision.cpp   # <--- AÑADIDO
+    #src/demo.cpp
+    src/Entities/Player.cpp
+    src/Utils/NavGrid.cpp
+    src/Utils/Pathfinder.cpp
+    src/Utils/Collision.cpp
+    src/Entities/Inventory.cpp
+    src/Entities/Item.cpp
     src/main.cpp
     src/DialogueManager.cpp
     src/DialogueUI.cpp
@@ -40,6 +42,7 @@ target_link_libraries(UchronyGame_Executable
     sfml-system  
     sfml-window   
     sfml-graphics
+    sfml-audio
 )
 
 # Establece el estándar de C++ (Esto ya estaba bien)
