@@ -1,14 +1,14 @@
-// Include/Utils/DialogueUI.hpp
-
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "../../vendor/imgui-sfml/imgui-SFML.h"
-#include "../../vendor/imgui/imgui.h"
+#include "imgui-SFML.h"
+#include "imgui.h"
 #include <string>
+#include "Utils/Enums.hpp"
 
 class DialogueUI {
 private:
+    DialogType m_type;
     std::string m_speakerName;
     std::string m_dialogueText;
     bool m_advanceClicked;
@@ -24,4 +24,8 @@ public:
 
     // Método para ser llamado por el DialogueManager en update()
     bool canAdvance();
+
+    std::vector<std::string> options;
+    
+    std::vector<int> nextDialogIDs;
 };

@@ -8,7 +8,7 @@ find_package(SFML 2.6.2 COMPONENTS system window graphics REQUIRED)
 
 # Define el ejecutable del juego
 add_executable(UchronyGame_Executable
-    src/demo.cpp
+   #src/demo.cpp
     src/Entities/Player.cpp     # <--- AÑADIDO
     src/Utils/NavGrid.cpp     # <--- AÑADIDO
     src/Utils/Pathfinder.cpp  # <--- AÑADIDO
@@ -17,6 +17,7 @@ add_executable(UchronyGame_Executable
     src/DialogueManager.cpp
     src/DialogueUI.cpp
     src/Game.cpp
+    src/MenuUI.cpp
     vendor/imgui/imgui.cpp
     vendor/imgui/imgui_draw.cpp
     vendor/imgui/imgui_widgets.cpp

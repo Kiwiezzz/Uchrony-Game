@@ -23,7 +23,7 @@
  *   desde la raíz del proyecto (o que la carpeta `assets/` esté visible
  *   desde el directorio de trabajo).
  */
-
+/*
 int main() {
 
 
@@ -171,3 +171,5 @@ int main() {
 
     return 0;
 }
+
+*/
