@@ -18,18 +18,14 @@ void Game::run()
             if (event.type == sf::Event::Closed)
             window.close();
         
-        current_scene->handle_event(event, window);
+            current_scene->handle_event(event, window);
         }
 
-        //Calculo
         current_scene->calculate(window);
-
-        ///RENDERIZADO
         current_scene->render(window);
 
         window.display();
     }
-    //std::cout << "a"; std::cin.get();
 }
 
 void Game::set_scene(Scene& scene)

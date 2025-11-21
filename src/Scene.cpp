@@ -86,7 +86,7 @@ void Scene::render(sf::RenderWindow& window)
 {
     window.clear();
     window.draw(background.sprite);
-    
+    window.draw(player.getSprite());
 
     std::sort(renderList.begin(), renderList.end(), 
         [](const sf::Sprite* a, const sf::Sprite* b) {
