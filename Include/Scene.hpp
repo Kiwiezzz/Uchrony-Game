@@ -9,17 +9,17 @@
 
 class Scene {
 public:
-    Scene(std::string background_path, std::string collision_image_path);
+    Scene(std::string background_path, std::string collision_image_path){}
  
-    ~Scene();
+    ~Scene(){}
 
-    void add_entity();
+    void add_entity(){}
 
-    void handle_event();
+    void handle_event(){}
 
-    void calculate();
+    void calculate(){}
 
-    void render();
+    void render(){}
 
 private:
 
