@@ -7,6 +7,8 @@ build/
 #Ignora el ejecutable en la carpeta principal :p
 UchronyGame_Executable
 
+.vscode/
+
 # Ignora todos los archivos de caché de CMake
 CMakeCache.txt
 CMakeFiles/
