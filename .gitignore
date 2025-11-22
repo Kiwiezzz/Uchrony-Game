@@ -1,0 +1,4 @@
+build/
+.vscode/
+UchronyGame_Executable
+cmake_edwer.txt

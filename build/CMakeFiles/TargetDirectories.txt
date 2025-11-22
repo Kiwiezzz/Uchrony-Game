@@ -1,0 +1,3 @@
+/home/edw/Escritorio/pr/Uchrony-Game/build/CMakeFiles/UchronyGame_Executable.dir
+/home/edw/Escritorio/pr/Uchrony-Game/build/CMakeFiles/edit_cache.dir
+/home/edw/Escritorio/pr/Uchrony-Game/build/CMakeFiles/rebuild_cache.dir
