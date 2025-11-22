@@ -1,7 +1,6 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
-#include "SpriteInfo.hpp"
 #include "Entities/Player.hpp"
 #include "Utils/GameUtilities.hpp"
 
@@ -14,23 +13,21 @@ public:
  
     ~Scene();
 
-    void add_entity(const SpriteInfo& entity);
+    void add_entity();
 
-    void handle_event(sf::Event event, sf::RenderWindow& window);
+    void handle_event();
 
-    void calculate(sf::RenderWindow& window);
+    void calculate();
 
-    void render(sf::RenderWindow& window);
+    void render();
 
 private:
-    sf::Time dt;
-    sf::Clock clock;
 
-    SpriteInfo background;
+    // background;
     sf::Image collision_image;
     
     Player player; //Esta es una clase de isaac
-    std::vector<SpriteInfo> entities;
+    //std::vector<SpriteInfo> entities;
     
     bool isDebugPlacing;
 

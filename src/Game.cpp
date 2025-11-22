@@ -16,14 +16,14 @@ void Game::run()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            scene_ptr->handle_event(event, window);
+            //scene_ptr->handle_event(event, window);
         }
 
         //Calcular
-        scene_ptr->calculate(window);
+        //scene_ptr->calculate(window);
 
         //Renderizar
-        scene_ptr->render(window);
+        //scene_ptr->render(window);
     }
 }
 
