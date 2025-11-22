@@ -3,10 +3,11 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 struct SpriteInfo {
     std::string path;
-    sf::Texture texture;
+    std::shared_ptr<sf::Texture> texture;
     sf::Sprite sprite;
 
 

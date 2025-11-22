@@ -11,7 +11,7 @@ class Game
     
     sf::Clock clock;
 
-    std::shared_ptr<Scene> current_scene;
+    std::shared_ptr<Scene> scene_ptr;
     
 public: 
 

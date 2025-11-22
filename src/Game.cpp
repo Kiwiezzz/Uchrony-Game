@@ -9,26 +9,25 @@ void Game::run()
 {
     //Bucle del juego principal
     while (window.isOpen()) {
-        current_scene->dt = clock.restart();
-        
         //inputs
         sf::Event event;
         while(window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-            window.close();
-        
-            current_scene->handle_event(event, window);
+                window.close();
+
+            scene_ptr->handle_event(event, window);
         }
 
-        current_scene->calculate(window);
-        current_scene->render(window);
+        //Calcular
+        scene_ptr->calculate(window);
 
-        window.display();
+        //Renderizar
+        scene_ptr->render(window);
     }
 }
 
 void Game::set_scene(Scene& scene)
 {
-    current_scene = std::make_shared<Scene>(scene);
+    scene_ptr = std::make_shared<Scene>(scene);
 }

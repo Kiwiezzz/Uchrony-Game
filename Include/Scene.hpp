@@ -5,11 +5,16 @@
 #include "Entities/Player.hpp"
 #include "Utils/GameUtilities.hpp"
 
+#include <unordered_map>
+
+
 class Scene {
 public:
-    Scene();
+    Scene(std::string background_path, std::string collision_image_path);
  
     ~Scene();
+
+    void add_entity(const SpriteInfo& entity);
 
     void handle_event(sf::Event event, sf::RenderWindow& window);
 
@@ -17,21 +22,16 @@ public:
 
     void render(sf::RenderWindow& window);
 
-    sf::Time dt;
-
 private:
+    sf::Time dt;
+    sf::Clock clock;
+
     SpriteInfo background;
+    sf::Image collision_image;
     
     Player player; //Esta es una clase de isaac
+    std::vector<SpriteInfo> entities;
     
-    sf::Image collision_image;
-
-    //std::map entities;
-
-    std::vector<sf::Sprite*> renderList;
-
-    std::vector<SpriteInfo> list;
-
     bool isDebugPlacing;
 
     

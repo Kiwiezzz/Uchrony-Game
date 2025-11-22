@@ -1,39 +1,27 @@
 #include "Scene.hpp"
+#include <iostream>
 
-Scene::Scene() : background("assets/textures/suelo.png") {
+Scene::Scene(std::string background_path, std::string collision_image_path) : background(background_path), player() {
+    //inicio el player
+    player.setPosition(400.f, 300.f); // Establece su posición inicial
+    player.getSprite().setScale(2.0f, 2.0f);
+
+    //inicio lo demás
     isDebugPlacing = false;
-
-    sf::Image collision_image;
-    if (!collision_image.loadFromFile("assets/textures/escenario_colision.png")) {}
-
-    SpriteInfo background("assets/textures/suelo.png");
     
-    SpriteInfo mesa("assets/textures/mesa.png");
-    mesa.sprite.setPosition(397, 494);
-    mesa.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
-    mesa.sprite.setScale(1.0f, 1.0f);
-
-    list.push_back(mesa);
-
-    SpriteInfo mesa2("assets/textures/mesa_2.png");
-    mesa2.sprite.setPosition(743, 354);
-    mesa2.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
-    mesa2.sprite.setScale(1.0f, 1.0f);
-    list.push_back(mesa2);
-
-    SpriteInfo botella("assets/textures/botella.png");
-    botella.sprite.setPosition(597, 185);
-    list.push_back(botella);
-
-    renderList.push_back(&(player.getSprite())); 
-    renderList.push_back(&(list[0].sprite));
-    renderList.push_back(&(list[1].sprite));
-    renderList.push_back(&(list[2].sprite));
+    if (!collision_image.loadFromFile(collision_image_path)) {
+        std::cerr << "Error: No se pudo cargar la imagen de colision" << std::endl;
+    }
 }
 
 Scene::~Scene()
 {
     //Empty
+}
+
+void Scene::add_entity(const SpriteInfo& entity)
+{
+    entities.push_back(entity);
 }
 
 void Scene::handle_event(sf::Event event, sf::RenderWindow& window)
@@ -60,7 +48,7 @@ void Scene::handle_event(sf::Event event, sf::RenderWindow& window)
             if (clickPos_i.x >= 0 && clickPos_i.x < (int)collision_image.getSize().x &&
                     clickPos_i.y >= 0 && clickPos_i.y < (int)collision_image.getSize().y &&
                     collision_image.getPixel(clickPos_i.x, clickPos_i.y) == sf::Color::White) 
-            {
+                    {
                 player.moveTo(clickPos);
             }
             else if (clickPos_i.x >= 0 && clickPos_i.x < (int)collision_image.getSize().x &&
@@ -74,32 +62,41 @@ void Scene::handle_event(sf::Event event, sf::RenderWindow& window)
 
 void Scene::calculate(sf::RenderWindow& window)
 {
+    dt = clock.restart();
     player.update(dt, collision_image);
 
-    if (isDebugPlacing) {
+    /*if (isDebugPlacing) {
         // MODO DEBUG
-        GameUtils::debugFollowMouse(list[2].sprite, window, "Posicion Objeto:");
-    }
+        GameUtils::debugFollowMouse(entities["botella"].sprite, window, "Posicion Objeto:");
+    }*/
 }
 
 void Scene::render(sf::RenderWindow& window)
 {
     window.clear();
     window.draw(background.sprite);
-    window.draw(player.getSprite());
 
-    std::sort(renderList.begin(), renderList.end(), 
+    std::vector<sf::Sprite*> renderList;
+    renderList.reserve(1 + entities.size());
+    renderList.push_back(&player.getSprite());
+
+    // Iterar por referencia: evitar tomar la dirección de una copia temporal
+    for (auto &x : entities) {
+        if (&x.sprite != nullptr) {
+            renderList.push_back(&x.sprite);
+        }
+    }
+
+    std::sort(renderList.begin(), renderList.end(),
         [](const sf::Sprite* a, const sf::Sprite* b) {
             return a->getPosition().y < b->getPosition().y;
         }
     );
 
-    for (SpriteInfo x : list) {
-        sf::Sprite sprite = x.sprite;
-        window.draw(sprite);
-        if (&sprite == &list[0].sprite) {
-            window.draw(list[2].sprite);
-        }
+    for (sf::Sprite* sprite : renderList) {
+        window.draw(*sprite);
+        // Comportamiento extra: si estamos dibujando la mesa, volvemos a dibujar la botella encima
     }
+
     window.display();
-}/**/
+}

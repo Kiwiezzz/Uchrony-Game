@@ -1,8 +1,11 @@
 #include "SpriteInfo.hpp"
 
-SpriteInfo::SpriteInfo() : path(""), texture(), sprite() {}
+#include <iostream>
 
-SpriteInfo::SpriteInfo(const std::string& path) 
+SpriteInfo::SpriteInfo() : path(""), texture(std::make_shared<sf::Texture>()), sprite() {}
+
+SpriteInfo::SpriteInfo(const std::string& path)
+    : path("") , texture(std::make_shared<sf::Texture>()), sprite()
 {
     new_path_and_update(path);
 }
@@ -10,7 +13,11 @@ SpriteInfo::SpriteInfo(const std::string& path)
 void SpriteInfo::new_path_and_update(const std::string& p)
 {
     path = p;
+    texture = std::make_shared<sf::Texture>();
 
-    if (!texture.loadFromFile(path)) {}
-    sprite = sf::Sprite(texture);
+    if (!texture->loadFromFile(path)) {
+        std::cerr << "Error: no se pudo cargar texture '" << path << "'" << std::endl;
+    }
+
+    sprite = sf::Sprite(*texture);
 }
