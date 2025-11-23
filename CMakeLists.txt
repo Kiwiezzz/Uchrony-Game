@@ -1,49 +1,90 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
-# Define el nombre de vuestro proyecto
+# Proyecto
 project(UchronyGame LANGUAGES CXX)
 
-# Busca la librería SFML
-find_package(SFML 2 COMPONENTS system window graphics audio REQUIRED)
+# Opciones
+option(USE_BUNDLED_SFML "Buscar SFML dentro de la carpeta ${CMAKE_SOURCE_DIR}/lib primero" ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Define el ejecutable del juego
+# Si hay una copia de SFML incluida en `lib/`, añade esa ruta a las pistas de búsqueda
+# Solo usamos la SFML empaquetada en lib/ en Windows (evita enlazar librerías Windows en Linux)
+if(USE_BUNDLED_SFML)
+    if(WIN32)
+        list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/lib")
+    else()
+        message(STATUS "USE_BUNDLED_SFML=ON, pero no se usará la SFML incluida en 'lib/' en este sistema (no-Windows).")
+    endif()
+endif()
+
+# Intenta encontrar SFML (usa HINTS a la carpeta lib/ para builds incluidas)
+find_package(SFML 2.5 COMPONENTS system window graphics audio)
+find_package(OpenGL REQUIRED) #esto lo necesita imgui
+
+if(NOT SFML_FOUND)
+    message(STATUS "SFML no encontrada automáticamente.")
+    message(STATUS "Si estás en Linux instala libsfml-dev (ej. 'sudo apt install libsfml-dev') o proporciona SFML con -DSFML_DIR.")
+    message(STATUS "Si estás en Windows y quieres usar la copia incluida en 'lib/', ejecuta con -DUSE_BUNDLED_SFML=ON y asegúrate de que 'lib/' contiene el paquete CMake adecuado.")
+    message(FATAL_ERROR "SFML no encontrada. Provee SFML o ajusta USE_BUNDLED_SFML/SFML_DIR.")
+endif()
+
+# Build SFML libs variable
+if(TARGET SFML::Graphics)
+    set(SFML_LIBS SFML::Graphics SFML::Window SFML::System SFML::Audio)
+elseif(DEFINED SFML_LIBRARIES)
+    set(SFML_LIBS ${SFML_LIBRARIES})
+else()
+    # Fallback to link by name
+    set(SFML_LIBS sfml-graphics sfml-window sfml-system sfml-audio)
+endif()
+
+# Recoger fuentes (reconfigurar automáticamente si se añaden archivos)
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
+    "src/*.cpp"
+    "src/*.c"
+)
+
+
+
+# Ejecutable
 add_executable(UchronyGame_Executable
-    #src/demo.cpp
-    src/Entities/Player.cpp
-    src/Utils/NavGrid.cpp
-    src/Utils/Pathfinder.cpp
-    src/Utils/Collision.cpp
-    src/Entities/Inventory.cpp
-    src/Entities/Item.cpp
-    src/main.cpp
-    src/DialogueManager.cpp
-    src/DialogueUI.cpp
-    src/Game.cpp
-    src/MenuUI.cpp
-    vendor/imgui/imgui.cpp
-    vendor/imgui/imgui_draw.cpp
-    vendor/imgui/imgui_widgets.cpp
-    vendor/imgui/imgui_tables.cpp
-    vendor/imgui-sfml/imgui-SFML.cpp
+    ${SOURCE_FILES}
+    #lib files (Not all):
+    lib/imgui/imgui.cpp
+    lib/imgui/imgui_draw.cpp
+    lib/imgui/imgui_widgets.cpp
+    lib/imgui/imgui_tables.cpp
+    lib/imgui-sfml/imgui-SFML.cpp
+)
+target_include_directories(UchronyGame_Executable PRIVATE 
+    Include 
+    lib/imgui
+    lib/imgui-sfml
 )
 
-# Agregar directorio de headers (Esto ya estaba bien)
-target_include_directories(UchronyGame_Executable PRIVATE Include) 
-# Agregar directorio de headers
-target_include_directories(UchronyGame_Executable PRIVATE
-    Include
-    vendor/imgui
-    vendor/imgui-sfml
-)
-
-# Enlaza las librerías al ejecutable del juego
 target_link_libraries(UchronyGame_Executable
     PRIVATE
     sfml-system  
     sfml-window   
     sfml-graphics
     sfml-audio
+    OpenGL::GL #Esto lo necesita imgui
 )
 
-# Establece el estándar de C++ (Esto ya estaba bien)
-target_compile_features(UchronyGame_Executable PUBLIC cxx_std_17) 
+target_compile_features(UchronyGame_Executable PUBLIC cxx_std_17)
+
+# Vincula SFML usando la variable calculada
+target_link_libraries(UchronyGame_Executable PRIVATE ${SFML_LIBS})
+
+# Rutas de salida por configuración (útil en Windows/Visual Studio)
+set_target_properties(UchronyGame_Executable PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/$<CONFIG>"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/$<CONFIG>"
+)
+
+# Mensaje final
+message(STATUS "Project: ${PROJECT_NAME}")
+message(STATUS "SFML Found: ${SFML_FOUND}")
+message(STATUS "SFML_LIBS: ${SFML_LIBS}")
