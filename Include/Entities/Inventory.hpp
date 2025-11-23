@@ -7,6 +7,8 @@
 
 class Inventory {
 public:
+    Inventory() = default;
+
     Inventory(const sf::Texture& slotTexture, unsigned slotW, unsigned slotH,
               unsigned capacity = 4, float spacing = 8.f);
 

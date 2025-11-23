@@ -6,8 +6,7 @@ Game::Game() :
     mWindow(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animacion"),
     background("assets/textures/suelo.png"),
     collision("assets/textures/escenario_colision.png"),
-    navGrid(16),
-    inventory(slotTex, 0, 0, 4, 8.f)
+    navGrid(16)
 {    
     using namespace std;
     
@@ -35,13 +34,14 @@ Game::Game() :
 
     player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
-
+    
     // Configuración del inventario
     if (!slotTex.loadFromFile("assets/textures/Inventory.png")) {
         std::cerr << "Warning: no se cargo assets/textures/Inventory.png" << std::endl;
     }
+    inventory = Inventory(slotTex, 0, 0, 4, 8.f);
     inventory.setDisplayScale(0.35f);
-
+    
     // Añadir items de ejemplo: botella, guitarra, lentes, ocarina
     // Cargar texturas de items
     items["guitarra"] = TextureAsset("assets/textures/Guitarra.png");
