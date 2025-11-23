@@ -59,6 +59,20 @@ cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DUSE_BUNDLED
 cmake --build build -j$(sysctl -n hw.ncpu)
 ```
 
+Si no detecta SFML:
+
+### SOLUCIÓN PARA MAC (MANUAL):
+Si tienes SFML en una carpeta, ejecuta cmake indicando la ruta a los archivos .cmake:
+```bash
+cmake -S . -B build -DSFML_DIR='/ruta/a/SFML/lib/cmake/SFML
+```
+
+Es MUY IMPORTANTE ejecutar el programa encima de unchrony game executable
+```bash
+cmake --build build -j$(sysctl -n hw.ncpu)
+./bin/UchronyGame_Executable
+```
+
 Consejos prácticos
 - Si CMake muestra errores del tipo "CMakeCache.txt directory ... is different..." borra el directorio `build/` y vuelve a ejecutar CMake desde la raíz del repo.
 - Para ejecutar el binario localmente en Linux/WSL usa `./build/bin/Release/UchronyGame_Executable` (o la ruta que muestre tu configuración).
