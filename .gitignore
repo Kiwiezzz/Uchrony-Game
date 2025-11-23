@@ -8,6 +8,7 @@ build/
 UchronyGame_Executable
 
 .vscode/
+.vs/
 
 # Ignora todos los archivos de caché de CMake
 CMakeCache.txt
