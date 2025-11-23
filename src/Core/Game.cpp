@@ -14,12 +14,15 @@ Game::~Game() {
 }
 
 /// @brief Función para cambiar de nivel desde cualquier lado
-void Game::changeState(GameState* newState) {
+void Game::changeState(GameState* newScene) {
     if (currentState != nullptr) {
-        delete currentState; // Borra el nivel viejo de la RAM
+        delete currentState;
     }
-    currentState = newState;
-    currentState->init(); // Arranca el nuevo nivel
+    currentState = newScene;
+    
+    currentState->setGame(this); 
+
+    currentState->init();
 }
 
 void Game::run() {
