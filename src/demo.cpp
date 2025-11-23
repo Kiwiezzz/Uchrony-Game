@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -8,21 +9,9 @@
 #include "Utils/NavGrid.hpp"
 #include "Utils/Pathfinder.hpp"
 #include "Utils/Collision.hpp"
+#include "Entities/Inventory.hpp"
+#include <optional>
 
-/*
- * demo.cpp
- * -------
- * Demo mínimo que muestra:
- * - Carga de recursos (texturas, imagen de colisión)
- * - Construcción de una `NavGrid` a partir de una imagen de colisión
- * - Uso del `Pathfinder` para generar rutas al hacer click
- * - Un bucle principal con manejo de eventos, actualización y render
- *
- * Notas:
- * - Las rutas relativas a `assets/` esperan que el ejecutable se lance
- *   desde la raíz del proyecto (o que la carpeta `assets/` esté visible
- *   desde el directorio de trabajo).
- */
 
 int main() {
 
@@ -72,6 +61,54 @@ int main() {
     player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
 
+    // Configuración del inventario
+    sf::Texture slotTex;
+    if (!slotTex.loadFromFile("assets/textures/Inventory.png")) {
+        std::cerr << "Warning: no se cargo assets/textures/Inventory.png" << std::endl;
+    }
+    Inventory inventory(slotTex, 0, 0, 4, 8.f);
+    inventory.setDisplayScale(0.35f);
+
+    // Añadir items de ejemplo: botella, guitarra, lentes, ocarina
+    // Cargar texturas de items
+    sf::Texture guitarraTex;
+    if (!guitarraTex.loadFromFile("assets/textures/Guitarra.png")) {
+        std::cerr << "Warning: no se cargo assets/textures/Guitarra.png" << std::endl;
+    }
+    sf::Texture lentesTex;
+    if (!lentesTex.loadFromFile("assets/textures/lentes.png")) {
+        std::cerr << "Warning: no se cargo assets/textures/lentes.png" << std::endl;
+    }
+    sf::Texture ocarinaTex;
+    if (!ocarinaTex.loadFromFile("assets/textures/Ocarina.png")) {
+        std::cerr << "Warning: no se cargo assets/textures/Ocarina.png" << std::endl;
+    }
+
+    // Cargar sonido de la ocarina (se usará al hacer click izquierdo sobre el item)
+    sf::SoundBuffer ocarinaBuffer;
+    if (!ocarinaBuffer.loadFromFile("assets/sounds/ocarina.mp3")) {
+        std::cerr << "Warning: no se cargo assets/sounds/ocarina.mp3" << std::endl;
+    }
+    sf::Sound ocarinaSound;
+    ocarinaSound.setBuffer(ocarinaBuffer);
+
+    Item bottleItem(1, bottellaTexture);
+    bottleItem.sprite().setScale(0.1f, 0.1f); // Escala personalizada para la botella
+    Item guitarItem(2, guitarraTex);
+    guitarItem.sprite().setScale(0.05f, 0.05f);
+    Item lentesItem(3, lentesTex);
+    lentesItem.sprite().setScale(0.05f, 0.05f);
+    Item ocarinaItem(4, ocarinaTex);
+    ocarinaItem.sprite().setScale(0.1f, 0.1f);
+
+    inventory.insertAt(0, bottleItem);
+    inventory.insertAt(1, guitarItem);
+    inventory.insertAt(2, lentesItem);
+    inventory.insertAt(3, ocarinaItem);
+
+    std::optional<Item> draggingItem;
+    int draggingFrom = -1;
+
     backgroundSprite.setScale(1.0f, 1.0f);
     backgroundSprite.setPosition(0, 0);
 
@@ -99,7 +136,22 @@ int main() {
             // Eventos de mouse
             // Manejo de click izquierdo: intentamos generar una ruta
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
+                        if (event.mouseButton.button == sf::Mouse::Left) {
+                                // CLICK IZQUIERDO: activar evento del item si clicó en UI, o generar ruta en el mundo
+                                sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+                                int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+                                if (uiIdx >= 0) {
+                                    const Item* it = inventory.itemAt((unsigned)uiIdx);
+                                    if (it) {
+                                        it->onClick();
+                                        // Si es la ocarina (id == 4) reproducir sonido
+                                        if (it->id() == 4) {
+                                            ocarinaSound.stop();
+                                            ocarinaSound.play();
+                                        }
+                                    }
+                                    continue;
+                                }
                     // Obtener posición del mouse en coordenadas del mundo
                     sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
@@ -127,6 +179,33 @@ int main() {
                             std::cout << "Zona prohibida!" << std::endl;
                         }
                     }
+                }
+            }
+
+            // CLICK DERECHO: iniciar/soltar drag de items en UI
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Right) {
+                    sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+                    int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+                    if (uiIdx >= 0) {
+                        draggingItem = inventory.pickAt(uiIdx);
+                        if (draggingItem) draggingFrom = uiIdx;
+                        continue;
+                    }
+                }
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
+                    sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+                    int idx = inventory.indexAtScreenPos(mouseWinPos, window);
+                    if (idx >= 0) {
+                        inventory.insertAt(idx, *draggingItem);
+                    } else {
+                        inventory.insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : inventory.size(), *draggingItem);
+                    }
+                    draggingItem.reset();
+                    draggingFrom = -1;
                 }
             }
         }
@@ -165,6 +244,27 @@ int main() {
         GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f);
         GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f);
         GameUtils::drawBoundingBox(window, botellaSprite, sf::Color::Yellow);
+
+        // DIBUJO UI (inventario) en vista por defecto para que quede fija en pantalla
+        auto prevView = window.getView();
+        window.setView(window.getDefaultView());
+        sf::Vector2u ws = window.getSize();
+        float margin = 8.f;
+        // Usar la altura de slot ya escalada para posicionar correctamente el inventario
+        inventory.setBasePosition({ margin, float(ws.y) - margin - float(inventory.displaySlotHeight()) });
+        inventory.draw(window);
+
+        // Dibujar item arrastrado bajo el mouse
+        if (draggingItem) {
+            sf::Vector2i mp = sf::Mouse::getPosition(window);
+            // SOLO dibujamos el sprite del item (no el fondo del slot)
+            sf::Sprite s = draggingItem->sprite();
+            sf::FloatRect gb = s.getGlobalBounds();
+            s.setPosition(float(mp.x) - gb.width/2.f, float(mp.y) - gb.height/2.f);
+            window.draw(s);
+        }
+
+        window.setView(prevView);
 
         window.display();
     }
