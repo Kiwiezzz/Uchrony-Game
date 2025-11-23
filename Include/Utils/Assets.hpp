@@ -8,10 +8,10 @@ struct SpriteAsset {
     std::string path;
     sf::Texture texture;
     sf::Sprite sprite; //Esto es una dirección de memoria, si simplemente la copias no servirá
-
+    int layer;
 
     SpriteAsset() : 
-        path(""), texture(), sprite()
+        path(""), texture(), sprite(), layer(0)
     {}
 
     SpriteAsset(const std::string& path)
@@ -34,11 +34,30 @@ struct SpriteAsset {
 
         sprite = sf::Sprite(texture);
     }
+    
+    //Funcion para mover el sprite
+    void setPosition(float x, float y)
+    {
+        sprite.setPosition(x, y);
+    }
+
+    //Funcion para escalar el sprite
+    void setScale(float scaleX, float scaleY)
+    {
+        sprite.setScale(scaleX, scaleY);
+    }
+
+    //Funcion para asignar la capa en que esta el sprite
+    void setlayer(int newLayer)
+    {
+        layer = newLayer;
+    }
 
     SpriteAsset& operator=(const SpriteAsset& other)
     {
         path = other.path;
         texture = other.texture;
+        sprite = other.sprite;
         sprite = sf::Sprite(texture);
 
         return *this;

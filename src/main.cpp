@@ -3,6 +3,7 @@
 int main()
 {
     Game game;
-    game.run(); //Aquí va la magia
+    game.changeState(new Screen1());
+    game.run();
     return 0;
-}/**/
+}

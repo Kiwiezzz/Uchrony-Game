@@ -1,65 +1,27 @@
 #pragma once
 
-
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <algorithm>
-#include <optional>
-#include <stdexcept>
-#include <map>
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#include "Utils/GameUtilities.hpp"
-#include "Utils/Assets.hpp"
-#include "Entities/Player.hpp"
-#include "Utils/NavGrid.hpp"
-#include "Utils/Pathfinder.hpp"
-#include "Utils/Collision.hpp"
-#include "Entities/Inventory.hpp"
-
+#include "Core/GameState.hpp"
+#include "GameStates/Screen1.hpp"
 
 class Game
 {
+private:
+    sf::RenderWindow window;
+    sf::Clock clock;
+    GameState* currentState;
+
 public:
-    /// @brief Constructor
     Game();
 
-    /// @brief Corre el juego
+    ~Game();
+
+    /// @brief Función para cambiar de nivel desde cualquier lado
+    /// @param newScene 
+    void changeState(GameState* newState);
+
     void run();
 
-private:
-    void handleEvents();    //1. Procesar eventos
-    void update();          //2. Actualizar
-    void render();          //3. Renderizar
-
-
-//Variables
-    sf::RenderWindow mWindow;
-
-
-//DESASTRE
-
-    sf::Clock clock;
-    bool isDebugPlacing;
-
-    SpriteAsset background;
-    ImageAsset collision;
-
-    Player player;
-
-    NavGrid navGrid; // tamaño de celda en píxeles
-    Pathfinder pathfinder;
-
-    std::map<std::string, SpriteAsset> objects;
-    sf::Texture slotTex;
-    Inventory inventory;
-
-    std::map<std::string, TextureAsset> items;
-    sf::SoundBuffer ocarinaBuffer;
-    sf::Sound ocarinaSound;
-    std::optional<Item> draggingItem;
-    int draggingFrom;
 };
