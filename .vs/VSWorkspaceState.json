@@ -1,0 +1,18 @@
+{
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "out\\build\\x64-Debug",
+      "out\\install\\x64-Debug"
+    ]
+  },
+  "ExpandedNodes": [
+    "",
+    "\\lib\\imgui\\examples",
+    "\\lib\\imgui\\examples\\example_sdl3_sdlrenderer3",
+    "\\out",
+    "\\out\\cmake_test",
+    "\\out\\cmake_test\\bin"
+  ],
+  "SelectedNode": "\\CMakeLists.txt",
+  "PreviewInSolutionExplorer": false
+}

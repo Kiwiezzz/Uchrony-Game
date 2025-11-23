@@ -1,4 +1,30 @@
 build/
+<<<<<<< HEAD
 .vscode/
 UchronyGame_Executable
 cmake_edwer.txt
+=======
+
+#Ignora el ejecutable en la carpeta principal :p
+UchronyGame_Executable
+
+.vscode/
+
+# Ignora todos los archivos de caché de CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Ignora los Makefiles generados (la carpeta build/ ya hace esto, pero es una buena práctica)
+Makefile
+
+# Ignora archivos de Depuración
+*.o
+*.obj
+*.exe
+*.out
+*.dylib
+*.so
+>>>>>>> development
