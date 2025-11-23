@@ -26,6 +26,9 @@ if(NOT SFML_FOUND)
     message(STATUS "SFML no encontrada automáticamente.")
     message(STATUS "Si estás en Linux instala libsfml-dev (ej. 'sudo apt install libsfml-dev') o proporciona SFML con -DSFML_DIR.")
     message(STATUS "Si estás en Windows y quieres usar la copia incluida en 'lib/', ejecuta con -DUSE_BUNDLED_SFML=ON y asegúrate de que 'lib/' contiene el paquete CMake adecuado.")
+    message(STATUS "SOLUCIÓN PARA MAC (MANUAL):
+    Si tienes SFML en una carpeta, ejecuta cmake indicando la ruta a los archivos .cmake:
+    cmake -S . -B build -DSFML_DIR='/ruta/a/SFML/lib/cmake/SFML'")
     message(FATAL_ERROR "SFML no encontrada. Provee SFML o ajusta USE_BUNDLED_SFML/SFML_DIR.")
 endif()
 
