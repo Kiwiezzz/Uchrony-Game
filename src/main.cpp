@@ -1,13 +1,9 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
 #include "Core/Game.hpp"
-#include "imgui.h" 
-#include "imgui-SFML.h"
 
-int main() {
-
-    Game game; 
+int main()
+{
+    Game game;
+    game.changeState(new Screen1());
     game.run();
-
     return 0;
 }

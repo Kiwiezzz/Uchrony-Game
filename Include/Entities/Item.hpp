@@ -10,6 +10,8 @@ public:
     // `scale` permite ajustar la escala inicial del sprite (lo puedes modificar después)
     Item(int id, const sf::Texture& tex, float scale = 1.f);
 
+    Item(const Item& copy);
+
     int id() const { return m_id; }
     const sf::Sprite& sprite() const { return m_sprite; }
     sf::Sprite& sprite() { return m_sprite; }
@@ -17,7 +19,10 @@ public:
     // Evento que se dispara al hacer click en el item (por ahora solo devuelve id)
     virtual void onClick() const;
 
+    Item& operator=(const Item& copy);
+
 private:
     int m_id = -1;
+    sf::Texture m_texture;
     sf::Sprite m_sprite;
 };

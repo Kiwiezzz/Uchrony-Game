@@ -48,8 +48,6 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
     "src/*.c"
 )
 
-
-
 # Ejecutable
 add_executable(UchronyGame_Executable
     ${SOURCE_FILES}
