@@ -89,87 +89,81 @@ void Screen1::init()
 
 void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-
-            // Eventos de mouse
-            // Manejo de click izquierdo: intentamos generar una ruta
-            if (event.type == sf::Event::MouseButtonPressed) {
-                        if (event.mouseButton.button == sf::Mouse::Left) {
-                                // CLICK IZQUIERDO: activar evento del item si clicó en UI, o generar ruta en el mundo
-                                sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                                int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
-                                if (uiIdx >= 0) {
-                                    const Item* it = inventory.itemAt((unsigned)uiIdx);
-                                    if (it) {
-                                        it->onClick();
-                                        // Si es la ocarina (id == 4) reproducir sonido
-                                        if (it->id() == 4) {
-                                            ocarinaSound.stop();
-                                            ocarinaSound.play();
-                                        }
-                                    }
-                                    continue;
+    // Eventos de mouse
+    // Manejo de click izquierdo: intentamos generar una ruta
+    if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                        // CLICK IZQUIERDO: activar evento del item si clicó en UI, o generar ruta en el mundo
+                        sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+                        int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+                        if (uiIdx >= 0) {
+                            const Item* it = inventory.itemAt((unsigned)uiIdx);
+                            if (it) {
+                                it->onClick();
+                                // Si es la ocarina (id == 4) reproducir sonido
+                                if (it->id() == 4) {
+                                    ocarinaSound.stop();
+                                    ocarinaSound.play();
                                 }
-                    // Obtener posición del mouse en coordenadas del mundo
-                    sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
-
-                    // Evento especial: si clicamos en la mesa, mostramos un mensaje
-                    if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
-                        std::cout << "Clic en la mesa!" << std::endl;
-                    } 
-                    else 
-                    {
-                        //Si no hay un evento en especial, procedemos a calcular la ruta
-                        Point start = navGrid.worldToGrid(player.getPosition());
-                        Point end = navGrid.worldToGrid(Vec2f(clickPos.x, clickPos.y));
-
-                        if (navGrid.isWalkable(end)) {
-                            std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
-                            if (!path.empty()) {
-                                // Pasar la ruta al jugador para que la siga
-                                player.setPath(path, navGrid);
-                            } else {
-                                std::cout << "No se encontro ruta!" << std::endl;
                             }
-                        } 
-                        //Zona de la puerta no caminable
-                        else {
-                            std::cout << "Zona prohibida!" << std::endl;
+                            return;
                         }
-                    }
-                }
-            }
+            // Obtener posición del mouse en coordenadas del mundo
+            sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
-            // CLICK DERECHO: iniciar/soltar drag de items en UI
-            if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Right) {
-                    sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                    int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
-                    if (uiIdx >= 0) {
-                        draggingItem = inventory.pickAt(uiIdx);
-                        if (draggingItem) draggingFrom = uiIdx;
-                        continue;
-                    }
-                }
-            }
+            // Evento especial: si clicamos en la mesa, mostramos un mensaje
+            if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
+                std::cout << "Clic en la mesa!" << std::endl;
+            } 
+            else 
+            {
+                //Si no hay un evento en especial, procedemos a calcular la ruta
+                Point start = navGrid.worldToGrid(player.getPosition());
+                Point end = navGrid.worldToGrid(Vec2f(clickPos.x, clickPos.y));
 
-            if (event.type == sf::Event::MouseButtonReleased) {
-                if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
-                    sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                    int idx = inventory.indexAtScreenPos(mouseWinPos, window);
-                    if (idx >= 0) {
-                        inventory.insertAt(idx, *draggingItem);
+                if (navGrid.isWalkable(end)) {
+                    std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
+                    if (!path.empty()) {
+                        // Pasar la ruta al jugador para que la siga
+                        player.setPath(path, navGrid);
                     } else {
-                        inventory.insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : inventory.size(), *draggingItem);
+                        std::cout << "No se encontro ruta!" << std::endl;
                     }
-                    draggingItem.reset();
-                    draggingFrom = -1;
+                } 
+                //Zona de la puerta no caminable
+                else {
+                    std::cout << "Zona prohibida!" << std::endl;
                 }
             }
         }
+    }
+
+    // CLICK DERECHO: iniciar/soltar drag de items en UI
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Right) {
+            sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+            int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+            if (uiIdx >= 0) {
+                draggingItem = inventory.pickAt(uiIdx);
+                if (draggingItem) draggingFrom = uiIdx;
+                return;
+            }
+        }
+    }
+
+    if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
+            sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
+            int idx = inventory.indexAtScreenPos(mouseWinPos, window);
+            if (idx >= 0) {
+                inventory.insertAt(idx, *draggingItem);
+            } else {
+                inventory.insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : inventory.size(), *draggingItem);
+            }
+            draggingItem.reset();
+            draggingFrom = -1;
+        }
+    }
 }
 
 void Screen1::update(sf::Time dt)
