@@ -7,7 +7,7 @@
 struct SpriteAsset {
     std::string path;
     sf::Texture texture;
-    sf::Sprite sprite;
+    sf::Sprite sprite; //Esto es una dirección de memoria, si simplemente la copias no servirá
 
 
     SpriteAsset() : 
@@ -20,6 +20,10 @@ struct SpriteAsset {
         new_path_and_update(path);
     }
 
+    SpriteAsset(const SpriteAsset& spriteAsset) : 
+        path(spriteAsset.path), texture(spriteAsset.texture), sprite(this->texture)
+    {}
+
     void new_path_and_update(const std::string& newPath)
     {   
         path = newPath;
@@ -29,6 +33,15 @@ struct SpriteAsset {
         }
 
         sprite = sf::Sprite(texture);
+    }
+
+    SpriteAsset& operator=(const SpriteAsset& other)
+    {
+        path = other.path;
+        texture = other.texture;
+        sprite = sf::Sprite(texture);
+
+        return *this;
     }
 };
 

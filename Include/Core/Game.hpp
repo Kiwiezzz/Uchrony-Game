@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <optional>
 #include <stdexcept>
+#include <map>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -23,7 +24,10 @@
 class Game
 {
 public:
+    /// @brief Constructor
     Game();
+
+    /// @brief Corre el juego
     void run();
 
 private:

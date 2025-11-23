@@ -9,6 +9,8 @@ Game::Game() :
     navGrid(16),
     inventory(slotTex, 0, 0, 4, 8.f)
 {    
+    using namespace std;
+    
     mWindow.setFramerateLimit(60);
     
     // Carga de objetos

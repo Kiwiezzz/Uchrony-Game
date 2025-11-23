@@ -21,6 +21,11 @@ cmake --build build -j$(nproc)
 ./build/bin/UchronyGame_Executable
 ```
 
+Comando resumido
+```bash
+if [ -d "build" ]; then rm -rf build; fi && cmake -S . -B build -DUSE_BUNDLED_SFML=OFF && cmake --build build -j$(nproc) && ./build/bin/UchronyGame_Executable
+```
+
 Windows (Visual Studio/PowerShell)
 
 ```powershell
