@@ -64,13 +64,18 @@ Si no detecta SFML:
 ### SOLUCIÓN PARA MAC (MANUAL):
 Si tienes SFML en una carpeta, ejecuta cmake indicando la ruta a los archivos .cmake:
 ```bash
-cmake -S . -B build -DSFML_DIR='/ruta/a/SFML/lib/cmake/SFML
+cmake -S . -B build -DSFML_DIR= 'tu ruta de sfml'
 ```
 
 Es MUY IMPORTANTE ejecutar el programa encima de unchrony game executable
 ```bash
 cmake --build build -j$(sysctl -n hw.ncpu)
-./bin/UchronyGame_Executable
+./build/bin/UchronyGame_Executable
+```
+
+Comando para Rosa en MAC:
+``` bash
+if [ -d "build" ]; then rm -rf build; fi && cmake -S . -B build -DSFML_DIR=/opt/homebrew/opt/sfml@2/lib/cmake/SFML && cmake --build build -j$(sysctl -n hw.ncpu) && ./build/bin/UchronyGame_Executable
 ```
 
 Consejos prácticos
