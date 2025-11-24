@@ -4,40 +4,54 @@
 #include <cstdlib>
 #include <vector>
 
-NPC::NPC()
-    : m_position(0.0f, 0.0f),
-      m_speed(100.0f),
+/*NPC::NPC(std::string path, Vec2f position, bool walkable)
+    : m_animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT),
+      m_speed(NPC_SPEED),
       m_isMoving(false),
+      m_walkable(walkable),
+      m_lastDirection(ROW_NPC_IDLE_DOWN),
       m_currentIndex(0),
       m_state(NPCState::Idle),
-      m_stateTimer(0.0f),
-      m_walkable(false),
-      m_lastDirection(ROW_NPC_IDLE_DOWN),
-      m_currentAnimation(""),
-      m_animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT)
+      m_stateTimer(0.f)
 {
-    setupAnimations();
-    playIdleAnimation();
-}
-
-void NPC::setPosition(float x, float y) {
-    m_sprite.setPosition(x, y);
-}
-
-void NPC::setTexture(const std::string& texturePath) {
-    if (!m_texture.loadFromFile(texturePath)) {
-        std::cerr << "Error al cargar la textura: " << texturePath << std::endl;
-        return; // Salimos de la función si hay un error
+    if (!m_texture.loadFromFile(path)) {
+        std::cerr << "Error: No se pudo cargar el sprite del NPC" << path << std::endl;
     }
+
     m_sprite.setTexture(m_texture);
-}
+    m_sprite.setOrigin(NPC_FRAME_WIDTH / 2.f, NPC_FRAME_HEIGHT);
 
-void NPC::setWalkable(bool isWalkable) {
-    m_walkable = isWalkable;
-}
+    setupAnimations();
+    m_animator.play("idle_down");
+    m_currentAnimation = "idle_down";
 
-void NPC::draw(sf::RenderWindow& window) {
-    window.draw(m_sprite);
+    setPosition(position.x, position.y);
+}*/
+
+
+
+void NPC::init(std::string path, Vec2f position, bool walkable) {
+    m_animator = Animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT);
+    m_speed = NPC_SPEED;
+    m_isMoving = false;
+    m_walkable = walkable;
+    m_lastDirection = ROW_NPC_IDLE_DOWN;
+    m_currentIndex = 0;
+    m_state = NPCState::Idle;
+    m_stateTimer = 0.f;
+
+    if (!m_texture.loadFromFile(path)) {
+        std::cerr << "Error: No se pudo cargar el sprite del NPC" << path << std::endl;
+    }
+
+    m_sprite.setTexture(m_texture);
+    m_sprite.setOrigin(NPC_FRAME_WIDTH / 2.f, NPC_FRAME_HEIGHT);
+
+    setupAnimations();
+    m_animator.play("idle_down");
+    m_currentAnimation = "idle_down";
+
+    setPosition(position.x, position.y);
 }
 
 void NPC::update(sf::Time dt, const NavGrid& grid) {
@@ -79,6 +93,19 @@ void NPC::update(sf::Time dt, const NavGrid& grid) {
 
     m_sprite.setPosition(m_position.x, m_position.y);
     m_animator.update(dt);
+}
+
+void NPC::render(sf::Window& window) {
+    window.draw(m_sprite);
+}
+
+void NPC::setPosition(float x, float y) {
+    m_position = Vec2f(x, y);
+    m_sprite.setPosition(m_position.x, m_position.y);
+    m_worldPath.clear();
+    m_isMoving = false;
+    m_currentIndex = 0;
+    startIdle();
 }
 
 void NPC::updateAI(sf::Time dt, const NavGrid& grid) {
@@ -166,10 +193,6 @@ void NPC::startIdle() {
 
 sf::Sprite& NPC::getSprite() {
     return m_sprite;
-}
-
-sf::Texture& NPC::getTexture() {
-    return m_texture;
 }
 
 Vec2f NPC::getPosition() const {

@@ -29,7 +29,6 @@ private:
     sf::Sprite spriteJugador;
     
     //Variables:
-    sf::Clock clock;
     bool isDebugPlacing;
 
     SpriteAsset background;
@@ -44,7 +43,6 @@ private:
     std::map<std::string, SpriteAsset> objects;
     sf::Texture slotTex;
     Inventory inventory;
-
     std::map<std::string, TextureAsset> items;
     sf::SoundBuffer ocarinaBuffer;
     sf::Sound ocarinaSound;

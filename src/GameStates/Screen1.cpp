@@ -96,7 +96,6 @@ void Screen1::init()
 
     isDebugPlacing = false; // Modo para colocar y seguir objetos con el mouse
 
-   
 }
 
 void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)

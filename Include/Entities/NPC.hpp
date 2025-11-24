@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "Animator.hpp"
-#include "Utils/Assets.hpp"
 #include "Utils/Geometry.hpp"
 #include "Utils/NavGrid.hpp"
 #include <vector>
@@ -30,16 +29,15 @@ enum class NPCState {
 
 class NPC {
 public:
-    NPC();
+    NPC() = default;
+
+    void init(std::string path, Vec2f position, bool walkable);
+    void update(sf::Time dt, const NavGrid& grid);
+    void render(sf::Window& window);
 
     void setPosition(float x, float y);
-    void setTexture(const std::string& texturePath);
-    void setWalkable(bool isWalkable);
-    void update(sf::Time dt, const NavGrid& grid);
     sf::Sprite& getSprite();
-    sf::Texture& getTexture();
     Vec2f getPosition() const;
-    void draw(sf::RenderWindow& window);
 
 private:
     void setupAnimations();
