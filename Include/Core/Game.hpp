@@ -1,30 +1,31 @@
-#include "Utils/MenuUI.hpp"
-#include "imgui-SFML.h"
+#pragma once
 
-class Game {
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
+#include "Core/GameState.hpp"
+#include "GameStates/MainMenu.hpp"
+
+class Game
+{
+private:
+    sf::RenderWindow window;
+    sf::Clock clock;
+    GameState* currentState = nullptr;
+    ImFont* m_Font = nullptr;
+
 public:
-    Game(); 
+    Game();
 
     ~Game();
 
+    /// @brief Función para cambiar de nivel desde cualquier lado
+    /// @param newScene 
+    void changeState(GameState* newState);
+
+    ImFont* getFont() const { return m_Font; }
+
     void run();
 
-    MenuAction getCurrentState() const { return m_currentState; }
-    
-    void setState(MenuAction newState) { m_currentState = newState; }
-
-private:
-    sf::RenderWindow m_window;
-
-    MenuAction m_currentState;
-
-    //DialogueManager m_dialogueManager;
-
-    MenuUI m_menuUI;
-
-    void MySaveFunction();
-
-    void initImGui();
-
-    sf::Texture m_logoTexture;
+    sf::RenderWindow& getWindow() { return window; }
 };

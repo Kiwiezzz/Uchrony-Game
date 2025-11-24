@@ -1,141 +1,113 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <algorithm>
-#include "Utils/GameUtilities.hpp"
-#include "Entities/Player.hpp"
-#include "Utils/NavGrid.hpp"
-#include "Utils/Pathfinder.hpp"
-#include "Utils/Collision.hpp"
-#include "Entities/Inventory.hpp"
-#include "Entities/NPC.hpp"
-#include <optional>
+/*#include "Core/GameBackup.hpp"
+#include "Utils/Assets.hpp"
 
+Game::Game() :
+    mWindow(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animacion"),
+    background("assets/textures/suelo.png"),
+    collision("assets/textures/escenario_colision.png"),
+    navGrid(16)
+{    
+    using namespace std;
+    
+    mWindow.setFramerateLimit(60);
+    
+    // Carga de objetos
+    objects["mesa"] = SpriteAsset("assets/textures/mesa.png");
+    objects["mesa2"] = SpriteAsset("assets/textures/mesa_2.png");
+    objects["botella"] = SpriteAsset("assets/textures/botella.png");
 
-int main() {
-
-
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Uchrony - Demo de Movimiento y Animacion");
-    window.setFramerateLimit(60);
-
-    // Background
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("assets/textures/suelo.png")) {
-        std::cerr << "Failed to load image \"assets/textures/suelo.png\". Reason: Unable to open file" << std::endl;
-    }
-    sf::Sprite backgroundSprite(backgroundTexture);
-
+    auto& mesa = objects["mesa"];
+    auto& mesa2 = objects["mesa2"];
+    auto& botella = objects["botella"];
+    
     // La colision mantiene la misma logica de una imagen de colision pero con la diferencia de que ahora
     // la clase NavGrid se encarga de interpretar la imagen de colision para generar una colision de tipo
     // rejilla adecuada para el pathfinding.
-    sf::Image collisionImage;
-    if (!collisionImage.loadFromFile("assets/textures/escenario_colision.png")) {
-        std::cerr << "Error: No se pudo cargar assets/textures/escenario_colision.png" << std::endl;
-        return -1;
-    }
 
-    // Carga de objetos
-    sf::Texture mesaTexture;
-    if (!mesaTexture.loadFromFile("assets/textures/mesa.png")) {}
-    sf::Sprite mesaSprite(mesaTexture);
-
-    sf::Texture mesaTexture_2;
-    if (!mesaTexture_2.loadFromFile("assets/textures/mesa_2.png")) {}
-    sf::Sprite mesaSprite_2(mesaTexture_2);
-
-    sf::Texture bottellaTexture;
-    if (!bottellaTexture.loadFromFile("assets/textures/botella.png")) {}
-    sf::Sprite botellaSprite(bottellaTexture);
-
-    //Uso de NavGrid y Pathfinder
-    NavGrid navGrid(16); // tamaño de celda en píxeles
-    if (!navGrid.buildFromImage(collisionImage)) {
+    //Uso de NavGrid y Pathfinder //El pathdinder y el otro están declarados globalmente
+    if (!navGrid.buildFromImage(collision.image)) {
         std::cerr << "Error: NavGrid::buildFromImage falló. Imagen inválida o tamaño incorrecto." << std::endl;
-        return -1;
+        //DEBERÍA CERRARSE
     }
-    Pathfinder pathfinder;
 
 
-    Player player;
     player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
-
-    NPC npc = NPC("assets/textures/npc_spritesheet.png", Vec2f(500.f, 300.f), false);
-
-    npc.getSprite().setScale(2.0f, 2.0f);
-
+    
     // Configuración del inventario
-    sf::Texture slotTex;
     if (!slotTex.loadFromFile("assets/textures/Inventory.png")) {
         std::cerr << "Warning: no se cargo assets/textures/Inventory.png" << std::endl;
     }
-    Inventory inventory(slotTex, 0, 0, 4, 8.f);
+    inventory = Inventory(slotTex, 0, 0, 4, 8.f);
     inventory.setDisplayScale(0.35f);
-
+    
     // Añadir items de ejemplo: botella, guitarra, lentes, ocarina
     // Cargar texturas de items
-    sf::Texture guitarraTex;
-    if (!guitarraTex.loadFromFile("assets/textures/Guitarra.png")) {
-        std::cerr << "Warning: no se cargo assets/textures/Guitarra.png" << std::endl;
-    }
-    sf::Texture lentesTex;
-    if (!lentesTex.loadFromFile("assets/textures/lentes.png")) {
-        std::cerr << "Warning: no se cargo assets/textures/lentes.png" << std::endl;
-    }
-    sf::Texture ocarinaTex;
-    if (!ocarinaTex.loadFromFile("assets/textures/Ocarina.png")) {
-        std::cerr << "Warning: no se cargo assets/textures/Ocarina.png" << std::endl;
-    }
+    items["guitarra"] = TextureAsset("assets/textures/Guitarra.png");
+    items["lentes"] = TextureAsset("assets/textures/lentes.png");
+    items["ocarina"] = TextureAsset("assets/textures/Ocarina.png");
 
     // Cargar sonido de la ocarina (se usará al hacer click izquierdo sobre el item)
-    sf::SoundBuffer ocarinaBuffer;
+    
     if (!ocarinaBuffer.loadFromFile("assets/sounds/ocarina.mp3")) {
         std::cerr << "Warning: no se cargo assets/sounds/ocarina.mp3" << std::endl;
     }
-    sf::Sound ocarinaSound;
+    
     ocarinaSound.setBuffer(ocarinaBuffer);
 
-    Item bottleItem(1, bottellaTexture);
+    Item bottleItem(1, botella.texture);
     bottleItem.sprite().setScale(0.1f, 0.1f); // Escala personalizada para la botella
-    Item guitarItem(2, guitarraTex);
+    Item guitarItem(2, items["guitarra"].texture);
     guitarItem.sprite().setScale(0.05f, 0.05f);
-    Item lentesItem(3, lentesTex);
+    Item lentesItem(3, items["lentes"].texture);
     lentesItem.sprite().setScale(0.05f, 0.05f);
-    Item ocarinaItem(4, ocarinaTex);
+    Item ocarinaItem(4, items["ocarina"].texture);
     ocarinaItem.sprite().setScale(0.1f, 0.1f);
 
     inventory.insertAt(0, bottleItem);
     inventory.insertAt(1, guitarItem);
     inventory.insertAt(2, lentesItem);
     inventory.insertAt(3, ocarinaItem);
+    
+    int draggingFrom;
 
-    std::optional<Item> draggingItem;
-    int draggingFrom = -1;
+    background.sprite.setScale(1.0f, 1.0f);
+    background.sprite.setPosition(0, 0);
 
-    backgroundSprite.setScale(1.0f, 1.0f);
-    backgroundSprite.setPosition(0, 0);
+    mesa.sprite.setPosition(397, 494);
+    mesa.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa.setlayer(0);
 
-    mesaSprite.setPosition(397, 494);
-    mesaSprite.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
+    mesa2.sprite.setPosition(743, 354);
+    mesa2.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa2.setlayer(0);
 
-    mesaSprite_2.setPosition(743, 354);
-    mesaSprite_2.setOrigin(mesaTexture.getSize().x / 2.f, mesaTexture.getSize().y);
+    botella.sprite.setPosition(597, 185);
+    botella.setlayer(1); // la botella debe renderizarse por encima de la mesa
 
-    botellaSprite.setPosition(597, 185);
+    isDebugPlacing = false; // Modo para colocar y seguir objetos con el mouse
 
-    bool isDebugPlacing = false; // Modo para colocar y seguir objetos con el mouse
+   
+}
 
-    sf::Clock clock;
 
-    //Game loop
-    while (window.isOpen()) {
-        sf::Time dt = clock.restart();
-        sf::Event event;
-        while (window.pollEvent(event)) {
+void Game::run()
+{
+    while (mWindow.isOpen())
+    {
+        handleEvents();
+        update();
+        render();
+    }
+    
+}
+
+void Game::handleEvents()
+{
+    sf::Event event;
+        while (mWindow.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                window.close();
+                mWindow.close();
             }
 
             // Eventos de mouse
@@ -144,7 +116,7 @@ int main() {
                         if (event.mouseButton.button == sf::Mouse::Left) {
                                 // CLICK IZQUIERDO: activar evento del item si clicó en UI, o generar ruta en el mundo
                                 sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                                int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+                                int uiIdx = inventory.indexAtScreenPos(mouseWinPos, mWindow);
                                 if (uiIdx >= 0) {
                                     const Item* it = inventory.itemAt((unsigned)uiIdx);
                                     if (it) {
@@ -158,10 +130,10 @@ int main() {
                                     continue;
                                 }
                     // Obtener posición del mouse en coordenadas del mundo
-                    sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
+                    sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(mWindow);
 
                     // Evento especial: si clicamos en la mesa, mostramos un mensaje
-                    if (mesaSprite.getGlobalBounds().contains(clickPos)) {
+                    if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
                         std::cout << "Clic en la mesa!" << std::endl;
                     } 
                     else 
@@ -191,7 +163,7 @@ int main() {
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Right) {
                     sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                    int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+                    int uiIdx = inventory.indexAtScreenPos(mouseWinPos, mWindow);
                     if (uiIdx >= 0) {
                         draggingItem = inventory.pickAt(uiIdx);
                         if (draggingItem) draggingFrom = uiIdx;
@@ -203,7 +175,7 @@ int main() {
             if (event.type == sf::Event::MouseButtonReleased) {
                 if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
                     sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                    int idx = inventory.indexAtScreenPos(mouseWinPos, window);
+                    int idx = inventory.indexAtScreenPos(mouseWinPos, mWindow);
                     if (idx >= 0) {
                         inventory.insertAt(idx, *draggingItem);
                     } else {
@@ -214,69 +186,76 @@ int main() {
                 }
             }
         }
+}
 
-        // trigger de debug para colocar objetos con el mouse
-        if (isDebugPlacing) {
-            GameUtils::debugFollowMouse(botellaSprite, window, "Posicion Objeto:");
-        } else {
-            player.update(dt);
-            npc.update(dt, navGrid);
+void Game::update()
+{
+    sf::Time dt = clock.restart();
+
+    // trigger de debug para colocar objetos con el mouse
+    if (isDebugPlacing) {
+        GameUtils::debugFollowMouse(objects["botella"].sprite, mWindow, "Posicion Objeto:");
+    } else {
+        player.update(dt);
+    }
+}
+
+void Game::render()
+{
+    // Dibujo de sprites por orden: primero por `layer`, luego por `y` (mayor y -> delante)
+    mWindow.clear();
+    mWindow.draw(background.sprite);
+
+    struct RenderEntry { sf::Sprite* sprite; int layer; };
+    std::vector<RenderEntry> renderList;
+
+    renderList.push_back({ &player.getSprite(), 0 });
+
+    // Añadir objetos del mapa usando su campo `layer`
+    for (auto& kv : objects) {
+        renderList.push_back({ &kv.second.sprite, kv.second.layer });
+    }
+
+    //Ordenamiento por capas y posición Y: Primero se dibuja los objetos
+    //cuya capa estap or encima del resto, y luego por los que estan en una 
+    //posición Y mayor (más abajo en pantalla).
+    std::sort(renderList.begin(), renderList.end(),
+        [](const RenderEntry& a, const RenderEntry& b) {
+            if (a.layer != b.layer) return a.layer < b.layer;
+            return a.sprite->getPosition().y < b.sprite->getPosition().y;
         }
+    );
 
-        // Dibujo de sprites por orden en eje Y
-        window.clear();
-        window.draw(backgroundSprite);
-
-        std::vector<sf::Sprite*> renderList;
-        renderList.push_back(&player.getSprite());
-        renderList.push_back(&npc.getSprite());
-        renderList.push_back(&botellaSprite);
-        renderList.push_back(&mesaSprite);
-        renderList.push_back(&mesaSprite_2);
-
-        std::sort(renderList.begin(), renderList.end(),
-            [](const sf::Sprite* a, const sf::Sprite* b) {
-                return a->getPosition().y < b->getPosition().y;
-            }
-        );
-
-        for (sf::Sprite* sprite : renderList) {
-            window.draw(*sprite);
-            if (sprite == &mesaSprite_2) {
-                window.draw(botellaSprite);
-            }
-        }
+    for (const auto& e : renderList) {
+        mWindow.draw(*e.sprite);
+    }
 
         //Funciones de depuracion visual
-        GameUtils::markPosition(window, player.getSprite().getPosition(), sf::Color::Red, 5.f);
-        GameUtils::markPosition(window, GameUtils::getMouseWorldPosition(window), sf::Color::Blue, 5.f);
-        GameUtils::drawBoundingBox(window, botellaSprite, sf::Color::Yellow);
+        //GameUtils::markPosition(mWindow, player.getSprite().getPosition(), sf::Color::Red, 5.f);
+        //GameUtils::markPosition(mWindow, GameUtils::getMouseWorldPosition(mWindow), sf::Color::Blue, 5.f);
+        //GameUtils::drawBoundingBox(mWindow, objects["botella"].sprite, sf::Color::Yellow);
 
         // DIBUJO UI (inventario) en vista por defecto para que quede fija en pantalla
-        auto prevView = window.getView();
-        window.setView(window.getDefaultView());
-        sf::Vector2u ws = window.getSize();
+        auto prevView = mWindow.getView();
+        mWindow.setView(mWindow.getDefaultView());
+        sf::Vector2u ws = mWindow.getSize();
         float margin = 8.f;
         // Usar la altura de slot ya escalada para posicionar correctamente el inventario
         inventory.setBasePosition({ margin, float(ws.y) - margin - float(inventory.displaySlotHeight()) });
-        inventory.draw(window);
+        inventory.draw(mWindow);
 
         // Dibujar item arrastrado bajo el mouse
         if (draggingItem) {
-            sf::Vector2i mp = sf::Mouse::getPosition(window);
+            sf::Vector2i mp = sf::Mouse::getPosition(mWindow);
             // SOLO dibujamos el sprite del item (no el fondo del slot)
             sf::Sprite s = draggingItem->sprite();
             sf::FloatRect gb = s.getGlobalBounds();
             s.setPosition(float(mp.x) - gb.width/2.f, float(mp.y) - gb.height/2.f);
-            window.draw(s);
+            mWindow.draw(s);
         }
 
-        window.setView(prevView);
+        mWindow.setView(prevView);
 
-        window.display();
-    }
-
-    return 0;
+        mWindow.display();
 }
-
 */

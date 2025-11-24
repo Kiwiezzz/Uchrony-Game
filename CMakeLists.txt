@@ -20,11 +20,15 @@ endif()
 
 # Intenta encontrar SFML (usa HINTS a la carpeta lib/ para builds incluidas)
 find_package(SFML 2.5 COMPONENTS system window graphics audio)
+find_package(OpenGL REQUIRED) #esto lo necesita imgui
 
 if(NOT SFML_FOUND)
     message(STATUS "SFML no encontrada automáticamente.")
     message(STATUS "Si estás en Linux instala libsfml-dev (ej. 'sudo apt install libsfml-dev') o proporciona SFML con -DSFML_DIR.")
     message(STATUS "Si estás en Windows y quieres usar la copia incluida en 'lib/', ejecuta con -DUSE_BUNDLED_SFML=ON y asegúrate de que 'lib/' contiene el paquete CMake adecuado.")
+    message(STATUS "SOLUCIÓN PARA MAC (MANUAL):
+    Si tienes SFML en una carpeta, ejecuta cmake indicando la ruta a los archivos .cmake:
+    cmake -S . -B build -DSFML_DIR='/ruta/a/SFML/lib/cmake/SFML'")
     message(FATAL_ERROR "SFML no encontrada. Provee SFML o ajusta USE_BUNDLED_SFML/SFML_DIR.")
 endif()
 
@@ -39,11 +43,36 @@ else()
 endif()
 
 # Recoger fuentes (reconfigurar automáticamente si se añaden archivos)
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "src/*.cpp" "src/*.c")
+file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
+    "src/*.cpp"
+    "src/*.c"
+)
 
 # Ejecutable
-add_executable(UchronyGame_Executable ${SOURCE_FILES})
-target_include_directories(UchronyGame_Executable PRIVATE Include)
+add_executable(UchronyGame_Executable
+    ${SOURCE_FILES}
+    #lib files (Not all):
+    lib/imgui/imgui.cpp
+    lib/imgui/imgui_draw.cpp
+    lib/imgui/imgui_widgets.cpp
+    lib/imgui/imgui_tables.cpp
+    lib/imgui-sfml/imgui-SFML.cpp
+)
+target_include_directories(UchronyGame_Executable PRIVATE 
+    Include 
+    lib/imgui
+    lib/imgui-sfml
+)
+
+target_link_libraries(UchronyGame_Executable
+    PRIVATE
+    sfml-system  
+    sfml-window   
+    sfml-graphics
+    sfml-audio
+    OpenGL::GL #Esto lo necesita imgui
+)
+
 target_compile_features(UchronyGame_Executable PUBLIC cxx_std_17)
 
 # Vincula SFML usando la variable calculada

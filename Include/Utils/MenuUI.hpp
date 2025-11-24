@@ -4,7 +4,6 @@
 #include "imgui.h"
 #include "Enums.hpp"
 
-
 class MenuUI {
 private:
     MenuAction m_lastAction = MenuAction::NONE;

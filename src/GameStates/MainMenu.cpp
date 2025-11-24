@@ -1,15 +1,20 @@
-// src/Utils/MenuUI.cpp
-
-#include "../../Include/Utils/MenuUI.hpp"
+#include "GameStates/MainMenu.hpp"
 #include <iostream> 
-#include "imgui.h" 
+#include "imgui.h"
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
+#include "Core/Game.hpp"
+#include "GameStates/Screen1.hpp"
+#include "GameStates/Dialogue1.hpp"
 
-void MenuUI::render(sf::RenderWindow& window) {
+void MainMenu::render(sf::RenderWindow& window) {
     
     // Reinicia la acción por defecto
     m_lastAction = MenuAction::NONE;
+
+    if (this->game != nullptr) {     // Verificamos que el jefe exista
+        m_customFont = this->game->getFont(); // Le pedimos la fuente
+    }
 
     if (m_customFont) {
         ImGui::PushFont(m_customFont); 
@@ -32,7 +37,7 @@ void MenuUI::render(sf::RenderWindow& window) {
     ImGuiWindowFlags flags = 
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |      
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |    
-        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground; // Ventana invisible
+        ImGuiWindowFlags_NoScrollbar;
     
     ImGui::Begin("Menu", nullptr, flags);
 
@@ -43,9 +48,9 @@ void MenuUI::render(sf::RenderWindow& window) {
     float scaledLogoHeight = 0.0f;
     float targetLogoWidth = 0.0f;
 
-    if (m_gameLogoTexture) {
-        float originalLogoWidth = (float)m_gameLogoTexture->getSize().x;
-        float originalLogoHeight = (float)m_gameLogoTexture->getSize().y;
+    if (m_gameLogoTexture.getNativeHandle() != 0) {
+        float originalLogoWidth = (float)m_gameLogoTexture.getSize().x;
+        float originalLogoHeight = (float)m_gameLogoTexture.getSize().y;
 
         // Escalar el logo a 1/3 del ancho disponible en la ventana de ImGui
         targetLogoWidth = contentWidth * (1.0f / 2.0f); 
@@ -68,22 +73,20 @@ void MenuUI::render(sf::RenderWindow& window) {
 
 
     // --- 4. DIBUJO DEL LOGO ---
-    if (m_gameLogoTexture) {
+    if (m_gameLogoTexture.getNativeHandle() != 0) {
         float logoCenterOffset = (contentWidth - targetLogoWidth) * 0.5f;
         ImGui::SetCursorPosX(logoCenterOffset);
 
         // Dibujar con las dimensiones escaladas
         ImGui::Image(
-            (ImTextureID)(uintptr_t)m_gameLogoTexture->getNativeHandle(),
+            (ImTextureID)(uintptr_t)m_gameLogoTexture.getNativeHandle(),
             ImVec2(targetLogoWidth, scaledLogoHeight) 
         );
     
-    // mejorar
+
     ImGui::Spacing(); 
     ImGui::Spacing(); // Añadir un segundo espacio
     ImGui::Spacing(); // Añadir un tercer espacioImGui::Spacing(); 
-    ImGui::Spacing(); // Añadir un segundo espacio
-    ImGui::Spacing(); // Añadir un tercer espacio
 
     }
 
@@ -93,7 +96,25 @@ void MenuUI::render(sf::RenderWindow& window) {
     // Botón Jugar
     ImGui::SetCursorPosX(centerOffsetButtons);
     if (ImGui::Button("Jugar", ImVec2(buttonWidth, 0))) {
+    
         m_lastAction = MenuAction::PLAY; 
+
+    // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
+    ImGui::End(); 
+
+    // 2. ¡CRÍTICO! LIMPIAR LA PILA DE FUENTES
+        // Esto balancea el ImGui::PushFont() del inicio de render()
+    if (m_customFont) {
+        ImGui::PopFont(); 
+    }
+
+    // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
+    this->game->changeState(new Screen1());
+
+    // 4. Salir: Terminamos la función render() para que no se ejecuten
+    //    las líneas de ImGui::End() y PopFont() de más abajo.
+    return;
+
     }
     
     ImGui::Spacing(); // Espaciado
@@ -126,6 +147,23 @@ void MenuUI::render(sf::RenderWindow& window) {
     ImGui::SetCursorPosX(centerOffsetButtons);
     if (ImGui::Button("Prueba de Diálogo", ImVec2(buttonWidth, 0))) {
         m_lastAction = MenuAction::DIALOGUE; 
+
+    // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
+    ImGui::End(); 
+
+    // 2. ¡CRÍTICO! LIMPIAR LA PILA DE FUENTES
+    // Esto balancea el ImGui::PushFont() del inicio de render()
+    if (m_customFont) {
+        ImGui::PopFont(); 
+    }
+
+    // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
+    this->game->changeState(new Dialogue1());
+
+    // 4. Salir: Terminamos la función render() para que no se ejecuten
+    //    las líneas de ImGui::End() y PopFont() de más abajo.
+    return;
+
     }
 
     ImGui::Spacing(); // Espaciado
@@ -134,11 +172,39 @@ void MenuUI::render(sf::RenderWindow& window) {
     ImGui::SetCursorPosX(centerOffsetButtons);
     if (ImGui::Button("Salir", ImVec2(buttonWidth, 0))) {
         m_lastAction = MenuAction::QUIT; 
+        this->game->getWindow().close();
     }
     
     ImGui::End(); 
 
     if (m_customFont) {
-        ImGui::PopFont(); 
+        ImGui::PopFont();
     }
+
 }
+
+void MainMenu::init() {
+
+    // La función loadFromFile toma la ruta del archivo.
+    if (!m_gameLogoTexture.loadFromFile("assets/textures/logo-uchrony.png")) {
+
+        std::cerr << "ERROR: No se pudo cargar el logo 'logo-uchrony.png'.\n";
+    }
+
+    // Opcional: si quieres el logo más suave
+    m_gameLogoTexture.setSmooth(true);
+}
+
+void MainMenu::handleEvent(sf::Event& event, sf::RenderWindow& window) {
+    // Si no procesas eventos, déjalo vacío.
+}
+
+void MainMenu::update(sf::Time dt) {
+    // Si el menú no tiene lógica de animación o temporizador, déjalo vacío.
+}
+
+//MenuAction getAction() const { return m_lastAction; /* to do */}
+
+//void setCustomFont(ImFont* fontPtr) { m_customFont = fontPtr; /* to do */}
+
+//void setGameLogoTexture(sf::Texture* texturePtr) { m_gameLogoTexture = texturePtr; /* to do */}
