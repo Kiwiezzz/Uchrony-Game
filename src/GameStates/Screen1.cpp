@@ -1,4 +1,6 @@
 #include "GameStates/Screen1.hpp"
+#include "GameStates/Dialogue1.hpp"
+#include "../Include/Core/Game.hpp"
 
 void Screen1::init()    
 {    
@@ -114,6 +116,8 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
             // Evento especial: si clicamos en la mesa, mostramos un mensaje
             if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
                 std::cout << "Clic en la mesa!" << std::endl;
+                // Tocar la mesa desencadena el evento de un cuadro de diálogo
+                this->game->changeState(new Dialogue1());
             } 
             else 
             {

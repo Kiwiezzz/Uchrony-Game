@@ -7,9 +7,6 @@ class GameState {
 protected:
     Game* game; //El numero de mi jefe
 
-private:
-    sf::RenderWindow window;
-
 public:
     virtual ~GameState(){}
 
@@ -25,5 +22,4 @@ public:
 
     virtual void render(sf::RenderWindow& window) = 0;
 
-    sf::RenderWindow& getWindow() { return window; }
 };

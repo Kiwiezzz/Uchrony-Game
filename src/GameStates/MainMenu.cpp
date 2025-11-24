@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "../../Include/Core/Game.hpp"
 #include "../../Include/GameStates/Screen1.hpp"
+#include "../../Include/GameStates/Dialogue1.hpp"
 
 void MainMenu::render(sf::RenderWindow& window) {
     
@@ -146,6 +147,23 @@ void MainMenu::render(sf::RenderWindow& window) {
     ImGui::SetCursorPosX(centerOffsetButtons);
     if (ImGui::Button("Prueba de Diálogo", ImVec2(buttonWidth, 0))) {
         m_lastAction = MenuAction::DIALOGUE; 
+
+    // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
+    ImGui::End(); 
+
+    // 2. ¡CRÍTICO! LIMPIAR LA PILA DE FUENTES
+    // Esto balancea el ImGui::PushFont() del inicio de render()
+    if (m_customFont) {
+        ImGui::PopFont(); 
+    }
+
+    // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
+    this->game->changeState(new Dialogue1());
+
+    // 4. Salir: Terminamos la función render() para que no se ejecuten
+    //    las líneas de ImGui::End() y PopFont() de más abajo.
+    return;
+
     }
 
     ImGui::Spacing(); // Espaciado
