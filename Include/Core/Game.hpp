@@ -4,14 +4,15 @@
 #include <SFML/Audio.hpp>
 
 #include "Core/GameState.hpp"
-#include "GameStates/Screen1.hpp"
+#include "GameStates/MainMenu.hpp"
 
 class Game
 {
 private:
     sf::RenderWindow window;
     sf::Clock clock;
-    GameState* currentState;
+    GameState* currentState = nullptr;
+    ImFont* m_Font = nullptr;
 
 public:
     Game();
@@ -22,6 +23,9 @@ public:
     /// @param newScene 
     void changeState(GameState* newState);
 
+    ImFont* getFont() const { return m_Font; }
+
     void run();
 
+    sf::RenderWindow& getWindow() { return window; }
 };

@@ -3,7 +3,7 @@
 int main()
 {
     Game game;
-    game.changeState(new Screen1());
+    game.changeState(new MainMenu());
     game.run();
     return 0;
 }

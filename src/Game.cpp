@@ -1,4 +1,4 @@
-#include "../Include/Core/Game.hpp" 
+/*#include "../Include/Core/Game.hpp" 
 #include "imgui-SFML.h"
 #include "imgui.h"
 #include <iostream>
@@ -109,3 +109,4 @@ void Game::run()
     ImGui::SFML::Shutdown();
 }
 
+*/

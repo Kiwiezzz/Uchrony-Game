@@ -59,7 +59,4 @@ public:
     
     void render(sf::RenderWindow& window) override;
 
-
-
-    // --- AQUÍ VAN LAS FUNCIONES DE LA CLASE ---
 };
