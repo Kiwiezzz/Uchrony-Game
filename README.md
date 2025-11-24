@@ -25,7 +25,9 @@ Windows (Visual Studio/PowerShell)
 
 ```powershell
 cd C:\Users\LENOVO\OneDrive\Escritorio\Uchrony-Game
-cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DUSE_BUNDLED_SFML=ON
+#Borrar build
+Remove-Item -Recurse -Force build
+cmake -S . -B build
 cmake --build build --config Release
 # Copiar DLLs de SFML/bin al directorio del ejecutable si enlazaste dinámicamente
 Copy-Item -Path .\lib\SFML-2.6.2\bin\*.dll -Destination .\build\bin\Release -Force

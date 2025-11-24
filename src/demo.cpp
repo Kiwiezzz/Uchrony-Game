@@ -10,6 +10,7 @@
 #include "Utils/Pathfinder.hpp"
 #include "Utils/Collision.hpp"
 #include "Entities/Inventory.hpp"
+#include "Entities/NPC.hpp"
 #include <optional>
 
 
@@ -60,6 +61,10 @@ int main() {
     Player player;
     player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
+
+    NPC npc = NPC("assets/textures/npc_spritesheet.png", Vec2f(500.f, 300.f), false);
+
+    npc.getSprite().setScale(2.0f, 2.0f);
 
     // Configuración del inventario
     sf::Texture slotTex;
@@ -215,6 +220,7 @@ int main() {
             GameUtils::debugFollowMouse(botellaSprite, window, "Posicion Objeto:");
         } else {
             player.update(dt);
+            npc.update(dt, navGrid);
         }
 
         // Dibujo de sprites por orden en eje Y
@@ -223,6 +229,7 @@ int main() {
 
         std::vector<sf::Sprite*> renderList;
         renderList.push_back(&player.getSprite());
+        renderList.push_back(&npc.getSprite());
         renderList.push_back(&botellaSprite);
         renderList.push_back(&mesaSprite);
         renderList.push_back(&mesaSprite_2);
@@ -271,3 +278,5 @@ int main() {
 
     return 0;
 }
+
+*/

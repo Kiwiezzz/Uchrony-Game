@@ -2,8 +2,8 @@
 
 // --- Implementación de Animation ---
 
-Animation::Animation(int r, int fc, float d, bool l)
-    : row(r), frameCount(fc), duration(d), loop(l) {
+Animation::Animation(int r, int fc, float d, bool l, int sc)
+    : row(r), frameCount(fc), duration(d), loop(l), startColumn(sc) {
 }
 
 
@@ -19,9 +19,9 @@ Animator::Animator(sf::Sprite& sprite, int frameWidth, int frameHeight)
 {
 }
 
-void Animator::addAnimation(const std::string& name, int row, int frameCount, float duration, bool loop) {
+void Animator::addAnimation(const std::string& name, int row, int frameCount, float duration, bool loop, int startColumn) {
     // Insertamos la animación en el mapa
-    m_animations[name] = Animation(row, frameCount, duration, loop);
+    m_animations[name] = Animation(row, frameCount, duration, loop, startColumn);
 }
 
 void Animator::play(const std::string& name) {
@@ -66,7 +66,8 @@ void Animator::update(sf::Time dt) {
 void Animator::updateTextureRect() {
     if (m_currentAnimation == nullptr) return;
 
-    int left = m_currentFrame * m_frameWidth;
+    // Usamos startColumn para desplazar el inicio de la animación
+    int left = (m_currentFrame + m_currentAnimation->startColumn) * m_frameWidth;
     int top = m_currentAnimation->row * m_frameHeight;
     
     m_sprite->setTextureRect(sf::IntRect(left, top, m_frameWidth, m_frameHeight));

@@ -1,8 +1,9 @@
-# ------------------------------------
-# Archivos de Compilación de CMake
-# ------------------------------------
-# Ignora toda la carpeta 'build' donde se genera el ejecutable
 build/
+<<<<<<< HEAD
+.vscode/
+UchronyGame_Executable
+cmake_edwer.txt
+=======
 
 #Ignora el ejecutable en la carpeta principal :p
 UchronyGame_Executable
@@ -27,3 +28,4 @@ Makefile
 *.out
 *.dylib
 *.so
+>>>>>>> development
