@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/GameState.hpp"
+#include "Utils/Assets.hpp"
 
 class Screen : public GameState
 {
@@ -17,7 +18,7 @@ private:
 
     Player player;
 
-    
+
     NPC npc; // Declaración del NPC
 
     NavGrid navGrid; // tamaño de celda en píxeles

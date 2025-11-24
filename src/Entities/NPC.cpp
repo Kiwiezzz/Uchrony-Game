@@ -13,7 +13,8 @@ NPC::NPC()
       m_stateTimer(0.0f),
       m_walkable(false),
       m_lastDirection(ROW_NPC_IDLE_DOWN),
-      m_currentAnimation("")
+      m_currentAnimation(""),
+      m_animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT)
 {
     setupAnimations();
     playIdleAnimation();

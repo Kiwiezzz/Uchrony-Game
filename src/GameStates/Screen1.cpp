@@ -21,7 +21,7 @@ void Screen1::init()
     objects["botella"] = SpriteAsset("assets/textures/botella.png");
 
     npc.getSprite().setScale(2.0f, 2.0f);
-    npc.setPosition(500.f, 400.f);
+    npc.setPosition(400.f, 300.f);
     npc.setTexture("assets/textures/npc_spritesheet.png");
     npc.setWalkable(true); 
 
