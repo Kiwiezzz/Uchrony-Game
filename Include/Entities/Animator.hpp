@@ -18,6 +18,9 @@ struct Animation {
 
 class Animator {
 public:
+    // Default Constructor
+    Animator() : m_sprite(nullptr), m_currentAnimation(nullptr), m_frameWidth(0), m_frameHeight(0), m_timer(0.f), m_currentFrame(0) {}
+
     // Constructor
     Animator(sf::Sprite& sprite, int frameWidth, int frameHeight);
 

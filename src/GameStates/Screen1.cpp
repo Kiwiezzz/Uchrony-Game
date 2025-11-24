@@ -20,10 +20,15 @@ void Screen1::init()
     objects["mesa2"] = SpriteAsset("assets/textures/mesa_2.png");
     objects["botella"] = SpriteAsset("assets/textures/botella.png");
 
-    npc.getSprite().setScale(2.0f, 2.0f);
-    npc.setPosition(400.f, 300.f);
-    npc.setTexture("assets/textures/npc_spritesheet.png");
-    npc.setWalkable(true); 
+    npc.init("assets/textures/npc_spritesheet.png", Vec2f(400.f, 300.f), true);
+    //npc.getSprite().setScale(2.0f, 2.0f);
+    //npc.setupAnimations(); // Private now
+    npc.addAnimation("Posicion_Espalda", 0, 1, 2.0f, false, 2);
+    npc.addAnimation("Posicion_Espalda2", 0, 1, 2.0f, false, 5);
+    //row(r), frameCount(fc), duration(d), loop(l), startColumn(sc)
+    
+    
+    
 
     auto& mesa = objects["mesa"];
     auto& mesa2 = objects["mesa2"];
@@ -100,6 +105,14 @@ void Screen1::init()
 
 void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
+    int random = rand() % 100;
+    if (random < 5 && npc.getState() == NPCState::Idle) {
+        npc.playAction("Posicion_Espalda", 1.0f);
+    }
+    else if (random >= 5 && random < 10 && npc.getState() == NPCState::Idle) {
+        npc.playAction("Posicion_Espalda2", 1.0f);
+    }
+    
     // Eventos de mouse
     // Manejo de click izquierdo: intentamos generar una ruta
     if (event.type == sf::Event::MouseButtonPressed) {
@@ -184,6 +197,7 @@ void Screen1::update(sf::Time dt)
     // trigger de debug para colocar objetos con el mouse
     if (!isDebugPlacing){
         player.update(dt);
+        npc.update(dt, navGrid);
     }
 }
 
@@ -198,7 +212,7 @@ void Screen1::render(sf::RenderWindow& window)
     std::vector<RenderEntry> renderList;
 
     renderList.push_back({ &player.getSprite(), 0 });
-    renderList.push_back({ &npc.getSprite(), 0 });
+    //renderList.push_back({ &npc.getSprite(), 0 });
 
     // Añadir objetos del mapa usando su campo `layer`
     for (auto& kv : objects) {

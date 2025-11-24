@@ -33,7 +33,12 @@ public:
 
     void init(std::string path, Vec2f position, bool walkable);
     void update(sf::Time dt, const NavGrid& grid);
-    void render(sf::Window& window);
+    void render(sf::RenderWindow& window);
+
+    // API para animaciones
+    void addAnimation(const std::string& name, int _row, int _frameCount, float _time, bool _loop = true, int _startColumn = 0);
+    void playAction(std::string name, float duration);
+    NPCState getState() const;
 
     void setPosition(float x, float y);
     sf::Sprite& getSprite();

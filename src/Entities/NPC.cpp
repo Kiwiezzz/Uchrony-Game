@@ -4,32 +4,6 @@
 #include <cstdlib>
 #include <vector>
 
-/*NPC::NPC(std::string path, Vec2f position, bool walkable)
-    : m_animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT),
-      m_speed(NPC_SPEED),
-      m_isMoving(false),
-      m_walkable(walkable),
-      m_lastDirection(ROW_NPC_IDLE_DOWN),
-      m_currentIndex(0),
-      m_state(NPCState::Idle),
-      m_stateTimer(0.f)
-{
-    if (!m_texture.loadFromFile(path)) {
-        std::cerr << "Error: No se pudo cargar el sprite del NPC" << path << std::endl;
-    }
-
-    m_sprite.setTexture(m_texture);
-    m_sprite.setOrigin(NPC_FRAME_WIDTH / 2.f, NPC_FRAME_HEIGHT);
-
-    setupAnimations();
-    m_animator.play("idle_down");
-    m_currentAnimation = "idle_down";
-
-    setPosition(position.x, position.y);
-}*/
-
-
-
 void NPC::init(std::string path, Vec2f position, bool walkable) {
     m_animator = Animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT);
     m_speed = NPC_SPEED;
@@ -95,7 +69,7 @@ void NPC::update(sf::Time dt, const NavGrid& grid) {
     m_animator.update(dt);
 }
 
-void NPC::render(sf::Window& window) {
+void NPC::render(sf::RenderWindow& window) {
     window.draw(m_sprite);
 }
 
@@ -122,7 +96,7 @@ void NPC::updateAI(sf::Time dt, const NavGrid& grid) {
                 startIdle();
             }
         }
-    } /*else if (m_state == NPCState::Patrol) {
+    } else if (m_state == NPCState::Patrol) {
         // Si estamos patrullando, el movimiento se maneja en update()
         // Si terminamos de movernos (m_isMoving false), pasamos a Idle en update()
     } else if (m_state == NPCState::Action) {
@@ -130,7 +104,7 @@ void NPC::updateAI(sf::Time dt, const NavGrid& grid) {
         if (m_stateTimer <= 0) {
             startIdle();
         }
-    }*/
+    }
 }
 
 void NPC::pickRandomPatrolPoint(const NavGrid& grid) {
@@ -170,25 +144,6 @@ void NPC::startIdle() {
     m_state = NPCState::Idle;
     m_stateTimer = 2.0f + static_cast<float>(rand() % 300) / 100.0f; // 2 a 5 segundos
     playIdleAnimation();
-
-    /*// Ocasionalmente reproducir una animación especial
-    int animRandom = rand() % 100;
-    if (animRandom < 20) { 
-        m_state = NPCState::Action;
-        m_animator.play("Pose_Espalda");
-        m_stateTimer = 2.0f; 
-    } 
-    else if (animRandom >= 20 && animRandom < 40) {
-        m_animator.play("Pose_Pecho");
-        m_stateTimer = 2.0f; 
-    }
-    else if (animRandom >= 40 && animRandom < 45) {
-        m_animator.play("Pose_Descanso");
-        m_stateTimer = 5.0f; 
-    }
-    else {
-        playIdleAnimation();
-    }*/
 }
 
 sf::Sprite& NPC::getSprite() {
@@ -211,12 +166,6 @@ void NPC::setupAnimations() {
     m_animator.addAnimation("idle_left",  ROW_NPC_IDLE_LEFT,  1, 1.0f);
     m_animator.addAnimation("idle_down",  ROW_NPC_IDLE_DOWN,  1, 1.0f);
     m_animator.addAnimation("idle_right", ROW_NPC_IDLE_RIGHT, 1, 1.0f);
-    
-    // Acciones especiales (ejemplo)
-    /*
-    m_animator.addAnimation("Pose_Espalda", 0 , 1 , 1.0f, false, 5);
-    m_animator.addAnimation("Pose_Pecho", 2 , 1 , 1.0f, false, 1);
-    m_animator.addAnimation("Pose_Descanso", 20 , 6 , 0.5f, false, 0);*/
 }
 
 void NPC::playWalkAnimation(Vec2f normDir) {
@@ -258,4 +207,19 @@ void NPC::playIdleAnimation() {
         m_animator.play(newAnimation);
         m_currentAnimation = newAnimation;
     }
+}
+
+void NPC::addAnimation(const std::string& name, int _row, int _frameCount, float _time, bool _loop, int _startColumn) {
+    m_animator.addAnimation(name, _row, _frameCount, _time, _loop, _startColumn);
+}
+
+void NPC::playAction(std::string name, float duration) {
+    m_state = NPCState::Action;
+    m_stateTimer = duration;
+    m_animator.play(name);
+    m_currentAnimation = name;
+}
+
+NPCState NPC::getState() const {
+    return m_state;
 }
