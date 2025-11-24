@@ -1,11 +1,16 @@
 #pragma once
 #include "Core/GameState.hpp"
 #include <SFML/Graphics.hpp>
-// Incluye aquí tus clases de Jugador, Enemigo, Mapa, etc.
+#include <iostream>
 
-class EscenaJuego : public GameState {
+// COPIAR Y PEGAR ESTA PLANTILLA DE ESCENA PARA CREAR UNA NUEVA
+// Recordar: Crear el respectivo .cpp con las definiciones de cada función,
+// aquí sólo van firmas.
+
+class PlantillaEscena : public GameState {
 private:
-    // --- AQUÍ VAN LAS VARIABLES QUE ANTES ESTABAN SUELTAS EN EL MAIN ---
+    // --- AQUÍ VAN LAS VARIABLES DE LA ESCENA ---
+
     sf::Texture texturaJugador; // ¡IMPORTANTE! Las texturas deben ser miembros de la clase
     sf::Sprite spriteJugador;
     
@@ -15,18 +20,21 @@ private:
 
 public:
     
-    
+    // --- AQUÍ VAN LAS FUNCIONES DE LA CLASE ---
+
     void init() override {
-        // AQUÍ VA LO QUE ESTABA ANTES DEL WHILE(WINDOW.ISOPEN())
-        // Cargar texturas, setear posiciones iniciales, música, etc.
+        // ¿Qué va aquí? --> Todos los componentes iniciales que se deban cargar
+        // antes de la escena como:
+        // texturas, setear posiciones iniciales, música, etc.
         if (!texturaJugador.loadFromFile("player.png")) {
-            // Error
+            // Mostrar error en caso de no encontrar
+            std::cerr << "ERROR: No se pudo cargar la textura 'player.png'.\n";
         }
         spriteJugador.setTexture(texturaJugador);
     }
 
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override {
-        // AQUÍ VA LO QUE ESTABA DENTRO DEL WHILE(POLL EVENT)
+        // ¿Qué va aquí? --> Todos los eventos de la escena y cómo se gestionan:
         // Cerrar ventana, teclas que solo se pulsan una vez (Pause, Disparo)
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
@@ -36,7 +44,7 @@ public:
     }
 
     void update(sf::Time dt) override {
-        // AQUÍ VA LA LÓGICA DE MOVIMIENTO Y COLISIONES
+        // ¿Qué va aquí? --> Toda la lógica de movimiento y colisiones:
         // Lo que usaba Keyboard::isKeyPressed() para moverse fluido
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             spriteJugador.move(100 * dt.asSeconds(), 0);
@@ -44,9 +52,7 @@ public:
     }
 
     void render(sf::RenderWindow& window) override {
-        // AQUÍ VA TODO LO QUE ESTABA ENTRE WINDOW.CLEAR() Y WINDOW.DISPLAY()
+        // ¿Qué va aquí? --> Toda la lógica de la interfaz con SFML y/o ImGui
         window.draw(spriteJugador);
     }
-
-    // --- AQUÍ VAN LAS FUNCIONES DE LA CLASE ---
 };

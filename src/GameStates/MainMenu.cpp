@@ -160,7 +160,7 @@ void MainMenu::render(sf::RenderWindow& window) {
     ImGui::End(); 
 
     if (m_customFont) {
-        ImGui::PopFont(); // <--- DEBES QUITARLA O AFECTARÁ OTROS LUGARES
+        ImGui::PopFont();
     }
 
 }
@@ -169,7 +169,7 @@ void MainMenu::init() {
 
     // La función loadFromFile toma la ruta del archivo.
     if (!m_gameLogoTexture.loadFromFile("assets/textures/logo-uchrony.png")) {
-        // Usa tu sistema de error preferido, pero avisa si falla
+
         std::cerr << "ERROR: No se pudo cargar el logo 'logo-uchrony.png'.\n";
     }
 

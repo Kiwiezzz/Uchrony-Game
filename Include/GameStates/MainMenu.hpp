@@ -5,8 +5,6 @@
 #include "imgui.h"
 #include "../Include/Utils/Enums.hpp"
 
-// Incluye aquí tus clases de Jugador, Enemigo, Mapa, etc.
-
 class MainMenu : public GameState {
 
 private:
@@ -28,17 +26,3 @@ public:
     void render(sf::RenderWindow& window) override;
 
 };
-
-/*  ANTIGUAS FUNCIONES DE MAIN MENU ROSA
-
-class MenuUI {
-
-public:
-    void render(sf::RenderWindow& window);
-
-    MenuAction getAction() const { return m_lastAction; }
-
-    void setCustomFont(ImFont* fontPtr) { m_customFont = fontPtr; }
-
-    void setGameLogoTexture(sf::Texture* texturePtr) { m_gameLogoTexture = texturePtr; }
-};*/
