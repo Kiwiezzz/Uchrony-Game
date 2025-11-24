@@ -4,16 +4,19 @@
 #include <cstdlib>
 #include <vector>
 
-NPC::NPC() : m_walkable(false) {
-    m_speed = 60.0f; // Velocidad de movimiento en píxeles por segundo
-    m_isMoving = false;
-    m_currentIndex = 0;
-    m_state = NPCState::Idle;
-    m_stateTimer = 0.0f;
-    m_lastDirection = ROW_NPC_IDLE_DOWN; // Dirección inicial mirando hacia abajo
-    m_currentAnimation = "";
-
+NPC::NPC()
+    : m_position(0.0f, 0.0f),
+      m_speed(100.0f),
+      m_isMoving(false),
+      m_currentIndex(0),
+      m_state(NPCState::Idle),
+      m_stateTimer(0.0f),
+      m_walkable(false),
+      m_lastDirection(ROW_NPC_IDLE_DOWN),
+      m_currentAnimation("")
+{
     setupAnimations();
+    playIdleAnimation();
 }
 
 void NPC::setPosition(float x, float y) {

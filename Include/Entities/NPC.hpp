@@ -28,7 +28,7 @@ enum class NPCState {
     Action // Estado para animaciones especiales
 };
 
-class NPC : public SpriteAsset {
+class NPC {
 public:
     NPC();
 
