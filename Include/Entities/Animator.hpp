@@ -9,10 +9,11 @@ struct Animation {
     int row;
     int frameCount;
     float duration;
+    int startColumn; // Columna inicial en el spritesheet
     bool loop;
 
     // Constructor (Declaración)
-    Animation(int r = 0, int fc = 1, float d = 0.1f, bool l = true);
+    Animation(int _row = 0, int _frameCount = 1, float _duration = 0.1f, bool _loop = true, int _startColumn = 0);
 };
 
 class Animator {
@@ -21,7 +22,7 @@ public:
     Animator(sf::Sprite& sprite, int frameWidth, int frameHeight);
 
     /* Añade una animación al conjunto */
-    void addAnimation(const std::string& name, int row, int frameCount, float duration, bool loop = true);
+    void addAnimation(const std::string& name, int _row, int _frameCount, float _time, bool _loop = true, int _startColumn = 0);
 
     /* Reproduce la animación `name` */
     void play(const std::string& name);
