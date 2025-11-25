@@ -5,7 +5,7 @@
 
 #include "Core/GameState.hpp"
 #include "GameStates/MainMenu.hpp"
-#include "Classes/TreePasts.hpp"
+#include "Classes/PastTree.hpp"
 
 class Game
 {

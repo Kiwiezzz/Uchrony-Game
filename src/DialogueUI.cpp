@@ -1,4 +1,4 @@
-// src/Utils/DialogueUI.cpp
+/*// src/Utils/DialogueUI.cpp
 
 #include "Utils/DialogueUI.hpp"
 
@@ -75,4 +75,4 @@ void DialogueUI::render(sf::RenderWindow& window) {
     }
 
     ImGui::End();
-}
+}*/

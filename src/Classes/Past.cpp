@@ -1,10 +1,9 @@
 #include "Classes/Past.hpp"
 #include <iostream>
-
+/*
 void Past::init()
 {
-
-    // Aquí deberías inicializar tus rooms y pathfinder
+    
 }
 
 void Past::handleEvent(sf::Event& event, sf::RenderWindow& window)
@@ -26,4 +25,4 @@ void Past::render(sf::RenderWindow& window)
 
     // 2. Dibujar jugador encima
     window.draw(spriteJugador);
-}
+}*/

@@ -5,7 +5,7 @@ TimeManager::TimeManager() {
     // --- AQUÍ CONSTRUYES TU ÁRBOL (TU GUION) ---
     
     // 1. La Raíz
-    /*treePasts[PastID::ACTUALIDAD] = { 
+    /*PastTree[PastID::ACTUALIDAD] = { 
         PastID::ACTUALIDAD, 
         "Inicio del juego",
         PastID::MEDIEVAL_PACIFICO, // Si elige A (Ir al museo)
@@ -13,7 +13,7 @@ TimeManager::TimeManager() {
     };
 
     // 2. Rama Medieval
-    treePasts[PastID::MEDIEVAL_PACIFICO] = {
+    PastTree[PastID::MEDIEVAL_PACIFICO] = {
         PastID::MEDIEVAL_PACIFICO,
         "Llegaste a la edad media y nadie pelea",
         PastID::MEDIEVAL_GUERRA, // Si matas al rey -> Se vuelve guerra

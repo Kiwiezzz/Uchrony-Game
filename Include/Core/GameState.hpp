@@ -25,7 +25,7 @@ public:
     /// @param dt 
     virtual void update(sf::Time dt) = 0;
 
-    /// @brief Es para dibujar esas cosas en la ventana
+    /// @brief Es para dibujar esas cosas en la pantalla
     /// @param window 
     virtual void render(sf::RenderWindow& window) = 0;
 

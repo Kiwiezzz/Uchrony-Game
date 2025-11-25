@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <string>
 #include <vector>
 #include "Utils/Enums.hpp"
@@ -21,4 +21,4 @@ public:
     std::vector<choiceOption> options;
 
     DialogueSequence(DialogueType t) : type(t) {}
-};
+};*/

@@ -7,6 +7,8 @@
 #include "GameStates/Screen1.hpp"
 #include "GameStates/Dialogue1.hpp"
 
+#include "Pasts/Past0.hpp"
+
 void MainMenu::render(sf::RenderWindow& window) {
     
     // Reinicia la acción por defecto
@@ -109,7 +111,7 @@ void MainMenu::render(sf::RenderWindow& window) {
     }
 
     // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new Screen1());
+    this->game->changeState(new Past0());
 
     // 4. Salir: Terminamos la función render() para que no se ejecuten
     //    las líneas de ImGui::End() y PopFont() de más abajo.

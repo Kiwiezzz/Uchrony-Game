@@ -23,3 +23,34 @@ void Room::render(sf::RenderWindow& window)
 {
     // LÓGICA DE DIBUJO FUTURA
 }
+
+
+
+void Room::setBackground(std::string path)
+{
+    background.new_path_and_update(path);
+}
+
+void Room::setCollisionAndGrid(std::string path)
+{
+    collision.new_path_and_update(path);
+    navGrid = NavGrid(16);
+    if (!navGrid.buildFromImage(collision.image)) {
+        std::cerr << "Error: NavGrid::buildFromImage falló. Imagen inválida o tamaño incorrecto." << std::endl;
+        //DEBERÍA CERRARSE
+    }
+}
+
+
+void Room::addEntity(const std::string& name, Entity& entity)
+{
+    entities[name] = entity;
+}
+
+void Room::addNpc(const std::string& name, NPC& entity){
+    npcs[name] = entity;
+}
+
+    
+
+
