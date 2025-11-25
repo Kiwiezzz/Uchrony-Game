@@ -8,18 +8,18 @@
 #include "Utils/DialogueSequence.hpp"
 #include "Utils/DialogueLine.hpp"
 #include "Utils/Assets.hpp"
+#include "Core/Game.hpp"
 
 class DialogueUI {
 private:
+    // Alias de referencia al game
+    Game* game;
+
     // Necesario para saber si mostrar botón de continuar u opciones.
     DialogueType m_type;
     std::string m_speakerName;
     std::string m_dialogueText;
     bool m_advanceClicked = false;
-    TextureAsset m_dialogueBoxTexture;
-    bool showDialogue = false;
-    // Referencia en memoria de nuestra imagen
-    ImTextureID m_texId = nullptr;
 
 public:
 
@@ -27,10 +27,17 @@ public:
 
     void init();    
 
+    void setGame(Game* gamePtr) {
+        this->game = gamePtr;
+    }
     // DEBE SER ASI
     //void render(DialogueSequence& sequence, int currentLineIndex);
 
     void render(const sf::RenderWindow& window);
+
+    void handleEvent(sf::Event& event, sf::RenderWindow& window);
+
+    void update(sf::Time dt);
 
     void renderLinearText(const DialogueLine& line);
 

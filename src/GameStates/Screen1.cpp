@@ -1,5 +1,4 @@
 #include "GameStates/Screen1.hpp"
-#include "GameStates/Dialogue1.hpp"
 #include "../Include/Core/Game.hpp"
 #include "../Include/Classes/GameManager.hpp"
 
@@ -12,8 +11,8 @@ void Screen1::init()
     using namespace std;
     
     // Inicialización de variables y carga de recursos de dialogo
-    dialogue1.init();
-    dialogue1.setGame(this->game);
+    dialogueUI.init();
+    dialogueUI.setGame(this->game);
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -255,6 +254,6 @@ void Screen1::render(sf::RenderWindow& window)
     window.setView(prevView);
 
     if (showDialogue) {
-        dialogue1.render(window); 
+        dialogueUI.render(window); 
     }
 }

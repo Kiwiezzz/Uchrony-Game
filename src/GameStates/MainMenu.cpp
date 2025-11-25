@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 #include "Core/Game.hpp"
 #include "GameStates/Screen1.hpp"
-#include "GameStates/Dialogue1.hpp"
 #include "Utils/DialogueUI.hpp"
 #include "Utils/Assets.hpp"
 

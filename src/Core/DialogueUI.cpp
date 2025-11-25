@@ -10,104 +10,104 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-void DialogueUI::init(){
-
-    m_dialogueBoxTexture.new_path_and_update("assets/textures/dialogue_box.png");
-    m_texId = (ImTextureID)(uintptr_t)m_dialogueBoxTexture.texture.getNativeHandle();
-    
-};
-
 // QUEDE POR AQUI
 
-void DialogueUI::render(const sf::RenderWindow& window){
+void DialogueUI::render(const sf::RenderWindow& window) {
 
-auto ws = window.getSize();
-float startYRatio = 0.7f;
-float heightRatio = 1.0f - startYRatio;
+    ImFont* fontPtr = nullptr;
 
-ImGui::SetNextWindowPos(ImVec2(0, ws.y * startYRatio)); 
-ImGui::SetNextWindowSize(ImVec2((float)ws.x, ws.y * heightRatio));
-
-if (ImGui::Begin("D", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove)) {
-    // Obtén las dimensiones originales de tu textura
-    // Reemplaza esto con el método apropiado según tu librería
-    float texWidth = m_dialogueBoxTexture.texture.getSize().x;   // Ejemplo para SFML
-    float texHeight = m_dialogueBoxTexture.texture.getSize().y;  // Ejemplo para SFML
-    
-    float aspectRatio = texWidth / texHeight;
-    ImVec2 availSize = ImGui::GetContentRegionAvail();
-    
-    float displayWidth = availSize.x;
-    float displayHeight = displayWidth / aspectRatio;
-    
-    if (displayHeight > availSize.y) {
-        displayHeight = availSize.y;
-        displayWidth = displayHeight * aspectRatio;
+    if (this->game != nullptr) {
+        fontPtr = this->game->getFont();
     }
+
+    if (fontPtr) {
+        ImGui::PushFont(fontPtr);
+    }
+
+    // 1. Calcular la posición y tamaño de la ventana de diálogo (parte inferior)
+    float window_width = static_cast<float>(window.getSize().x);
+    float window_height = static_cast<float>(window.getSize().y);
+
+    // Altura fija para la caja de diálogo
+    float dialogHeight = 150.0f;
+
+    // Establecer posición y tamaño para la próxima ventana de ImGui
+    ImGui::SetNextWindowPos(ImVec2(0, window_height - dialogHeight));
+    ImGui::SetNextWindowSize(ImVec2(window_width, dialogHeight));
+
+    ImGui::SetNextWindowBgAlpha(0.0f);
+
+    ImGui::Begin("GameDialogueWindow", nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse);
+
+        ImVec2 winPos = ImGui::GetWindowPos();
+        ImVec2 winSize = ImGui::GetWindowSize();
+        
+        // Color Negro (0, 0, 0) con 75% de opacidad (Alpha 191/255)
+        ImU32 semiTransparentBlack = IM_COL32(0, 0, 0, 191); 
+
+        // Dibuja un rectángulo relleno que cubre toda la ventana de diálogo
+        ImGui::GetWindowDrawList()->AddRectFilled(
+            winPos,                                     // Esquina superior izquierda (p_min)
+            ImVec2(winPos.x + winSize.x, winPos.y + winSize.y), // Esquina inferior derecha (p_max)
+            semiTransparentBlack                        // Color y opacidad
+        );
+
+    // Contenido del diálogo (texto encima del fondo)
     
-    // Centra la imagen horizontalmente
-    ImGui::SetCursorPosX((availSize.x - displayWidth) * 0.5f);
-    
-    ImGui::Image(m_texId, ImVec2(displayWidth, displayHeight));
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.95f, 0.95f, 0.95f, 1.0f));
+    ImGui::SetCursorPos(ImVec2(16.f, 8.f));
+    ImGui::Text("%s:", m_speakerName.c_str());
+    ImGui::PopStyleColor();
+
+    ImGui::Separator();
+
+    ImGui::SetCursorPos(ImVec2(16.f, 32.f));
+    ImGui::TextWrapped("%s", m_dialogueText.c_str());
+
+    // Botón de avance alineado a la derecha
+    float advanceButtonWidth = 120.0f;
+    float padding = 10.0f;
+    ImGui::SetCursorPosX(ImGui::GetWindowSize().x - advanceButtonWidth - padding);
+
+    if (ImGui::Button("Continuar >", ImVec2(advanceButtonWidth, 0))) {
+        m_advanceClicked = true;
+    }
+
     ImGui::End();
+
+    if (fontPtr) {
+        ImGui::PopFont();
+    }
 }
-};
+
+void DialogueUI::init() {
+    // Variables iniciales de diálogo
+    m_type = DialogueType::NORMAL;
+    m_speakerName = "John Barr";
+    m_dialogueText = "La mesa está vacía, busca en otro sitio.";
+    m_advanceClicked = false;
+
+    // para que ImGui no tenga bordes redondeados ni transparencia
+    ImGui::GetStyle().Alpha = 1.0f;
+    ImGui::GetStyle().WindowRounding = 0.0f;
+}
+
+void DialogueUI::handleEvent(sf::Event& event, sf::RenderWindow& window) {
+    // Procesar eventos si es necesario (por ahora vacío)
+}
+
+void DialogueUI::update(sf::Time dt) {
+    // Lógica de actualización del diálogo si se requiere
+}
 
 void DialogueUI::renderLinearText(const DialogueLine& line){ };
     
 int DialogueUI::renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options){ return -1; };
 
 bool DialogueUI::wasAdvanceClicked(){ return false; };
-
-// --- Renderizado con ImGui OLD---
-/*
-void DialogueUI::render(sf::RenderWindow& window) {
-    
-    // 1. Calcular la posición y tamaño de la ventana de diálogo (parte inferior)
-    float window_width = (float)window.getSize().x;
-    float window_height = (float)window.getSize().y;
-    
-    // Altura fija para la caja de diálogo (ejemplo: 150 píxeles de alto)
-    float dialogHeight = 150.0f; 
-
-    // 2. Establecer la posición y tamaño para la próxima ventana de ImGui
-    ImGui::SetNextWindowPos(ImVec2(0, window_height - dialogHeight));
-    ImGui::SetNextWindowSize(ImVec2(window_width, dialogHeight));
-
-    // 3. Iniciar la ventana del diálogo
-    ImGui::Begin("GameDialogueWindow", nullptr, 
-        ImGuiWindowFlags_NoResize | 
-        ImGuiWindowFlags_NoMove | 
-        ImGuiWindowFlags_NoCollapse | 
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoScrollWithMouse);
-        
-    // 4. Contenido del diálogo
-    
-    // Nombre del personaje
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.8f, 0.0f, 1.0f)); // Color amarillo/dorado
-    ImGui::Text("%s:", m_speakerName.c_str());
-    ImGui::PopStyleColor();
-
-    ImGui::Separator();
-    
-    // El texto real del diálogo (TextWrapped es crucial para que salte de línea)
-    ImGui::TextWrapped("%s", m_dialogueText.c_str());
-
-    // 5. Botón/Indicador de Avance
-    
-    // Colocamos el botón en la esquina inferior derecha (o simplemente alineado a la derecha)
-    float advanceButtonWidth = 80.0f;
-    float padding = 10.0f;
-    ImGui::SetCursorPosX(ImGui::GetWindowSize().x - advanceButtonWidth - padding);
-    
-    if (ImGui::Button("Continuar >", ImVec2(advanceButtonWidth, 0))) {
-        // Establecemos el flag que será leído por DialogueManager::update()
-        m_advanceClicked = true; 
-    }
-
-    ImGui::End();
-}
-    
-*/
