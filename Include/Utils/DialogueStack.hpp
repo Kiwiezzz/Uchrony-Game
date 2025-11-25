@@ -6,7 +6,7 @@
 #include "Utils/Enums.hpp"
 #include "Include/Utils/DialogueSequence.hpp"
 #include "Include/Utils/DialogueUI.hpp"
-#include "Core/Game.hpp"
+#include "Include/Core/Game.hpp"
 
 class DialogueStack {
 private:

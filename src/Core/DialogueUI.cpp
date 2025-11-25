@@ -16,7 +16,6 @@ int renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& opti
 
 bool wasAdvanceClicked(){};
 
-
 // --- Renderizado con ImGui OLD---
 /*
 void DialogueUI::render(sf::RenderWindow& window) {

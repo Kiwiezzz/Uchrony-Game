@@ -26,7 +26,7 @@ public:
 
     void renderLinearText(const DialogueLine& line);
     
-    int renderDecisionPrompt(const std::vector<DialogueSequence::DecisionOption>& options);
+    int renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options);
 
     // 2. Método para consultar si el usuario hizo clic en "Continuar"
     // Reinicia la bandera a 'false' inmediatamente después de consultarla.
