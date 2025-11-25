@@ -2,18 +2,25 @@
 
 #include <algorithm>
 
-Inventory::Inventory(const sf::Texture& slotTexture, unsigned slotW,
+//Funcion Init
+void Inventory::Init(const std::string& slotTexturePath, unsigned slotW,
 					 unsigned slotH, unsigned capacity, float spacing)
-	: m_slotW(slotW), m_slotH(slotH), m_capacity(capacity), m_spacing(spacing), m_basePos(16.f, 16.f), m_slotTexture(&slotTexture)
 {
-	// El atlas `slotTexture` contiene N ranuras horizontalmente (capacity).
-	// Calculamos automáticamente el tamaño real del slot en pixeles según la textura.
-	if (m_slotTexture) {
-		sf::Vector2u tsize = m_slotTexture->getSize();
-		// Ahora asumimos que la textura representa UN único slot (no un atlas).
-		// Usamos el tamaño completo de la textura como tamaño base del slot.
-		m_slotW = tsize.x;
-		m_slotH = tsize.y;
+	m_slotW = slotW;
+	m_slotH = slotH;
+	m_capacity = capacity;
+	m_spacing = spacing;
+	m_basePos = sf::Vector2f(16.f, 16.f);
+
+	if(!m_slotTexture.loadFromFile(slotTexturePath)) {
+		throw std::runtime_error("Error al cargar la textura del slot");
+	}
+
+	// Si se pasa 0 en ancho o alto, usar el tamaño de la textura
+	if (m_slotW == 0 || m_slotH == 0) {
+		sf::Vector2u texSize = m_slotTexture.getSize();
+		if (m_slotW == 0) m_slotW = texSize.x;
+		if (m_slotH == 0) m_slotH = texSize.y;
 	}
 }
 
@@ -30,7 +37,7 @@ void Inventory::insertAt(unsigned index, const Item& item) {
 		if (m_items.size() < m_capacity) m_items.push_back(item);
 		else {
 			auto it = m_items.begin();
-			std::advance(it, std::min<unsigned>(index, m_items.size()));
+			std::advance(it, std::min(index, (unsigned)m_items.size()));
 			m_items.insert(it, item);
 			while (m_items.size() > m_capacity) m_items.pop_back();
 		}
@@ -99,11 +106,11 @@ void Inventory::draw(sf::RenderWindow& window) const {
 
 	for (unsigned i = 0; i < m_capacity; ++i) {
 		sf::Vector2f pos = slotPosition(i);
-		if (m_slotTexture) {
+		if (m_slotTexture.getSize().x > 0) {
 			sf::Sprite slot;
-			slot.setTexture(*m_slotTexture);
+			slot.setTexture(m_slotTexture);
 			// Usamos la textura completa para la ranura y escalamos a drawW/drawH
-			sf::Vector2u tsize = m_slotTexture->getSize();
+			sf::Vector2u tsize = m_slotTexture.getSize();
 			slot.setTextureRect(sf::IntRect(0, 0, int(tsize.x), int(tsize.y)));
 			float sx = drawW / float(tsize.x);
 			float sy = drawH / float(tsize.y);
@@ -141,10 +148,10 @@ void Inventory::draw(sf::RenderWindow& window) const {
 }
 
 void Inventory::drawSlotBackgroundAt(sf::RenderWindow& window, sf::Vector2f topLeft) const {
-	if (!m_slotTexture) return;
+	if (m_slotTexture.getSize().x == 0) return;
 	sf::Sprite slot;
-	slot.setTexture(*m_slotTexture);
-	sf::Vector2u tsize = m_slotTexture->getSize();
+	slot.setTexture(m_slotTexture);
+	sf::Vector2u tsize = m_slotTexture.getSize();
 	slot.setTextureRect(sf::IntRect(0, 0, int(tsize.x), int(tsize.y)));
 	float drawW = float(m_slotW) * m_displayScale;
 	float drawH = float(m_slotH) * m_displayScale;

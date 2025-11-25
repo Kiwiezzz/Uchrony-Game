@@ -1,5 +1,4 @@
-#include "Classes/PastTree.hpp"
-#include "Utils/Pathfinder.hpp"
+#include "Entities/Inventory.hpp"
 
 class GameManager {
 private:
@@ -9,12 +8,9 @@ private:
     /*jugador
     */
     int ejemplo;
-    
-    GameManager();
-    
-public:
-    TimeManager timeManager;
-    Pathfinder pathfinder;
+
+    GameManager(); 
+
 
 public:
     GameManager(const GameManager&) = delete;
@@ -25,7 +21,7 @@ public:
     // Se usa así GameManager::get();
     static GameManager& get();
 
-
+    Inventory& getInventory();
 
     //Funciones publicas para modificar
 

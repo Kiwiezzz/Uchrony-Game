@@ -9,7 +9,7 @@ class Inventory {
 public:
     Inventory() = default;
 
-    Inventory(const sf::Texture& slotTexture, unsigned slotW, unsigned slotH,
+    void Init(const std::string& slotTexturePath, unsigned slotW, unsigned slotH,
               unsigned capacity = 4, float spacing = 8.f);
 
     void setDisplayScale(float s) { m_displayScale = s; }
@@ -45,7 +45,7 @@ private:
     sf::Vector2f slotPosition(unsigned index) const;
 
     std::list<Item> m_items;
-    const sf::Texture* m_slotTexture = nullptr; // atlas with N slots horizontally
+    sf::Texture m_slotTexture; // atlas with N slots horizontally
     unsigned m_slotW;
     unsigned m_slotH;
     unsigned m_capacity;
