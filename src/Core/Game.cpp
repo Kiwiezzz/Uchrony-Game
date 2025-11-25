@@ -116,7 +116,7 @@ void Game::run() {
 }
 
 
-
+/*
 GameState* Game::changePastByID(PastID id) {
     switch (id) {
         case PastID::INICIO: 
@@ -133,4 +133,4 @@ GameState* Game::changePastByID(PastID id) {
             
         default: return nullptr;
     }
-}
+}*/

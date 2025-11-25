@@ -1,4 +1,4 @@
-#include "Classes/Past.hpp"
+/*#include "Classes/Past.hpp"
 #include <iostream>
 
 void Past::init()
@@ -26,4 +26,4 @@ void Past::render(sf::RenderWindow& window)
 
     // 2. Dibujar jugador encima
     window.draw(spriteJugador);
-}
+}*/

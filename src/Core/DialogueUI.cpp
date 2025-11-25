@@ -1,4 +1,5 @@
 #include "Utils/DialogueUI.hpp"
+#include "Utils/Assets.hpp"
 
 // --- Inicialización ---
 
@@ -8,7 +9,10 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-void render(DialogueSequence& sequence, int currentLineIndex){};
+void DialogueUI::render(DialogueSequence& sequence, int currentLineIndex){
+
+    m_dialogueBoxTexture.new_path_and_update("assets/textures/dialogue_box.png");
+};
 
 void renderLinearText(const DialogueLine& line){};
     

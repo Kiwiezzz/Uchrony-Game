@@ -2,8 +2,8 @@
 
 #include <unordered_map>
 
-#include <Assets.hpp>
-#include <NPC.hpp>
+#include "Utils/Assets.hpp"
+#include "Entities/NPC.hpp"
 #include "Classes/Entity.hpp"
 
 using namespace std;
@@ -32,8 +32,6 @@ public:
     void update(sf::Time dt);
 
     void render(sf::RenderWindow& window);
-
-
 
     void setBackground(std::string path);
 

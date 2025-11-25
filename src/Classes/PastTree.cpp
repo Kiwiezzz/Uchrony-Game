@@ -1,11 +1,10 @@
-#include "Classes/TreePasts.hpp"
-
+/*#include "Classes/PastTree.hpp"
 
 TimeManager::TimeManager() {
     // --- AQUÍ CONSTRUYES TU ÁRBOL (TU GUION) ---
     
     // 1. La Raíz
-    /*treePasts[PastID::ACTUALIDAD] = { 
+    treePasts[PastID::ACTUALIDAD] = { 
         PastID::ACTUALIDAD, 
         "Inicio del juego",
         PastID::MEDIEVAL_PACIFICO, // Si elige A (Ir al museo)
@@ -21,12 +20,12 @@ TimeManager::TimeManager() {
     };
 
     // ... defines el resto ...
-    */
+    
     current = PastID::INICIO;
 }
 
 PastID TimeManager::toPast(bool decisionA) {
-    NodePast currentNode = treePasts[current];
+    NodePast currentNode = PastTree[current];
     
     if (decisionA) {
         current = currentNode.pastA;
@@ -35,3 +34,4 @@ PastID TimeManager::toPast(bool decisionA) {
     }
     return current;
 }
+*/

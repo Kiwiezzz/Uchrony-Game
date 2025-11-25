@@ -1,7 +1,7 @@
 #include <stack>
 #include <unordered_map>
-#include "Include/Utils/DialogueStack.hpp"
-#include "Include/Utils/DialogueSequence.hpp"
+#include "Utils/DialogueStack.hpp"
+#include "Utils/DialogueSequence.hpp"
   
 // Avanza la línea si es NORMAL, o llama a popDialog si termina.
 void advanceLine() {

@@ -14,7 +14,7 @@ private:
     sf::Texture texturaDialogo; // ¡IMPORTANTE! Las texturas deben ser miembros de la clase
     sf::Sprite spriteJugador;
 
-    DialogType m_type;
+    DialogueType m_type;
     std::string m_speakerName;
     std::string m_dialogueText;
     bool m_advanceClicked;

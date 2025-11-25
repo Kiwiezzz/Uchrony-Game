@@ -4,9 +4,9 @@
 #include <stack>
 #include <string>
 #include "Utils/Enums.hpp"
-#include "Include/Utils/DialogueSequence.hpp"
-#include "Include/Utils/DialogueUI.hpp"
-#include "Include/Core/Game.hpp"
+#include "Utils/DialogueSequence.hpp"
+#include "Utils/DialogueUI.hpp"
+#include "Core/Game.hpp"
 
 class DialogueStack {
 private:

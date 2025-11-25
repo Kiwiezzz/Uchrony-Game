@@ -4,9 +4,10 @@
 #include "imgui-SFML.h"
 #include "imgui.h"
 #include <string>
-#include "Include/Utils/Enums.hpp"
-#include "Include/Utils/DialogueSequence.hpp"
-#include "Include/Utils/DialogueLine.hpp"
+#include "Utils/Enums.hpp"
+#include "Utils/DialogueSequence.hpp"
+#include "Utils/DialogueLine.hpp"
+#include "Utils/Assets.hpp"
 
 class DialogueUI {
 private:
@@ -15,10 +16,11 @@ private:
     std::string m_speakerName;
     std::string m_dialogueText;
     bool m_advanceClicked = false;
+    TextureAsset m_dialogueBoxTexture;
 
 public:
-    DialogueUI() = default;
 
+    DialogueUI();
     // Método principal de dibujo
     // Recibe la secuencia (tope de la pila) y el índice actual.
     // Retorna la opción elegida o -1 si no hubo elección.
