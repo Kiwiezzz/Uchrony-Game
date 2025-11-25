@@ -21,6 +21,7 @@ private:
     Game& game;
 
 public:
+    DialogueStack(Game& game) : game(game) {}
 
     // Métodos de la Pila (Interfaz LIFO)
     void pushDialog(const DialogueSequence& dialog) {

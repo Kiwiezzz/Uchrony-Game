@@ -10,5 +10,6 @@ void advanceLine() {
 
 // Devuelve el SceneID a donde se debe saltar si se toma una decisión
 std::string chooseOption(size_t index) {
+    return  "";
         // ... Lógica para elegir la opción y obtener el nextSceneID
 }

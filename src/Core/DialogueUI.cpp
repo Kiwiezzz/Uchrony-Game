@@ -14,11 +14,11 @@ void DialogueUI::render(DialogueSequence& sequence, int currentLineIndex){
     m_dialogueBoxTexture.new_path_and_update("assets/textures/dialogue_box.png");
 };
 
-void renderLinearText(const DialogueLine& line){};
+void DialogueUI::renderLinearText(const DialogueLine& line){ };
     
-int renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options){};
+int DialogueUI::renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options){ return -1; };
 
-bool wasAdvanceClicked(){};
+bool DialogueUI::wasAdvanceClicked(){ return false; };
 
 // --- Renderizado con ImGui OLD---
 /*

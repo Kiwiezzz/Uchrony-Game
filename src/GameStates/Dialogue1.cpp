@@ -4,6 +4,7 @@
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 #include "Utils/Enums.hpp"
+#include <cstdint>
 
 void Dialogue1::render(sf::RenderWindow& window) {
 
@@ -42,7 +43,7 @@ void Dialogue1::render(sf::RenderWindow& window) {
         ImVec2 winSize = ImGui::GetWindowSize();
 
         // sf::Texture::getNativeHandle() devuelve el id nativo de la textura (GLuint en OpenGL)
-        ImTextureID texId = (ImTextureID)texturaDialogo.getNativeHandle();
+        ImTextureID texId = (ImTextureID)(uintptr_t)texturaDialogo.getNativeHandle();
 
         ImGui::GetWindowDrawList()->AddImage(texId,
             ImVec2(winPos.x, winPos.y),
