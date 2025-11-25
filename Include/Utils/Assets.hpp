@@ -8,18 +8,24 @@ struct SpriteAsset {
     std::string path;
     sf::Texture texture;
     sf::Sprite sprite; //Esto es una dirección de memoria, si simplemente la copias no servirá
-    int layer;
+    int layer; // Capa donde se renderiza
 
+    /// @brief lo crea vacío
     SpriteAsset() : 
         path(""), texture(), sprite(), layer(0)
     {}
 
+    /// @brief Crea el objeto y automaticamente carga la textura 
+    /// y el sprite del path que le pasas
+    /// @param newPath 
     SpriteAsset(const std::string& path)
         : SpriteAsset()
     {
         new_path_and_update(path);
     }
 
+    /// @brief Carga la textura y el sprite del path que le pasas
+    /// @param newPath 
     SpriteAsset(const SpriteAsset& spriteAsset) : 
         path(spriteAsset.path), texture(spriteAsset.texture), sprite(this->texture)
     {}
@@ -74,17 +80,20 @@ struct ImageAsset {
     std::string path;
     sf::Image image;
 
-
+    /// @brief Se crea vacío
     ImageAsset() : 
         path(""), image()
     { }
 
+    /// @brief Carga automaticamente la imagen al construirse
     ImageAsset(const std::string& path)
         : ImageAsset()
     {
         new_path_and_update(path);
     }
 
+    /// @brief Carga la imagen del path que le pasas
+    /// @param newPath 
     void new_path_and_update(const std::string& newPath)
     {
         path = newPath;
@@ -103,16 +112,20 @@ struct TextureAsset
     std::string path;
     sf::Texture texture;
 
+    /// @brief Lo crea vacío
     TextureAsset() : 
         path(""), texture()
     { }
 
+    /// @brief Carga automaticamente la textura al construirse
     TextureAsset(const std::string& path)
         : TextureAsset()
     {
         new_path_and_update(path);
     }
 
+    /// @brief Carga la textura del path que le pasas
+    /// @param newPath 
     void new_path_and_update(const std::string& newPath)
     {
         path = newPath;
