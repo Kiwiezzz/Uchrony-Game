@@ -1,4 +1,4 @@
-#include "Classes/TreePasts.hpp"
+#include "Classes/PastTree.hpp"
 #include "Utils/Pathfinder.hpp"
 
 class GameManager {
