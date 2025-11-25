@@ -21,7 +21,7 @@ protected:
     /// @brief Se usa para path finder. Depende del collision
     NavGrid navGrid;
 
-    unordered_map<string, Entity> entities;
+    unordered_map<string, Entity*> entities;
     unordered_map<string, NPC> npcs;
     
 
@@ -38,14 +38,14 @@ public:
 
     void setBackground(std::string path);
 
-    Entity& getBackground();
+    SpriteAsset& getBackground();
 
     void setCollisionAndGrid(std::string path);
 
     /// @brief Agrega a la tabla hash de entities una entity
     /// @param name
     /// @param entity 
-    void addEntity(const std::string& name, Entity& entity);
+    void addEntity(const std::string& name, Entity* entity);
 
     /// @brief Busca en la tabla hash de entities y retorna una referencia a ella
     /// @param name 

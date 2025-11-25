@@ -1,32 +1,25 @@
-/*#pragma once
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "imgui-SFML.h"
 #include "imgui.h"
 #include <string>
-#include "Utils/Enums.hpp"
 
 class DialogueUI {
 private:
-    // Necesario para saber si mostrar botón de continuar u opciones.
-    DialogType m_type;
     std::string m_speakerName;
     std::string m_dialogueText;
     bool m_advanceClicked = false;
 
 public:
-    DialogueUI() = default;
+    DialogueUI();
 
-    // Método principal de dibujo
-    // Recibe la secuencia (tope de la pila) y el índice actual.
-    // Retorna la opción elegida o -1 si no hubo elección.
-    void render(DialogueSequence& sequence, int currentLineIndex);
+    // Configura el texto a mostrar
+    void setText(const std::string& speaker, const std::string& text);
 
-    void renderLinearText(const DialogLine& line);
-    
-    int renderDecisionPrompt(const std::vector<DialogueSequence::DecisionOption>& options);
+    // Dibuja la ventana de diálogo usando ImGui
+    void render(sf::RenderWindow& window);
 
-    // 2. Método para consultar si el usuario hizo clic en "Continuar"
-    // Reinicia la bandera a 'false' inmediatamente después de consultarla.
-    bool wasAdvanceClicked();
-};*/
+    // Retorna true si el usuario pulsó "Continuar"
+    bool canAdvance();
+};

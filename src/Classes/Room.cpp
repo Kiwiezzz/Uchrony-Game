@@ -42,7 +42,7 @@ void Room::setCollisionAndGrid(std::string path)
 }
 
 
-void Room::addEntity(const std::string& name, Entity& entity)
+void Room::addEntity(const std::string& name, Entity* entity)
 {
     entities[name] = entity;
 }
@@ -51,5 +51,19 @@ void Room::addNpc(const std::string& name, NPC& entity){
     npcs[name] = entity;
 }
 
-    
+SpriteAsset& Room::getBackground()
+{
+    return background;
+}
 
+Entity& Room::getEntity(std::string name)
+{
+    // Nota: Esto lanzará una excepción si la key no existe.
+    // Deberías manejarlo o usar find() si no estás seguro.
+    return *entities.at(name);
+}
+
+NPC& Room::getNpc(std::string name)
+{
+    return npcs.at(name);
+}

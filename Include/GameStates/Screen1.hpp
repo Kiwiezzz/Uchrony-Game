@@ -1,4 +1,6 @@
 #pragma once
+// [DEPRECATED] Esta clase es un remanente del sistema antiguo.
+// Usar GenericScene y SceneRegistry para nuevas escenas.
 #include "Core/GameState.hpp"
 #include <SFML/Graphics.hpp>
 

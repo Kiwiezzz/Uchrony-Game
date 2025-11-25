@@ -1,9 +1,11 @@
 #pragma once
+// [DEPRECATED] Esta clase es un remanente del sistema antiguo.
+// Usar GenericScene y SceneRegistry para nuevas escenas.
 
 #include "Classes/Past.hpp"
 #include "Entities/NPC.hpp"
 
-class Past0 : protected Past
+class Past0 : public Past
 {
 public:
     /// @brief carga los diferentes rooms

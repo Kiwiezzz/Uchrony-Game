@@ -11,7 +11,7 @@
 
 using namespace std;
 
-class Past : protected GameState
+class Past : public GameState
 {
 protected:
     sf::Texture texturaJugador; // ¡IMPORTANTE! Las texturas deben ser miembros de la clase

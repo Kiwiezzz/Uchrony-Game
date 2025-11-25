@@ -11,21 +11,21 @@ void Past0::init()
     
     // Carga de objetos
     
-    ObjectRoom mesa("assets/textures/mesa.png");
-    mesa.sprite.setPosition(397, 494);
-    mesa.sprite.setOrigin(float(mesa.texture.getSize().x) / 2.f, float(mesa.texture.getSize().y));
-    mesa.setlayer(0);
+    ObjectRoom* mesa = new ObjectRoom("assets/textures/mesa.png");
+    mesa->sprite.setPosition(397, 494);
+    mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
+    mesa->setlayer(0);
     firstRoom.addEntity("mesa", mesa);
     
-    ObjectRoom mesa2("assets/textures/mesa.png");
-    mesa2.sprite.setPosition(673, 284);
-    mesa2.sprite.setOrigin(float(mesa2.texture.getSize().x) / 2.f, float(mesa2.texture.getSize().y));
-    mesa2.setlayer(0);
+    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa.png");
+    mesa2->sprite.setPosition(673, 284);
+    mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
+    mesa2->setlayer(0);
     firstRoom.addEntity("mesa2", mesa2);
 
-    ObjectRoom botella("assets/textures/botella.png");
-    botella.sprite.setPosition(597, 185);
-    botella.setlayer(1); // la botella debe renderizarse por encima de la mesa
+    ObjectRoom* botella = new ObjectRoom("assets/textures/botella.png");
+    botella->sprite.setPosition(597, 185);
+    botella->setlayer(1); // la botella debe renderizarse por encima de la mesa
     firstRoom.addEntity("botella", botella);
     
     NPC npc;
@@ -37,11 +37,6 @@ void Past0::init()
     npc.addAnimation("Posicion_Espalda2", 0, 1, 2.0f, false, 5);
     //row(r), frameCount(fc), duration(d), loop(l), startColumn(sc)
     
-    
-    
-
-
-
     
     
     /*player.setPosition(400.f, 300.f); //Posicion Inicial
@@ -76,8 +71,6 @@ void Past0::init()
     GameManager::get().getInventory().insertAt(3, ocarinaItem);
     
     
-
-
     isDebugPlacing = false; // Modo para colocar y seguir objetos con el mouse*/
 }
 
@@ -92,7 +85,7 @@ void Past0::update(sf::Time dt)
 
 }
 
-void render(sf::RenderWindow& window)
+void Past0::render(sf::RenderWindow& window)
 {
 
 }

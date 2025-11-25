@@ -1,6 +1,5 @@
-/*#include "../Include/GameStates/Dialogue1.hpp"
-#include "../Include/GameStates/MainMenu.hpp"
-#include "../../Include/Core/Game.hpp"
+#include "GameStates/Dialogue1.hpp"
+#include "Core/Game.hpp"
 #include "imgui.h" 
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
@@ -9,7 +8,7 @@ void Dialogue1::render(sf::RenderWindow& window) {
 
     // Usar la fuente
 
-    ImFont* fontPtr;
+    ImFont* fontPtr = nullptr;
 
     if (this->game != nullptr) {     // Verificamos que el jefe exista
         fontPtr = this->game->getFont(); // Le pedimos la fuente
@@ -85,5 +84,3 @@ void Dialogue1::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 void Dialogue1::update(sf::Time dt) {
         // Si no hay lógica de actualización, déjalo vacío.
 }
-
-*/

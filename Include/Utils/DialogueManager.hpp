@@ -1,39 +1,51 @@
-/*#pragma once
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <map>
+#include <vector>
 #include <string>
+#include "DialogueUI.hpp"
 
-// Incluir las clases que gestionaremos y usaremos
-#include "DialogueLine.hpp" 
-#include "DialogueUI.hpp" 
-#include "Core/Game.hpp" // Para usar el enum Game::State
+// Estructura simple para una línea de diálogo.
+// LÓGICA: Un diálogo no es más que quién habla y qué dice.
+struct SimpleLine {
+    std::string speaker; // Ej: "Juan"
+    std::string text;    // Ej: "Hola, ¿cómo estás?"
+};
 
+// Clase que gestiona la visualización de textos.
+// PATRÓN SINGLETON: Solo queremos un gestor de diálogos en todo el juego
+// para evitar conflictos y poder llamarlo desde cualquier lado.
 class DialogueManager {
 private:
-    // 1. Datos: El árbol de diálogo actual
-    DialogueTree m_currentDialogue;
+    // Base de datos de diálogos: ID -> Lista de líneas.
+    // Aquí guardamos todas las conversaciones posibles.
+    std::map<std::string, std::vector<SimpleLine>> m_dialogueDatabase;
     
-    // 2. UI: La clase que dibuja la ventana
+    // Estado actual
+    std::vector<SimpleLine> m_currentSequence; // La conversación que se está mostrando ahora
+    int m_currentIndex; // En qué línea vamos
+    bool m_isActive; // ¿Hay una ventana de diálogo abierta?
+
     DialogueUI m_ui;
 
-    // 3. Estado del flujo de la historia
-    int m_currentNodeID;
-    
-    // Referencia al juego principal para cambiar el estado
-    //Game& m_game; 
-
 public:
-    // Constructor (necesita una referencia al juego)
-    //DialogueManager(Game& game);
-    
-    // Métodos principales para el bucle del juego
+    DialogueManager();
+
+    // Singleton para acceso global fácil
+    static DialogueManager& get();
+
+    // Carga un diálogo por su ID (ej: "intro_guardia")
+    void startDialogue(const std::string& id);
+
+    // Avanza al siguiente texto
+    void advance();
+
     void update(sf::Time dt);
     void render(sf::RenderWindow& window);
 
-    // Métodos de control
-    void startDialogue(const std::string& treeName); // Carga y comienza un diálogo (ej: "intro_mission")
-    void advanceDialogue(); // Mueve al siguiente nodo
+    bool isDialogueActive() const { return m_isActive; }
     
-    bool isDialogueActive() const; // Comprueba si el estado es DIALOGUE
-};*/
+    // Función para registrar diálogos
+    void registerDialogue(const std::string& id, const std::vector<SimpleLine>& lines);
+};

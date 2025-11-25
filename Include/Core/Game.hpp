@@ -6,6 +6,7 @@
 #include "Core/GameState.hpp"
 #include "GameStates/MainMenu.hpp"
 #include "Classes/PastTree.hpp"
+#include "Core/SceneRegistry.hpp"
 
 class Game
 {
@@ -14,6 +15,9 @@ private:
     sf::Clock clock;
     GameState* currentState = nullptr;
     ImFont* m_Font = nullptr;
+    
+    // Registro de escenas (Base de datos de niveles)
+    SceneRegistry m_sceneRegistry;
 
 public:
     Game();

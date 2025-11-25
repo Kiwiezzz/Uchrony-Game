@@ -1,4 +1,4 @@
-/*// src/Utils/DialogueUI.cpp
+// src/Utils/DialogueUI.cpp
 
 #include "Utils/DialogueUI.hpp"
 
@@ -7,7 +7,7 @@
 DialogueUI::DialogueUI() : m_advanceClicked(false) {
     // Inicialización de valores por defecto
     m_speakerName = "Narrador";
-    m_dialogueText = "¡Bienvenido a Uchrony Game!";
+    m_dialogueText = "";
 }
 
 // --- Métodos de Control de Datos ---
@@ -29,6 +29,8 @@ bool DialogueUI::canAdvance() {
 // --- Renderizado con ImGui ---
 
 void DialogueUI::render(sf::RenderWindow& window) {
+    // Si no hay texto, no dibujamos nada
+    if (m_dialogueText.empty()) return;
     
     // 1. Calcular la posición y tamaño de la ventana de diálogo (parte inferior)
     float window_width = (float)window.getSize().x;
@@ -75,4 +77,4 @@ void DialogueUI::render(sf::RenderWindow& window) {
     }
 
     ImGui::End();
-}*/
+}

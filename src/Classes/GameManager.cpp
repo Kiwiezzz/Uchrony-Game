@@ -8,7 +8,7 @@ GameManager::GameManager()
     inventory.setDisplayScale(0.35f);
     
     //~~~~~~~FIN INVENTARIO~~~~~~~
-    ejemplo = 1;
+    //~~~~~~~FIN INVENTARIO~~~~~~~
 } 
 
 GameManager& GameManager::get() {
