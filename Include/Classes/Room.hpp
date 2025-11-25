@@ -21,8 +21,8 @@ class Room
 
     unordered_map<string, Entity> entities;
     
-
 public:
+
     void init();
 
     void handleEvent(sf::Event event);

@@ -1,5 +1,3 @@
-// src/Utils/DialogueUI.cpp
-
 #include "Utils/DialogueUI.hpp"
 
 // --- Inicialización ---
@@ -10,24 +8,17 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-// --- Métodos de Control de Datos ---
+void render(DialogueSequence& sequence, int currentLineIndex){};
 
-void DialogueUI::setText(const std::string& speaker, const std::string& text) {
-    m_speakerName = speaker;
-    m_dialogueText = text;
-    // Reiniciamos el flag de avance
-    m_advanceClicked = false;
-}
+void renderLinearText(const DialogueLine& line){};
+    
+int renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options){};
 
-bool DialogueUI::canAdvance() {
-    // Retorna el estado del clic y luego lo reinicia
-    bool result = m_advanceClicked;
-    m_advanceClicked = false; 
-    return result;
-}
+bool wasAdvanceClicked(){};
 
-// --- Renderizado con ImGui ---
 
+// --- Renderizado con ImGui OLD---
+/*
 void DialogueUI::render(sf::RenderWindow& window) {
     
     // 1. Calcular la posición y tamaño de la ventana de diálogo (parte inferior)
@@ -76,3 +67,5 @@ void DialogueUI::render(sf::RenderWindow& window) {
 
     ImGui::End();
 }
+    
+*/

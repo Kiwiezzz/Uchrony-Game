@@ -4,7 +4,9 @@
 #include <stack>
 #include <string>
 #include "Utils/Enums.hpp"
-#include "Utils/DialogueSequence.hpp"
+#include "Include/Utils/DialogueSequence.hpp"
+#include "Include/Utils/DialogueUI.hpp"
+#include "Core/Game.hpp"
 
 class DialogueStack {
 private:
@@ -19,18 +21,21 @@ private:
     Game& m_game;
 
 public:
+
     // Métodos de la Pila (Interfaz LIFO)
     void pushDialog(const DialogueSequence& dialog) {
         activeDialogs.push(dialog);
         currentLineIndex = 0; // Reiniciar índice al empezar una nueva secuencia
     }
 
+    // Elimina el diálogo tope de la pila
     void popDialog() {
         if (!activeDialogs.empty()) {
             activeDialogs.pop();
         }
     }
 
+    // Consulta si la pila está vacía
     bool isStackEmpty() const {
         return activeDialogs.empty();
     }
@@ -42,12 +47,8 @@ public:
     }
     
     // Avanza la línea si es NORMAL, o llama a popDialog si termina.
-    void advanceLine() {
-        // ... Lógica para avanzar currentLineIndex si es NORMAL
-    }
+    void advanceLine();
 
     // Devuelve el SceneID a donde se debe saltar si se toma una decisión
-    std::string chooseOption(size_t index) {
-        // ... Lógica para elegir la opción y obtener el nextSceneID
-    }
+    std::string chooseOption(size_t index);
 };
