@@ -26,6 +26,7 @@ private:
 public:
     
     // --- AQUÍ VAN LAS FUNCIONES DE LA CLASE ---
+    Dialogue1();
 
     void init() override;
 

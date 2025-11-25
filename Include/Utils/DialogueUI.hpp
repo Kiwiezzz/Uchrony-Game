@@ -17,17 +17,26 @@ private:
     std::string m_dialogueText;
     bool m_advanceClicked = false;
     TextureAsset m_dialogueBoxTexture;
+    bool showDialogue = false;
+    // Referencia en memoria de nuestra imagen
+    ImTextureID m_texId = nullptr;
 
 public:
 
     DialogueUI();
+
+    void init();    
+
+    // DEBE SER ASI
+    //void render(DialogueSequence& sequence, int currentLineIndex);
+
+    void render(const sf::RenderWindow& window);
+
+    void renderLinearText(const DialogueLine& line);
+
     // Método principal de dibujo
     // Recibe la secuencia (tope de la pila) y el índice actual.
     // Retorna la opción elegida o -1 si no hubo elección.
-    void render(DialogueSequence& sequence, int currentLineIndex);
-
-    void renderLinearText(const DialogueLine& line);
-    
     int renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options);
 
     // 2. Método para consultar si el usuario hizo clic en "Continuar"

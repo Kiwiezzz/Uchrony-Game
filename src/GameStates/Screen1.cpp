@@ -1,11 +1,9 @@
 #include "GameStates/Screen1.hpp"
 #include "GameStates/Dialogue1.hpp"
 #include "../Include/Core/Game.hpp"
-#include "Classes/GameManager.hpp"
-
+#include "../Include/Classes/GameManager.hpp"
 
 Screen1::Screen1() {
-
     init();
 }
 
@@ -13,6 +11,9 @@ void Screen1::init()
 {    
     using namespace std;
     
+    // Inicialización de variables y carga de recursos de dialogo
+    dialogue1.init();
+    dialogue1.setGame(this->game);
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -128,7 +129,10 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
                 std::cout << "Clic en la mesa!" << std::endl;
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
-                this->game->changeState(new Dialogue1());
+
+                // CAMBIAR ESTADO A DIALOGO esto borra el estado actual y pone el de dialogo
+                //this->game->changeState(new Dialogue1());
+                showDialogue = true;
             } 
             else 
             {
@@ -247,5 +251,10 @@ void Screen1::render(sf::RenderWindow& window)
         window.draw(s);
     }
 
+    // Restaurar vista previa para dibujar diálogo
     window.setView(prevView);
+
+    if (showDialogue) {
+        dialogue1.render(window); 
+    }
 }

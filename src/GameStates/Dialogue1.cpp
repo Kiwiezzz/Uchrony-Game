@@ -6,6 +6,12 @@
 #include "Utils/Enums.hpp"
 #include <cstdint>
 
+Dialogue1::Dialogue1() : m_advanceClicked(false) {
+    // Inicialización de valores por defecto
+    m_speakerName = "Narrador";
+    m_dialogueText = "¡Bienvenido a Uchrony Game!";
+}
+
 void Dialogue1::render(sf::RenderWindow& window) {
 
     ImFont* fontPtr = nullptr;
@@ -29,6 +35,8 @@ void Dialogue1::render(sf::RenderWindow& window) {
     ImGui::SetNextWindowPos(ImVec2(0, window_height - dialogHeight));
     ImGui::SetNextWindowSize(ImVec2(window_width, dialogHeight));
 
+    ImGui::SetNextWindowBgAlpha(0.0f);
+
     ImGui::Begin("GameDialogueWindow", nullptr,
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
@@ -37,20 +45,21 @@ void Dialogue1::render(sf::RenderWindow& window) {
         ImGuiWindowFlags_NoScrollbar |
         ImGuiWindowFlags_NoScrollWithMouse);
 
-    // Si cargamos una textura para la ventana de diálogo, la dibujamos como fondo
-    if (texturaDialogo.getSize().x > 0) {
         ImVec2 winPos = ImGui::GetWindowPos();
         ImVec2 winSize = ImGui::GetWindowSize();
+        
+        // Color Negro (0, 0, 0) con 75% de opacidad (Alpha 191/255)
+        ImU32 semiTransparentBlack = IM_COL32(0, 0, 0, 191); 
 
-        // sf::Texture::getNativeHandle() devuelve el id nativo de la textura (GLuint en OpenGL)
-        ImTextureID texId = (ImTextureID)(uintptr_t)texturaDialogo.getNativeHandle();
-
-        ImGui::GetWindowDrawList()->AddImage(texId,
-            ImVec2(winPos.x, winPos.y),
-            ImVec2(winPos.x + winSize.x, winPos.y + winSize.y));
-    }
+        // Dibuja un rectángulo relleno que cubre toda la ventana de diálogo
+        ImGui::GetWindowDrawList()->AddRectFilled(
+            winPos,                                     // Esquina superior izquierda (p_min)
+            ImVec2(winPos.x + winSize.x, winPos.y + winSize.y), // Esquina inferior derecha (p_max)
+            semiTransparentBlack                        // Color y opacidad
+        );
 
     // Contenido del diálogo (texto encima del fondo)
+    
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.95f, 0.95f, 0.95f, 1.0f));
     ImGui::SetCursorPos(ImVec2(16.f, 8.f));
     ImGui::Text("%s:", m_speakerName.c_str());
@@ -89,6 +98,10 @@ void Dialogue1::init() {
     if (!texturaDialogo.loadFromFile("assets/textures/dialog_box.png")) {
         std::cerr << "Warning: no se pudo cargar assets/textures/dialog_box.png (diálogo)" << std::endl;
     }
+
+    // para que ImGui no tenga bordes redondeados ni transparencia
+    ImGui::GetStyle().Alpha = 1.0f;
+    ImGui::GetStyle().WindowRounding = 0.0f;
 }
 
 void Dialogue1::handleEvent(sf::Event& event, sf::RenderWindow& window) {

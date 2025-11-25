@@ -21,6 +21,8 @@
 #include "Utils/Pathfinder.hpp"
 #include "Utils/Collision.hpp"
 #include "Entities/Inventory.hpp"
+#include "Utils/DialogueUI.hpp"
+#include "GameStates/Dialogue1.hpp"
 
 class Screen1 : public GameState {
 private:
@@ -48,6 +50,11 @@ private:
     sf::Sound ocarinaSound;
     std::optional<Item> draggingItem;
     int draggingFrom;
+
+    // Diálogo UI
+    DialogueUI dialogueUI;
+    Dialogue1 dialogue1;
+    bool showDialogue = false;
 
 public:
     Screen1();

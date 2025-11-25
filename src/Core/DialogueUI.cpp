@@ -1,5 +1,6 @@
 #include "Utils/DialogueUI.hpp"
 #include "Utils/Assets.hpp"
+#include <cstdint>
 
 // --- Inicialización ---
 
@@ -9,9 +10,47 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-void DialogueUI::render(DialogueSequence& sequence, int currentLineIndex){
+void DialogueUI::init(){
 
     m_dialogueBoxTexture.new_path_and_update("assets/textures/dialogue_box.png");
+    m_texId = (ImTextureID)(uintptr_t)m_dialogueBoxTexture.texture.getNativeHandle();
+    
+};
+
+// QUEDE POR AQUI
+
+void DialogueUI::render(const sf::RenderWindow& window){
+
+auto ws = window.getSize();
+float startYRatio = 0.7f;
+float heightRatio = 1.0f - startYRatio;
+
+ImGui::SetNextWindowPos(ImVec2(0, ws.y * startYRatio)); 
+ImGui::SetNextWindowSize(ImVec2((float)ws.x, ws.y * heightRatio));
+
+if (ImGui::Begin("D", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove)) {
+    // Obtén las dimensiones originales de tu textura
+    // Reemplaza esto con el método apropiado según tu librería
+    float texWidth = m_dialogueBoxTexture.texture.getSize().x;   // Ejemplo para SFML
+    float texHeight = m_dialogueBoxTexture.texture.getSize().y;  // Ejemplo para SFML
+    
+    float aspectRatio = texWidth / texHeight;
+    ImVec2 availSize = ImGui::GetContentRegionAvail();
+    
+    float displayWidth = availSize.x;
+    float displayHeight = displayWidth / aspectRatio;
+    
+    if (displayHeight > availSize.y) {
+        displayHeight = availSize.y;
+        displayWidth = displayHeight * aspectRatio;
+    }
+    
+    // Centra la imagen horizontalmente
+    ImGui::SetCursorPosX((availSize.x - displayWidth) * 0.5f);
+    
+    ImGui::Image(m_texId, ImVec2(displayWidth, displayHeight));
+    ImGui::End();
+}
 };
 
 void DialogueUI::renderLinearText(const DialogueLine& line){ };

@@ -6,6 +6,8 @@
 #include "Core/Game.hpp"
 #include "GameStates/Screen1.hpp"
 #include "GameStates/Dialogue1.hpp"
+#include "Utils/DialogueUI.hpp"
+#include "Utils/Assets.hpp"
 
 void MainMenu::render(sf::RenderWindow& window) {
     
@@ -146,7 +148,7 @@ void MainMenu::render(sf::RenderWindow& window) {
      // Botón Salir
     ImGui::SetCursorPosX(centerOffsetButtons);
     if (ImGui::Button("Prueba de Diálogo", ImVec2(buttonWidth, 0))) {
-        m_lastAction = MenuAction::DIALOGUE; 
+        m_lastAction = MenuAction::DIALOGUE;
 
     // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
     ImGui::End(); 
@@ -156,9 +158,6 @@ void MainMenu::render(sf::RenderWindow& window) {
     if (m_customFont) {
         ImGui::PopFont(); 
     }
-
-    // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new Dialogue1());
 
     // 4. Salir: Terminamos la función render() para que no se ejecuten
     //    las líneas de ImGui::End() y PopFont() de más abajo.
@@ -174,7 +173,7 @@ void MainMenu::render(sf::RenderWindow& window) {
         m_lastAction = MenuAction::QUIT; 
         this->game->getWindow().close();
     }
-    
+
     ImGui::End(); 
 
     if (m_customFont) {
