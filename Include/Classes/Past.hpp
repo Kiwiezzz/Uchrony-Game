@@ -18,8 +18,11 @@ protected:
     sf::Sprite spriteJugador;
 
     unordered_map<string, Room> rooms; //Tabla hash con las habitaciones
+    Room* currentRoom;
 
-    Pathfinder pathfinder;
+    //Faltan cosas
+
+    //Pathfinder pathfinder;
 
     //sf::Texture slotTex;
     //Inventory inventory;

@@ -120,6 +120,10 @@ void Game::run() {
 
 
 GameState* Game::newPastByID(PastID id) {
+
+    if(id == "Past0" ) return new Past0;
+
+
     // ESTA ES LA MAGIA DEL SISTEMA NUEVO:
     
     // 1. Buscamos los datos de la escena en el registro.
@@ -129,8 +133,11 @@ GameState* Game::newPastByID(PastID id) {
     // 2. Si el ID es válido (la escena existe), creamos una GenericScene con esos datos.
     // Fíjate que devolvemos un "new GenericScene", no un "new Past0".
     // GenericScene se transforma en lo que necesitemos según los datos que le pasemos.
+
+    if()
+
     if (!data.id.empty()) {
-        return new GenericScene(data);
+        //return new GenericScene(data);
     }
 
     // 3. Si no existe, devolvemos nullptr o una escena de error.

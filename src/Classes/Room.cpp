@@ -21,7 +21,13 @@ void Room::update(sf::Time dt)
 
 void Room::render(sf::RenderWindow& window)
 {
-    // LÓGICA DE DIBUJO FUTURA
+    window.draw(background.sprite);
+    for (auto& entity : entities) {
+        window.draw(entity.second->sprite);
+    }
+    for (auto& npc : npcs) {
+        npc.second->render(window);
+    }
 }
 
 
@@ -48,7 +54,7 @@ void Room::addEntity(const std::string& name, Entity* entity)
 }
 
 void Room::addNpc(const std::string& name, NPC& entity){
-    npcs[name] = entity;
+    npcs[name] = &entity;
 }
 
 SpriteAsset& Room::getBackground()
@@ -65,5 +71,5 @@ Entity& Room::getEntity(std::string name)
 
 NPC& Room::getNpc(std::string name)
 {
-    return npcs.at(name);
+    return *npcs.at(name);
 }

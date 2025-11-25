@@ -2,7 +2,7 @@
 
 void Past0::init()
 {
-    Room firstRoom;
+    auto& firstRoom = rooms["first"] = Room();
     firstRoom.setBackground("assets/textures/suelo.png");
     firstRoom.getBackground().sprite.setScale(1.0f, 1.0f);
     firstRoom.getBackground().sprite.setPosition(0, 0);
@@ -17,7 +17,7 @@ void Past0::init()
     mesa->setlayer(0);
     firstRoom.addEntity("mesa", mesa);
     
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa.png");
+    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(673, 284);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(0);
@@ -37,10 +37,16 @@ void Past0::init()
     npc.addAnimation("Posicion_Espalda2", 0, 1, 2.0f, false, 5);
     //row(r), frameCount(fc), duration(d), loop(l), startColumn(sc)
     
+    //npcs["npc"] = npc;
+    /*
+    currentRoom = &rooms["first"];
     
-    
-    /*player.setPosition(400.f, 300.f); //Posicion Inicial
-    player.getSprite().setScale(2.0f, 2.0f);
+
+    //El jugador está en GameManager
+    auto& GM = GameManager::get();
+
+    GM.player.setPosition(400.f, 300.f); //Posicion Inicial
+    GM.player.getSprite().setScale(2.0f, 2.0f);
     
     // Añadir items de ejemplo: botella, guitarra, lentes, ocarina
     // Cargar texturas de items
@@ -87,5 +93,5 @@ void Past0::update(sf::Time dt)
 
 void Past0::render(sf::RenderWindow& window)
 {
-
+    currentRoom->render(window);
 }

@@ -4,8 +4,9 @@
 
 #include "Classes/Past.hpp"
 #include "Entities/NPC.hpp"
+#include "GameManager.hpp"
 
-class Past0 : public Past
+class Past0 : public Past //:GameState
 {
 public:
     /// @brief carga los diferentes rooms

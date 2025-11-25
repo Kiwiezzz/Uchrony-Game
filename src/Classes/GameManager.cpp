@@ -1,14 +1,17 @@
 #include "Classes/GameManager.hpp"
 
 
-GameManager::GameManager()
+GameManager::GameManager() :
+    player()
 {
     //~~~~~~~INVENTARIO~~~~~~~
     inventory.Init("assets/textures/Inventory.png", 0, 0, 4, 8.f);
     inventory.setDisplayScale(0.35f);
     
     //~~~~~~~FIN INVENTARIO~~~~~~~
-    //~~~~~~~FIN INVENTARIO~~~~~~~
+    
+
+    
 } 
 
 GameManager& GameManager::get() {
