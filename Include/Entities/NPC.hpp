@@ -4,7 +4,6 @@
 #include "Animator.hpp"
 #include "Utils/Geometry.hpp"
 #include "Utils/NavGrid.hpp"
-#include "Classes/Entity.hpp"
 #include <vector>
 #include <string>
 
@@ -28,13 +27,13 @@ enum class NPCState {
     Action // Estado para animaciones especiales
 };
 
-class NPC : protected Entity {
+class NPC {
 public:
     NPC() = default;
 
     void init(std::string path, Vec2f position, bool walkable);
     void update(sf::Time dt, const NavGrid& grid);
-    void draw(sf::RenderWindow& window) override;
+    void render(sf::RenderWindow& window);
 
     // API para animaciones
     void addAnimation(const std::string& name, int _row, int _frameCount, float _time, bool _loop = true, int _startColumn = 0);
@@ -50,8 +49,8 @@ public:
     std::string dialogueKey;       // CLAVE: Qué diálogo ofrecer.
     bool isInteractive = true;    // ESTADO: Si se permite la interacción con ese NPC.
     
-    // Para evitar el spam de diálogos:
-    bool m_hasActiveDialogue = false; // TRUE si ya tiene una pila de diálogo abierta.
+    // Para evitar el spam de diálogos
+    bool m_hasActiveDialogue = false; // TRUE si ya tiene una pila de diálogo abierta
 
 private:
     void setupAnimations();

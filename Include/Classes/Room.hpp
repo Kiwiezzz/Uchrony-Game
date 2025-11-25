@@ -22,6 +22,7 @@ protected:
     NavGrid navGrid;
 
     unordered_map<string, Entity> entities;
+    unordered_map<string, NPC> npcs;
     
 
 public:
@@ -43,7 +44,11 @@ public:
 
     void addEntity(const std::string& name, Entity& entity);
 
-    const Entity& getEntity(std::string name);
+    Entity& getEntity(std::string name);
+
+    void addNpc(const std::string& name, NPC& entity);
+
+    NPC& getNpc(std::string name);
 
     Entity& operator=(const Entity& other);
 };

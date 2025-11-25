@@ -5,9 +5,8 @@
 
 class Present : protected Past
 {
-
-
 public:
+    /// @brief carga los diferentes rooms
     void init() override;
 
     
