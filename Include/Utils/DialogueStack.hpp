@@ -16,9 +16,9 @@ private:
     // Índice actual para secuencias NORMAL
     int currentLineIndex = 0;
     
-    DialogueUI m_ui;
+    DialogueUI ui;
 
-    Game& m_game;
+    Game& game;
 
 public:
 

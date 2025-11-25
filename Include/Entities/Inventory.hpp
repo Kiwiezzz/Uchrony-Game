@@ -13,6 +13,12 @@ public:
               unsigned capacity = 4, float spacing = 8.f);
 
     void setDisplayScale(float s) { m_displayScale = s; }
+    
+    
+    
+    void draw(sf::RenderWindow& window) const;
+    
+
 
     unsigned capacity() const;
     unsigned size() const;
@@ -23,7 +29,6 @@ public:
     void move(unsigned fromIndex, unsigned toIndex);
 
     int indexAtScreenPos(sf::Vector2i mousePos, const sf::RenderWindow& window) const;
-    void draw(sf::RenderWindow& window) const;
     void setBasePosition(sf::Vector2f basePos);
     // Dibuja el fondo de un slot (la textura completa) en la posición top-left indicada
     void drawSlotBackgroundAt(sf::RenderWindow& window, sf::Vector2f topLeft) const;

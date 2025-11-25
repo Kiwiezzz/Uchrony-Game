@@ -17,7 +17,7 @@ struct NodePast {
 
 class TimeManager {
 private:
-    std::map<PastID, NodePast> treePasts;
+    std::map<PastID, NodePast> PastTree;
     PastID current;
 
 public:
@@ -25,7 +25,7 @@ public:
         // --- AQUÍ CONSTRUYES TU ÁRBOL (TU GUION) ---
         
         // 1. La Raíz
-        /*treePasts[PastID::ACTUALIDAD] = { 
+        /*PastTree[PastID::ACTUALIDAD] = { 
             PastID::ACTUALIDAD, 
             "Inicio del juego",
             PastID::MEDIEVAL_PACIFICO, // Si elige A (Ir al museo)
@@ -33,7 +33,7 @@ public:
         };
 
         // 2. Rama Medieval
-        treePasts[PastID::MEDIEVAL_PACIFICO] = {
+        PastTree[PastID::MEDIEVAL_PACIFICO] = {
             PastID::MEDIEVAL_PACIFICO,
             "Llegaste a la edad media y nadie pelea",
             PastID::MEDIEVAL_GUERRA, // Si matas al rey -> Se vuelve guerra
@@ -49,7 +49,7 @@ public:
     /// @param decisionA 
     /// @return 
     PastID toPast(bool decisionA) {
-        NodePast nodoActual = treePasts[current];
+        NodePast nodoActual = PastTree[current];
         
         if (decisionA) {
             current = nodoActual.pastA;

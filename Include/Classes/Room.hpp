@@ -8,8 +8,10 @@
 
 using namespace std;
 
+/// @brief t
 class Room
 {
+protected:
     /// @brief SpriteAsset del fondo
     SpriteAsset background;
 
@@ -30,4 +32,14 @@ public:
     void update(sf::Time dt);
 
     void render(sf::RenderWindow& window);
+
+
+
+    void setBackground(std::string path);
+
+    void setCollisionAndGrid(std::string path);
+
+    void addEntity(const std::string& name, Entity& entity);
+
+    const Entity& getEntity(std::string name);
 };

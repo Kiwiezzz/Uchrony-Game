@@ -6,6 +6,10 @@
 class ObjectRoom : public Entity
 {
 public:
+    ObjectRoom(const std::string& path);
+
+    ObjectRoom(const Entity& entityCopy);
+
     // Solo declaramos las funciones, sin el cuerpo "{}" y sin "ObjectRoom::"
     void init();
     
