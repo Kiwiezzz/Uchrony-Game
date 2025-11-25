@@ -1,4 +1,4 @@
-#include "Classes/TreePasts.hpp"
+#include "Classes/PastTree.hpp"
 
 
 TimeManager::TimeManager() {
@@ -22,11 +22,11 @@ TimeManager::TimeManager() {
 
     // ... defines el resto ...
     */
-    current = PastID::INICIO;
+    current = PastID::PAST0;
 }
 
 PastID TimeManager::toPast(bool decisionA) {
-    NodePast currentNode = treePasts[current];
+    NodePast currentNode = PastTree[current];
     
     if (decisionA) {
         current = currentNode.pastA;

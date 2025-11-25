@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <map>
@@ -36,4 +36,4 @@ public:
     void advanceDialogue(); // Mueve al siguiente nodo
     
     bool isDialogueActive() const; // Comprueba si el estado es DIALOGUE
-};
+};*/

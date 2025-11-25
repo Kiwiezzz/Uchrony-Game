@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <SFML/Graphics.hpp>
 #include "imgui-SFML.h"
@@ -29,4 +29,4 @@ public:
     // 2. Método para consultar si el usuario hizo clic en "Continuar"
     // Reinicia la bandera a 'false' inmediatamente después de consultarla.
     bool wasAdvanceClicked();
-};
+};*/

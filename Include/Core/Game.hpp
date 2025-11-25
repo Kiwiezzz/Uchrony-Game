@@ -5,7 +5,7 @@
 
 #include "Core/GameState.hpp"
 #include "GameStates/MainMenu.hpp"
-#include "Classes/TreePasts.hpp"
+#include "Classes/PastTree.hpp"
 
 class Game
 {
@@ -27,7 +27,7 @@ public:
     // En Game.cpp
 
 // Esta función recibe un ID (del mapa) y te devuelve el Objeto real (Pesado)
-    GameState* changePastByID(PastID id);
+    GameState* newPastByID(PastID id);
 
     ImFont* getFont() const { return m_Font; }
 

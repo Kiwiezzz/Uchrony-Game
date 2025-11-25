@@ -1,11 +1,12 @@
-#pragma once
+/*#pragma once
 
 #include <vector>
 #include <stack>
 #include <string>
 #include "Utils/Enums.hpp"
 #include "Utils/DialogueSequence.hpp"
-#include "Include/Utils/DialogueUI.hpp"
+#include "Utils/DialogueUI.hpp"
+#include "Core/Game.hpp"
 
 class DialogueStack {
 private:
@@ -51,4 +52,4 @@ public:
     std::string chooseOption(size_t index) {
         // ... Lógica para elegir la opción y obtener el nextSceneID
     }
-};
+};*/

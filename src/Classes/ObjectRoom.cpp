@@ -37,3 +37,14 @@ void ObjectRoom::showText()
     // Ej: GameManager::getInstance().getDialogueSystem().show("Es una maceta vieja.");
     std::cout << "Muestrando descripción del objeto..." << std::endl;
 }
+
+
+ObjectRoom::ObjectRoom(const std::string& path) : Entity(path)
+{
+    
+}
+
+ObjectRoom::ObjectRoom(const Entity& entityCopy) : Entity(*this)
+{
+
+}
