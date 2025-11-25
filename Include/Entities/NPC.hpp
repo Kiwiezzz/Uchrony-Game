@@ -4,6 +4,7 @@
 #include "Animator.hpp"
 #include "Utils/Geometry.hpp"
 #include "Utils/NavGrid.hpp"
+#include "Classes/Entity.hpp"
 #include <vector>
 #include <string>
 
@@ -27,13 +28,13 @@ enum class NPCState {
     Action // Estado para animaciones especiales
 };
 
-class NPC {
+class NPC : protected Entity {
 public:
     NPC() = default;
 
     void init(std::string path, Vec2f position, bool walkable);
     void update(sf::Time dt, const NavGrid& grid);
-    void render(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window) override;
 
     // API para animaciones
     void addAnimation(const std::string& name, int _row, int _frameCount, float _time, bool _loop = true, int _startColumn = 0);

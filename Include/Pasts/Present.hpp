@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Classes/Past.hpp"
+#include "Entities/NPC.hpp"
 
 class Present : protected Past
 {
-    
+
 
 public:
     void init() override;

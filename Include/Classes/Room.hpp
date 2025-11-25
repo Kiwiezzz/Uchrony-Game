@@ -37,9 +37,13 @@ public:
 
     void setBackground(std::string path);
 
+    Entity& getBackground();
+
     void setCollisionAndGrid(std::string path);
 
     void addEntity(const std::string& name, Entity& entity);
 
     const Entity& getEntity(std::string name);
+
+    Entity& operator=(const Entity& other);
 };
