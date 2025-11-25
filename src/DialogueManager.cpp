@@ -21,4 +21,15 @@ public:
     void renderDecisionPrompt();
 
     void advanceLine();
+public:
+
+    // ====== Métodos de renderizado de diálogo generales: ======
+
+    void renderDialogs();
+
+    void renderLinearText();
+
+    void renderDecisionPrompt();
+
+    void advanceLine();
 };

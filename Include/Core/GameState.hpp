@@ -14,6 +14,8 @@ public:
         this->game = gamePtr;
     }
 
+    // ===== Métodos virtuales de cada escena: =====
+
     virtual void init() = 0;
 
     /// @brief Se encarga de manejar los eventos (inputs) que suceden.

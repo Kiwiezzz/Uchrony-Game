@@ -21,7 +21,7 @@ private:
     int m_currentNodeID;
     
     // Referencia al juego principal para cambiar el estado
-    //Game& m_game; 
+    //Game& game; 
 
 public:
     // Constructor (necesita una referencia al juego)
@@ -36,4 +36,26 @@ public:
     void advanceDialogue(); // Mueve al siguiente nodo
     
     bool isDialogueActive() const; // Comprueba si el estado es DIALOGUE
+};
+
+class DialogueRender {
+    
+private:
+    // Pila para las líneas de diálogo que esperan ser mostradas
+    std::stack<DialogueData> m_dialogStack;
+    
+    // Almacena todos los bloques de diálogo del juego (usualmente cargado de un archivo)
+    std::unordered_map<int, std::vector<DialogueData>> m_dialogBlocks;
+
+public:
+
+    // ====== Métodos de renderizado de diálogo generales: ======
+
+    void renderDialogs();
+
+    void renderLinearText();
+
+    void renderDecisionPrompt();
+
+    void advanceLine();
 };

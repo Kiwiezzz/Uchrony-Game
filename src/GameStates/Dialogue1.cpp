@@ -35,6 +35,7 @@ void Dialogue1::render(sf::RenderWindow& window) {
         ImGuiWindowFlags_NoResize | 
         ImGuiWindowFlags_NoMove | 
         ImGuiWindowFlags_NoCollapse | 
+        //ImGuiWindowFlags_NoBackground | /*OJO esto es para probar transparencia*/
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoScrollbar |
         ImGuiWindowFlags_NoScrollWithMouse);
