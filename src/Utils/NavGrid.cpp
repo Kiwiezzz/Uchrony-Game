@@ -15,11 +15,13 @@ NavGrid::NavGrid(int tileSize) : m_tileSize(tileSize), m_width(0), m_height(0) {
     if (m_tileSize <= 0) m_tileSize = 1;
 }
 
-bool NavGrid::buildFromImage(const sf::Image& img) {
-    if (img.getSize().x == 0 || img.getSize().y == 0) return false;
+bool NavGrid::buildFromImage(const sf::Image& image) {
+    
+    // Validar que la imagen tenga tamaño válido
+    if (image.getSize().x == 0 || image.getSize().y == 0) return false;
 
-    m_width = img.getSize().x / m_tileSize;
-    m_height = img.getSize().y / m_tileSize;
+    m_width = image.getSize().x / m_tileSize;
+    m_height = image.getSize().y / m_tileSize;
     m_grid.clear();
     m_grid.resize(m_width * m_height, 0); // 0 = caminable, 1 = pared
 
@@ -35,11 +37,11 @@ bool NavGrid::buildFromImage(const sf::Image& img) {
                     int worldY = (y * m_tileSize) + py;
 
                     // Evitar leer fuera de la imagen
-                    if (worldX >= (int)img.getSize().x || worldY >= (int)img.getSize().y) {
+                    if (worldX >= (int)image.getSize().x || worldY >= (int)image.getSize().y) {
                         continue;
                     }
 
-                    if (img.getPixel(worldX, worldY) != sf::Color::White) {
+                    if (image.getPixel(worldX, worldY) != sf::Color::White) {
                         foundWall = true;
                         break;
                     }

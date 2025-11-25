@@ -2,7 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include "Pasts/Past0.hpp"
-#include "GameStates/GenericScene.hpp"
+#include "GameStates/Screen1.hpp"
 
 Game::Game() {
     window.create(sf::VideoMode(800, 600), "Uchrony Game");
@@ -120,21 +120,16 @@ void Game::run() {
 
 
 GameState* Game::newPastByID(PastID id) {
-    // ESTA ES LA MAGIA DEL SISTEMA NUEVO:
+    // Sistema antiguo: cada escena tiene su propia clase
     
-    // 1. Buscamos los datos de la escena en el registro.
-    // El registro ya tiene cargada la info de qué fondo usar, qué NPCs poner, etc.
-    SceneData data = m_sceneRegistry.getScene(id);
-
-    // 2. Si el ID es válido (la escena existe), creamos una GenericScene con esos datos.
-    // Fíjate que devolvemos un "new GenericScene", no un "new Past0".
-    // GenericScene se transforma en lo que necesitemos según los datos que le pasemos.
-    if (!data.id.empty()) {
-        return new GenericScene(data);
+    if (id == "PAST_0_ROOM_1") {
+        return new Past0();
     }
-
-    // 3. Si no existe, devolvemos nullptr o una escena de error.
-    // Esto ayuda a detectar si escribiste mal el ID en el PastTree.
-    std::cerr << "ERROR: Intentando cargar escena inexistente: " << id << std::endl;
+    else if (id == "SCREEN_1") {
+        return new Screen1();
+    }
+    // Agrega aquí más escenas según las necesites
+    
+    std::cerr << "ERROR: Escena no encontrada: " << id << std::endl;
     return nullptr;
 }

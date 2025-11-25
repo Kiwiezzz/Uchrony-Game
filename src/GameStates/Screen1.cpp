@@ -160,24 +160,33 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
 
             int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
             if (uiIdx >= 0) {
-                draggingItem = GameManager::get().getInventory().pickAt(uiIdx);
-                if (draggingItem) draggingFrom = uiIdx;
+                // Usar el estado de drag-and-drop del GameManager
+                GameManager::get().getDraggingItem() = GameManager::get().getInventory().pickAt(uiIdx);
+                if (GameManager::get().getDraggingItem()) {
+                    GameManager::get().setDraggingFrom(uiIdx);
+                }
                 return;
             }
         }
     }
 
     if (event.type == sf::Event::MouseButtonReleased) {
-        if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
+        if (event.mouseButton.button == sf::Mouse::Right && GameManager::get().getDraggingItem()) {
             sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
             int idx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
             if (idx >= 0) {
-                GameManager::get().getInventory().insertAt(idx, *draggingItem);
+                // Insertar el item en la posición donde se soltó
+                GameManager::get().getInventory().insertAt(idx, *GameManager::get().getDraggingItem());
             } else {
-                GameManager::get().getInventory().insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : GameManager::get().getInventory().size(), *draggingItem);
+                // Si se soltó fuera del inventario, volver a colocarlo en su posición original (o al final)
+                int fromIdx = GameManager::get().getDraggingFrom();
+                GameManager::get().getInventory().insertAt(
+                    fromIdx >= 0 ? (unsigned)fromIdx : GameManager::get().getInventory().size(), 
+                    *GameManager::get().getDraggingItem()
+                );
             }
-            draggingItem.reset();
-            draggingFrom = -1;
+            // Reiniciar el estado de drag-and-drop
+            GameManager::get().resetDragging();
         }
     }
 }
@@ -237,11 +246,11 @@ void Screen1::render(sf::RenderWindow& window)
     GameManager::get().getInventory().setBasePosition({ margin, float(ws.y) - margin - float(GameManager::get().getInventory().displaySlotHeight()) });
     GameManager::get().getInventory().draw(window);
 
-    // Dibujar item arrastrado bajo el mouse (ahora manejado por Inventory::draw)
-    if (draggingItem) {
+    // Dibujar item arrastrado bajo el mouse
+    if (GameManager::get().getDraggingItem()) {
         sf::Vector2i mp = sf::Mouse::getPosition(window);
         // SOLO dibujamos el sprite del item (no el fondo del slot)
-        sf::Sprite s = draggingItem->sprite();
+        sf::Sprite s = GameManager::get().getDraggingItem()->sprite();
         sf::FloatRect gb = s.getGlobalBounds();
         s.setPosition(float(mp.x) - gb.width/2.f, float(mp.y) - gb.height/2.f);
         window.draw(s);

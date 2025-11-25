@@ -22,34 +22,35 @@
 #include "Utils/NavGrid.hpp"
 #include "Utils/Pathfinder.hpp"
 #include "Utils/Collision.hpp"
-#include "Entities/Inventory.hpp"
+
 
 class Screen1 : public GameState {
 private:
     // --- AQUÍ VAN LAS VARIABLES QUE ANTES ESTABAN SUELTAS EN EL MAIN ---
-    sf::Texture texturaJugador; // ¡IMPORTANTE! Las texturas deben ser miembros de la clase
-    sf::Sprite spriteJugador;
+    
     
     //Variables:
     bool isDebugPlacing;
 
+    // Variables específicas de esta escena (no del GameManager)
     SpriteAsset background;
     ImageAsset collision;
-
+    NavGrid navGrid;
     Player player;
-    NPC npc; // Declaración del NPC
-
-    NavGrid navGrid; // tamaño de celda en píxeles
     Pathfinder pathfinder;
 
+    NPC npc; // Declaración del NPC
+
+     // tamaño de celda en píxeles
+    
+
     std::map<std::string, SpriteAsset> objects;
-    sf::Texture slotTex;
+    
     // Inventory inventory; // Removed to use singleton
     std::map<std::string, TextureAsset> items;
     sf::SoundBuffer ocarinaBuffer;
     sf::Sound ocarinaSound;
-    std::optional<Item> draggingItem;
-    int draggingFrom;
+    // draggingItem y draggingFrom ahora están en GameManager singleton
 
 public:
     Screen1();
