@@ -1,4 +1,4 @@
-#include "../Include/GameStates/Dialogue1.hpp"
+/*#include "../Include/GameStates/Dialogue1.hpp"
 #include "../Include/GameStates/MainMenu.hpp"
 #include "../../Include/Core/Game.hpp"
 #include "imgui.h" 
@@ -86,3 +86,4 @@ void Dialogue1::update(sf::Time dt) {
         // Si no hay lógica de actualización, déjalo vacío.
 }
 
+*/

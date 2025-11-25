@@ -1,4 +1,22 @@
+<<<<<<< HEAD
 #include "Classes/PastTree.hpp"
+=======
+#pragma once
+
+#include <map>
+//Patrón de diseño: factory pattern
+
+enum class PastID {
+    PAST0
+};
+
+struct NodePast {
+    PastID id; 
+
+    PastID pastA; 
+    PastID pastB;
+};
+>>>>>>> 7c0b274bcbdc25fe5631c81f31ec93922c775ff8
 
 
 TimeManager::TimeManager() {
@@ -12,6 +30,7 @@ TimeManager::TimeManager() {
         PastID::FUTURO_CYBERPUNK   // Si elige B (Ir al laboratorio)
     };
 
+<<<<<<< HEAD
     // 2. Rama Medieval
     PastTree[PastID::MEDIEVAL_PACIFICO] = {
         PastID::MEDIEVAL_PACIFICO,
@@ -35,3 +54,13 @@ PastID TimeManager::toPast(bool decisionA) {
     }
     return current;
 }
+=======
+public:
+    TimeManager();
+
+    /// @brief Te dice a que pasado vas dependiendo de la decisión
+    /// @param decisionA 
+    /// @return 
+    PastID toPast(bool decisionA);
+};
+>>>>>>> 7c0b274bcbdc25fe5631c81f31ec93922c775ff8

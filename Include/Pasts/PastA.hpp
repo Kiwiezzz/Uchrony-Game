@@ -2,7 +2,7 @@
 
 #include "Classes/Past.hpp"
 
-class Present : public Past
+class Past0 : public Past
 {
 
 };

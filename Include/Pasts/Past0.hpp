@@ -3,7 +3,7 @@
 #include "Classes/Past.hpp"
 #include "Entities/NPC.hpp"
 
-class Present : protected Past
+class Past0 : protected Past
 {
 public:
     /// @brief carga los diferentes rooms
