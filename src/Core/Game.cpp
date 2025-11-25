@@ -114,3 +114,23 @@ void Game::run() {
         window.display();
     }
 }
+
+
+
+GameState* Game::changePastByID(PastID id) {
+    switch (id) {
+        case PastID::INICIO: 
+            return new NivelActualidad(); // Aquí es donde haces el new
+        
+        case PastID::MEDIEVAL_PACIFICO: 
+            return new NivelMedieval(false); // false = no hay guerra
+            
+        case PastID::MEDIEVAL_GUERRA: 
+            return new NivelMedieval(true);  // true = hay guerra
+            
+        case PastID::FUTURO_CYBERPUNK: 
+            return new NivelFuturo();
+            
+        default: return nullptr;
+    }
+}

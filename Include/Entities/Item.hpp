@@ -22,6 +22,7 @@ public:
     Item& operator=(const Item& copy);
 
 private:
+
     int m_id = -1;
     sf::Texture m_texture;
     sf::Sprite m_sprite;

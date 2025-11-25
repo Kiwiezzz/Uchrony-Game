@@ -5,6 +5,7 @@
 
 #include "Core/GameState.hpp"
 #include "GameStates/MainMenu.hpp"
+#include "Classes/TreePasts.hpp"
 
 class Game
 {
@@ -22,6 +23,11 @@ public:
     /// @brief Función para cambiar de nivel desde cualquier lado
     /// @param newScene 
     void changeState(GameState* newState);
+
+    // En Game.cpp
+
+// Esta función recibe un ID (del mapa) y te devuelve el Objeto real (Pesado)
+    GameState* changePastByID(PastID id);
 
     ImFont* getFont() const { return m_Font; }
 

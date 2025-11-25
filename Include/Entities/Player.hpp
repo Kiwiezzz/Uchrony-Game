@@ -21,12 +21,15 @@ const int IDLE_FRAMES = 1;
 class Player {
 public:
     Player();
+    
+    // La función de actualización principal
+    void update(sf::Time dt);
+
+    void render(sf::RenderWindow window);
 
     // Configura la posición inicial y cancela cualquier ruta
     void setPosition(float x, float y);
 
-    // La función de actualización principal
-    void update(sf::Time dt);
 
     // Asigna una nueva ruta al jugador
     void setPath(const std::vector<Point>& gridPath, const NavGrid& grid);
@@ -39,6 +42,13 @@ public:
 
     // Devuelve true si el jugador está siguiendo una ruta
     bool isMoving() const;
+
+    // Atributos de Diálogo del Jugador:
+    std::string id;                // ID único del Jugador (ej: "Guardia_123").
+    std::string dialogueKey;       // CLAVE: Qué diálogo ofrecer.
+    
+    // Para evitar el spam de diálogos:
+    bool m_hasActiveDialogue = false; // TRUE si ya tiene una pila de diálogo abierta.
 
 private:
 

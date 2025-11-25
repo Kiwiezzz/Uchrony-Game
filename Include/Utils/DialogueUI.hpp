@@ -8,24 +8,25 @@
 
 class DialogueUI {
 private:
+    // Necesario para saber si mostrar botón de continuar u opciones.
     DialogType m_type;
     std::string m_speakerName;
     std::string m_dialogueText;
-    bool m_advanceClicked;
+    bool m_advanceClicked = false;
 
 public:
-    DialogueUI();
+    DialogueUI() = default;
 
-    // Dibuja la ventana y el texto de ImGui
-    void render(sf::RenderWindow& window);
+    // Método principal de dibujo
+    // Recibe la secuencia (tope de la pila) y el índice actual.
+    // Retorna la opción elegida o -1 si no hubo elección.
+    void render(DialogueSequence& sequence, int currentLineIndex);
 
-    // Método llamado por el DialogueManager para cambiar el texto
-    void setText(const std::string& speaker, const std::string& text);
-
-    // Método para ser llamado por el DialogueManager en update()
-    bool canAdvance();
-
-    std::vector<std::string> options;
+    void renderLinearText(const DialogLine& line);
     
-    std::vector<int> nextDialogIDs;
+    int renderDecisionPrompt(const std::vector<DialogueSequence::DecisionOption>& options);
+
+    // 2. Método para consultar si el usuario hizo clic en "Continuar"
+    // Reinicia la bandera a 'false' inmediatamente después de consultarla.
+    bool wasAdvanceClicked();
 };

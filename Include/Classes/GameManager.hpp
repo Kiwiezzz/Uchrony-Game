@@ -11,6 +11,7 @@ private:
 
     GameManager(); 
 
+
 public:
     GameManager(const GameManager&) = delete;
     void operator=(const GameManager&) = delete;
