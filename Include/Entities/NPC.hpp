@@ -44,6 +44,14 @@ public:
     sf::Sprite& getSprite();
     Vec2f getPosition() const;
 
+    // Atributos de Diálogo del NPC:
+    std::string id;                // ID único del NPC (ej: "Guardia_123").
+    std::string dialogueKey;       // CLAVE: Qué diálogo ofrecer.
+    bool isInteractive = true;    // ESTADO: Si se permite la interacción con ese NPC.
+    
+    // Para evitar el spam de diálogos:
+    bool m_hasActiveDialogue = false; // TRUE si ya tiene una pila de diálogo abierta.
+
 private:
     void setupAnimations();
     void playWalkAnimation(Vec2f direction);
