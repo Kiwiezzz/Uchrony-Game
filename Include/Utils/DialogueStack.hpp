@@ -5,6 +5,7 @@
 #include <string>
 #include "Utils/Enums.hpp"
 #include "Utils/DialogueSequence.hpp"
+#include "Include/Utils/DialogueUI.hpp"
 
 class DialogueStack {
 private:
@@ -14,9 +15,9 @@ private:
     // Índice actual para secuencias NORMAL
     int currentLineIndex = 0;
     
-    DialogueUI m_ui;
+    DialogueUI ui;
 
-    Game& m_game;
+    Game& game;
 
 public:
     // Métodos de la Pila (Interfaz LIFO)

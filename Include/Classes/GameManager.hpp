@@ -1,17 +1,20 @@
+#include "Classes/TreePasts.hpp"
+#include "Utils/Pathfinder.hpp"
+
 class GameManager {
 private:
     //Atributos
-    /*
-    inventario
-    jugador
+    Inventory inventory;
+    int draggingFrom;
+    /*jugador
     */
     int ejemplo;
-
-    GameManager()
-    {
-        //Pones aquí los val iniciales
-        ejemplo = 1;
-    } 
+    
+    GameManager();
+    
+public:
+    TimeManager timeManager;
+    Pathfinder pathfinder;
 
 public:
     GameManager(const GameManager&) = delete;
