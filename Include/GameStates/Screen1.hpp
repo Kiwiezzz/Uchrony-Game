@@ -42,7 +42,7 @@ private:
 
     std::map<std::string, SpriteAsset> objects;
     sf::Texture slotTex;
-    Inventory inventory;
+    // Inventory inventory; // Removed to use singleton
     std::map<std::string, TextureAsset> items;
     sf::SoundBuffer ocarinaBuffer;
     sf::Sound ocarinaSound;

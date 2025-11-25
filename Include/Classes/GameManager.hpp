@@ -1,17 +1,15 @@
+#include "Entities/Inventory.hpp"
+
 class GameManager {
 private:
     //Atributos
-    /*
-    inventario
-    jugador
+    Inventory inventory;
+    int draggingFrom;
+    /*jugador
     */
     int ejemplo;
 
-    GameManager()
-    {
-        //Pones aquí los val iniciales
-        ejemplo = 1;
-    } 
+    GameManager(); 
 
 public:
     GameManager(const GameManager&) = delete;
@@ -22,7 +20,7 @@ public:
     // Se usa así GameManager::get();
     static GameManager& get();
 
-
+    Inventory& getInventory();
 
     //Funciones publicas para modificar
 

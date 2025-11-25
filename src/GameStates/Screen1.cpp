@@ -1,15 +1,18 @@
 #include "GameStates/Screen1.hpp"
 #include "GameStates/Dialogue1.hpp"
 #include "../Include/Core/Game.hpp"
+#include "Classes/GameManager.hpp"
 
 
 Screen1::Screen1() {
+
     init();
 }
 
 void Screen1::init()    
 {    
     using namespace std;
+    
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -48,13 +51,6 @@ void Screen1::init()
     player.setPosition(400.f, 300.f); //Posicion Inicial
     player.getSprite().setScale(2.0f, 2.0f);
     
-    // Configuración del inventario
-    if (!slotTex.loadFromFile("assets/textures/Inventory.png")) {
-        std::cerr << "Warning: no se cargo assets/textures/Inventory.png" << std::endl;
-    }
-    inventory = Inventory(slotTex, 0, 0, 4, 8.f);
-    inventory.setDisplayScale(0.35f);
-    
     // Añadir items de ejemplo: botella, guitarra, lentes, ocarina
     // Cargar texturas de items
     items["guitarra"] = TextureAsset("assets/textures/Guitarra.png");
@@ -78,22 +74,22 @@ void Screen1::init()
     Item ocarinaItem(4, items["ocarina"].texture);
     ocarinaItem.sprite().setScale(0.1f, 0.1f);
 
-    inventory.insertAt(0, bottleItem);
-    inventory.insertAt(1, guitarItem);
-    inventory.insertAt(2, lentesItem);
-    inventory.insertAt(3, ocarinaItem);
+    GameManager::get().getInventory().insertAt(0, bottleItem);
+    GameManager::get().getInventory().insertAt(1, guitarItem);
+    GameManager::get().getInventory().insertAt(2, lentesItem);
+    GameManager::get().getInventory().insertAt(3, ocarinaItem);
     
-    int draggingFrom;
+    
 
     background.sprite.setScale(1.0f, 1.0f);
     background.sprite.setPosition(0, 0);
 
     mesa.sprite.setPosition(397, 494);
-    mesa.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa.sprite.setOrigin(float(mesa.texture.getSize().x) / 2.f, float(mesa.texture.getSize().y));
     mesa.setlayer(0);
 
-    mesa2.sprite.setPosition(743, 354);
-    mesa2.sprite.setOrigin(mesa.texture.getSize().x / 2.f, mesa.texture.getSize().y);
+    mesa2.sprite.setPosition(673, 284);
+    mesa2.sprite.setOrigin(float(mesa2.texture.getSize().x) / 2.f, float(mesa2.texture.getSize().y));
     mesa2.setlayer(0);
 
     botella.sprite.setPosition(597, 185);
@@ -105,23 +101,16 @@ void Screen1::init()
 
 void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    int random = rand() % 100;
-    if (random < 5 && npc.getState() == NPCState::Idle) {
-        npc.playAction("Posicion_Espalda", 1.0f);
-    }
-    else if (random >= 5 && random < 10 && npc.getState() == NPCState::Idle) {
-        npc.playAction("Posicion_Espalda2", 1.0f);
-    }
-    
     // Eventos de mouse
     // Manejo de click izquierdo: intentamos generar una ruta
     if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                         // CLICK IZQUIERDO: activar evento del item si clicó en UI, o generar ruta en el mundo
                         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-                        int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+
+                        int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
                         if (uiIdx >= 0) {
-                            const Item* it = inventory.itemAt((unsigned)uiIdx);
+                            const Item* it = GameManager::get().getInventory().itemAt((unsigned)uiIdx);
                             if (it) {
                                 it->onClick();
                                 // Si es la ocarina (id == 4) reproducir sonido
@@ -168,9 +157,10 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Right) {
             sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-            int uiIdx = inventory.indexAtScreenPos(mouseWinPos, window);
+
+            int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
             if (uiIdx >= 0) {
-                draggingItem = inventory.pickAt(uiIdx);
+                draggingItem = GameManager::get().getInventory().pickAt(uiIdx);
                 if (draggingItem) draggingFrom = uiIdx;
                 return;
             }
@@ -180,11 +170,11 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
     if (event.type == sf::Event::MouseButtonReleased) {
         if (event.mouseButton.button == sf::Mouse::Right && draggingItem) {
             sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
-            int idx = inventory.indexAtScreenPos(mouseWinPos, window);
+            int idx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
             if (idx >= 0) {
-                inventory.insertAt(idx, *draggingItem);
+                GameManager::get().getInventory().insertAt(idx, *draggingItem);
             } else {
-                inventory.insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : inventory.size(), *draggingItem);
+                GameManager::get().getInventory().insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : GameManager::get().getInventory().size(), *draggingItem);
             }
             draggingItem.reset();
             draggingFrom = -1;
@@ -212,7 +202,7 @@ void Screen1::render(sf::RenderWindow& window)
     std::vector<RenderEntry> renderList;
 
     renderList.push_back({ &player.getSprite(), 0 });
-    //renderList.push_back({ &npc.getSprite(), 0 });
+    renderList.push_back({ &npc.getSprite(), 0 });
 
     // Añadir objetos del mapa usando su campo `layer`
     for (auto& kv : objects) {
@@ -244,10 +234,10 @@ void Screen1::render(sf::RenderWindow& window)
     sf::Vector2u ws = window.getSize();
     float margin = 8.f;
     // Usar la altura de slot ya escalada para posicionar correctamente el inventario
-    inventory.setBasePosition({ margin, float(ws.y) - margin - float(inventory.displaySlotHeight()) });
-    inventory.draw(window);
+    GameManager::get().getInventory().setBasePosition({ margin, float(ws.y) - margin - float(GameManager::get().getInventory().displaySlotHeight()) });
+    GameManager::get().getInventory().draw(window);
 
-    // Dibujar item arrastrado bajo el mouse
+    // Dibujar item arrastrado bajo el mouse (ahora manejado por Inventory::draw)
     if (draggingItem) {
         sf::Vector2i mp = sf::Mouse::getPosition(window);
         // SOLO dibujamos el sprite del item (no el fondo del slot)

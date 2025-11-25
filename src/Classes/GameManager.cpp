@@ -3,7 +3,11 @@
 
 GameManager::GameManager()
 {
-    //Pones aquí los val iniciales1234
+    //~~~~~~~INVENTARIO~~~~~~~
+    inventory.Init("assets/textures/Inventory.png", 0, 0, 4, 8.f);
+    inventory.setDisplayScale(0.35f);
+    
+    //~~~~~~~FIN INVENTARIO~~~~~~~
     ejemplo = 1;
 } 
 
@@ -15,6 +19,10 @@ GameManager& GameManager::get() {
 
 
 //Funciones publicas para modificar
+
+Inventory& GameManager::getInventory() {
+    return inventory;
+}
 
 int GameManager::getEjemplo()
 {
