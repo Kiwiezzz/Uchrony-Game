@@ -28,7 +28,7 @@ enum class MenuAction {
  *
  * @param NORMAL Una simple línea de texto (sin opción).
  * @param CHOICE Muestra opciones al jugador.
- * @param TRIGGER Ejecuta una acción de juego (sin texto).
+ * @param TRIGGER Ejecuta una acción de juego.
  */
 enum class DialogueType {
     NORMAL,

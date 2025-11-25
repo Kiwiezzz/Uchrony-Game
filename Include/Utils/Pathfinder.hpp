@@ -5,6 +5,7 @@
 #include "Utils/Geometry.hpp"
 #include "Utils/NavGrid.hpp"
 
+//Volver singleton
 class Pathfinder {
 private:
     /*
