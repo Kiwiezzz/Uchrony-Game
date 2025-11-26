@@ -136,6 +136,10 @@ void MainMenu::render(sf::RenderWindow& window) {
         ImGui::PopFont(); 
     }
 
+    // Parar la musica
+
+    m_menuMusic.stop();
+
     // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
     this->game->changeState(new Screen1());
 
@@ -206,6 +210,20 @@ void MainMenu::init() {
     }
     
     m_backgroundSprite.setTexture(m_backgroundTexture);
+
+    // 1. Cargar el archivo de música
+    if (!m_menuMusic.openFromFile("assets/sounds/main_menu_music.mp3")) {
+
+        std::cerr << "Error al cargar la música del menú." << std::endl;
+
+    } else {
+        // 2. Configurar la música
+        m_menuMusic.setVolume(50.0f); // 50% de volumen
+        m_menuMusic.setLoop(true);   // Repetir la música indefinidamente
+
+        // 3. Iniciar la reproducción
+        m_menuMusic.play();
+    }
 }
 
 void MainMenu::handleEvent(sf::Event& event, sf::RenderWindow& window) {
