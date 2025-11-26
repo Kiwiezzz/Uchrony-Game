@@ -22,10 +22,15 @@ void MainMenu::render(sf::RenderWindow& window) {
     }
 
     // --- SETUP DE VENTANA (Dimensiones y Posición) ---
-    float menuWidth = 800.0f;
-    float menuHeight = 600.0f;
     float window_width = (float)window.getSize().x;
     float window_height = (float)window.getSize().y;
+    // 1. Definir el TAMAÑO del menú basado en la ventana (Responsive Size)
+    // Por ejemplo: El menú ocupa el 75% del ancho y el 80% de la altura de la ventana.
+    const float MENU_WIDTH_PERCENT = 1.0f;
+    const float MENU_HEIGHT_PERCENT = 1.0f;
+
+    float menuWidth = window_width * MENU_WIDTH_PERCENT;
+    float menuHeight = window_height * MENU_HEIGHT_PERCENT;
 
     // 1. Posicionar la ventana del menú en el centro de la pantalla
     ImGui::SetNextWindowSize(ImVec2(menuWidth, menuHeight));
@@ -43,8 +48,9 @@ void MainMenu::render(sf::RenderWindow& window) {
     ImGui::Begin("Menu", nullptr, flags);
 
     // --- CÁLCULO DE ESCALADO DE LOGO Y CENTRADO DE CONTENIDO ---
-    float buttonWidth = 300.0f;
     float contentWidth = ImGui::GetContentRegionAvail().x;
+    const float buttonPadding = contentWidth * 0.3f; // Espacio que quieres dejar a los lados
+    float buttonWidth = contentWidth - (2.0f * buttonPadding);
     
     float scaledLogoHeight = 0.0f;
     float targetLogoWidth = 0.0f;
@@ -144,25 +150,6 @@ void MainMenu::render(sf::RenderWindow& window) {
         m_lastAction = MenuAction::CREDITS; 
     }
 
-     // Botón Salir
-    ImGui::SetCursorPosX(centerOffsetButtons);
-    if (ImGui::Button("Prueba de Diálogo", ImVec2(buttonWidth, 0))) {
-        m_lastAction = MenuAction::DIALOGUE;
-
-    // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
-    ImGui::End(); 
-
-    // 2. ¡CRÍTICO! LIMPIAR LA PILA DE FUENTES
-    // Esto balancea el ImGui::PushFont() del inicio de render()
-    if (m_customFont) {
-        ImGui::PopFont(); 
-    }
-
-    // 4. Salir: Terminamos la función render() para que no se ejecuten
-    //    las líneas de ImGui::End() y PopFont() de más abajo.
-    return;
-
-    }
 
     ImGui::Spacing(); // Espaciado
 

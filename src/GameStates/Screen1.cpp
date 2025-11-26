@@ -210,7 +210,6 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
         }
         // Si es diálogo normal, avanza la línea
         dialogueStack.advanceLine();
-        std::cout << dialogueStack.getCurrentLineIndex() << std::endl;
     }
 }
 
