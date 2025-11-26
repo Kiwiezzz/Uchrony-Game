@@ -361,11 +361,11 @@ void Past0::render(sf::RenderWindow& window)
     // Restaurar vista previa para dibujar diálogo
     window.setView(prevView);
 
-    if (showDialogue && !dialogueStack.isStackEmpty()) {
+    if (showDialogue && !dialogueStack->isStackEmpty()) {
 
-        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue(); 
 
-        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack.getCurrentLineIndex()); 
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack->getCurrentLineIndex()); 
     }
 }
 
@@ -403,8 +403,8 @@ void Past0::loadDialogs() {
     
     // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
     // El último en entrar (introDialogue) será el primero en ejecutarse.
-    dialogueStack.pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack.pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
-    dialogueStack.pushDialogue(introDialogue);        // Se ejecuta PRIMERO
+    dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
+    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 
 }

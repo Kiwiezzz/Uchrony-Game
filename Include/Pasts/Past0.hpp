@@ -13,6 +13,10 @@
 class Past0 : public Past
 {
 public:
+    // Constructor y destructor
+    Past0() : dialogueStack(nullptr) {}
+    ~Past0() { if (dialogueStack) delete dialogueStack; }
+
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
     void update(sf::Time dt) override;
@@ -20,9 +24,6 @@ public:
     virtual void loadDialogs() override;
 
 private:
-
-    // Constructor por defecto
-    Past0() = default;
 
     std::optional<Item> draggingItem;
     int draggingFrom = -1;
@@ -43,6 +44,6 @@ private:
     // UI de Diálogos
     DialogueUI dialogueUI;
     bool showDialogue = false;
-    // Pila de diálogos
-    DialogueStack dialogueStack;
+    // Pila de diálogos (se inicializa en init() con new)
+    DialogueStack* dialogueStack;
 };
