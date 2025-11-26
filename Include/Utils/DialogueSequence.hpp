@@ -13,7 +13,7 @@ public:
     // Estructura para opciones de decisión (Usado para CHOICE).
     struct choiceOption {
         // Ir al siguiente diálogo
-        std::string nextDialogueLine;
+        std::string optionText;
         // Ir a la siguiente escena
         // La clave aquí: indica a qué SceneID/NodeID debe pasar el juego.
         std::string nextSceneID;

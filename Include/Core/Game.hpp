@@ -14,6 +14,7 @@ private:
     sf::Clock clock;
     GameState* currentState = nullptr;
     ImFont* m_Font = nullptr;
+    sf::Font m_SFMLFont;
 
 public:
     Game();
@@ -26,10 +27,14 @@ public:
 
     // En Game.cpp
 
-// Esta función recibe un ID (del mapa) y te devuelve el Objeto real (Pesado)
+    // Esta función recibe un ID (del mapa) y te devuelve el Objeto real (Pesado)
     GameState* changePastByID(PastID id);
 
     ImFont* getFont() const { return m_Font; }
+
+    const sf::Font& getSFMLFont() const { 
+        return m_SFMLFont; 
+    }
 
     void run();
 

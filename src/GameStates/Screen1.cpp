@@ -278,6 +278,12 @@ void Screen1::render(sf::RenderWindow& window)
     if (showDialogue && !dialogueStack.isStackEmpty()) {
         dialogueUI.render(window, dialogueStack.getCurrentDialogue(), dialogueStack.getCurrentLineIndex()); 
     }
+
+    const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
+    if (currentDialogue.getType() == DialogueType::CHOICE) {
+        // 💡 Renderiza las opciones SOLO si el diálogo es CHOICE:
+        dialogueUI.renderOptions(window, currentDialogue.options, game->getSFMLFont()); 
+    }
 }
 
 void Screen1::loadDialogs(){
@@ -305,12 +311,12 @@ void Screen1::loadDialogs(){
     choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
     
     // 💡 Paso 3: Empuja las secuencias a la pila en orden inverso
-    // El último en entrar es el primero en salir (LIFO), así que si quieres que el Diálogo 1 se ejecute primero,
+    // El último en entrar es el primero en salir (FIFO), así que si quieres que el Diálogo 1 se ejecute primero,
     // empuja primero el Diálogo 2, y luego el Diálogo 1.
     
     // (Ejemplo de orden de ejecución: Diálogo de Elección, luego Diálogo Normal)
     dialogueStack.pushDialogue(choiceDialogue); 
-    dialogueStack.pushDialogue(introDialogue); 
+    dialogueStack.pushDialogue(introDialogue);
 
     // Ahora, `introDialog` está en la cima y será lo último que aparezca.
 

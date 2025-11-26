@@ -35,7 +35,7 @@ public:
     ///@param window Ventana de renderizado.
     ///@param sequence Secuencia de diálogo actual.
     ///@param currentLineIndex Índice de la línea de diálogo actual.
-    void render(const sf::RenderWindow& window, DialogueSequence& sequence, int currentLineIndex);
+    void render(const sf::RenderWindow& window, const DialogueSequence& sequence, int currentLineIndex);
 
     void handleEvent(sf::Event& event, sf::RenderWindow& window);
 
@@ -51,4 +51,7 @@ public:
     // 2. Método para consultar si el usuario hizo clic en "Continuar"
     // Reinicia la bandera a 'false' inmediatamente después de consultarla.
     bool wasAdvanceClicked();
+
+    void renderOptions(sf::RenderWindow& window, const std::vector<DialogueSequence::choiceOption>& options, const sf::Font& font);
+
 };

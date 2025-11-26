@@ -10,7 +10,7 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-void DialogueUI::render(const sf::RenderWindow& window, DialogueSequence& sequence, int currentLineIndex) {
+void DialogueUI::render(const sf::RenderWindow& window, const DialogueSequence& sequence, int currentLineIndex) {
 
     ImFont* fontPtr = nullptr;
 
@@ -119,3 +119,52 @@ bool DialogueUI::wasAdvanceClicked(){
         }
     return false;
 };
+
+void DialogueUI::renderOptions(sf::RenderWindow& window, const std::vector<DialogueSequence::choiceOption>& options, const sf::Font& font) 
+{
+        ImGui::Begin("GameDialogueWindow", nullptr,
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse);
+
+        ImVec2 winPos = ImGui::GetWindowPos();
+        ImVec2 winSize = ImGui::GetWindowSize();
+        
+        // Color Negro (0, 0, 0) con 75% de opacidad (Alpha 191/255)
+        ImU32 semiTransparentBlack = IM_COL32(0, 0, 0, 191); 
+
+        // Dibuja un rectángulo relleno que cubre toda la ventana de diálogo
+        ImGui::GetWindowDrawList()->AddRectFilled(
+            winPos,                                     // Esquina superior izquierda (p_min)
+            ImVec2(winPos.x + winSize.x, winPos.y + winSize.y), // Esquina inferior derecha (p_max)
+            semiTransparentBlack                        // Color y opacidad
+        );
+    float advanceButtonWidth = 200.0f; // Aumentar ancho para que quepa el texto
+    float padding = 10.0f;
+
+    // 💡 IMPORTANTE: Asegúrate de que el ImGui::Begin() de la ventana principal
+    // de diálogo ya se haya llamado en Screen1::render().
+
+    ImGui::Spacing(); 
+    ImGui::Separator();
+    
+    for (size_t i = 0; i < options.size(); ++i) {
+
+        // ✅ USAR SOLO ImGui::Button para la interacción y el dibujo
+        if (ImGui::Button(options[i].optionText.c_str(), ImVec2(advanceButtonWidth, 0))) {
+            // 💡 ESTA ES LA ACCIÓN DE CLICK, la procesaremos en Screen1::handleEvent.
+
+            std::cout << "DEBUG: Clic en Opcion " << i << ": " << options[i].optionText << std::endl;
+            
+            // 🚨 Como no podemos cambiar el estado directamente desde render(), 
+            // la lógica de manejo de clic debe ir en handleEvent().
+            // Usaremos una bandera o un valor de retorno en DialogueUI.
+        }
+    }
+
+    ImGui::End();
+
+}

@@ -44,11 +44,11 @@ public:
     }
     
     // Métodos para el flujo del diálogo actual
-    DialogueSequence& getCurrentDialogue() {
+    const DialogueSequence& getCurrentDialogue() {
         return activeDialogues.top();
     }
 
-    DialogueLine& getCurrentLine() {
+    const DialogueLine& getCurrentLine() {
         return getCurrentDialogue().dialogueLines[currentLineIndex];
     }
 
