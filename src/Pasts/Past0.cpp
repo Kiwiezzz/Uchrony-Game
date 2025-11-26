@@ -15,6 +15,7 @@ void Past0::init()
     // ============================================================
     // Carga de Diálogos
     // ============================================================
+    dialogueUI.setGame(this->game);
     dialogueStack = new DialogueStack(*game);
 
     loadDialogs();

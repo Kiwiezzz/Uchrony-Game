@@ -5,7 +5,7 @@
 
 // --- Inicialización ---
 
-DialogueUI::DialogueUI() : m_advanceClicked(false) {
+DialogueUI::DialogueUI() : game(nullptr), m_advanceClicked(false) {
     // Inicialización de valores por defecto
     m_speakerName = "Narrador";
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
@@ -77,7 +77,9 @@ void DialogueUI::render(sf::RenderWindow& window, const DialogueSequence& sequen
 
     // Si hay opciones, renderizarlas
     if (sequence.getType() == DialogueType::CHOICE) {
-    renderOptions(window, sequence, sequence.options, game->getSFMLFont(), currentLineIndex);
+        if (game) {
+            renderOptions(window, sequence, sequence.options, game->getSFMLFont(), currentLineIndex);
+        }
     } else {
     // Botón de avance solo para diálogos normales
     float advanceButtonWidth = 120.0f;
