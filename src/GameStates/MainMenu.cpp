@@ -212,7 +212,7 @@ void MainMenu::init() {
     m_backgroundSprite.setTexture(m_backgroundTexture);
 
     // 1. Cargar el archivo de música
-    if (!m_menuMusic.openFromFile("assets/sounds/main_menu_music.mp3")) {
+    if (!m_menuMusic.openFromFile("assets/music/main_menu_music.mp3")) {
 
         std::cerr << "Error al cargar la música del menú." << std::endl;
 
