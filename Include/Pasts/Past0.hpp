@@ -24,8 +24,11 @@ private:
     
     bool m_pendingRoomSwitch = false;
     Room* m_pendingNextRoom = nullptr;
-    Room* m_previousRoom = nullptr;  // Para saber de qué habitación venimos
+    Room* m_previousRoom = nullptr;
     Pathfinder pathfinder;
     
+    // Sistema de debug
     bool isDebugPlacing = false;
+    sf::Sprite* debugSprite = nullptr;  // Sprite siendo posicionado
+    std::string debugSpriteName = "";   // Nombre del sprite
 };

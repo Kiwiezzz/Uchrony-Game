@@ -39,13 +39,28 @@ void Past0::init()
     mesa->setlayer(0);  // Layer 0 = detrás del jugador
     secondRoom.addEntity("mesa", mesa);
     
+    // ============================================================
+    // SISTEMA DE DEBUG DE SPRITES
+    // ============================================================
+    // Para posicionar un sprite con el sistema de debug:
+    // 1. Descomenta las siguientes 2 líneas
+    // 2. Compila y ejecuta el juego
+    // 3. Presiona 'D' para activar modo debug
+    // 4. El sprite seguirá al mouse
+    // 5. La consola mostrará las coordenadas en tiempo real
+    // 6. Copia las coordenadas y pégalas en setPosition()
+    // 7. Comenta de nuevo las líneas y recompila
+    //
+    
+    // ============================================================
+    
     ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
-    mesa2->sprite.setPosition(673, 284);
+    mesa2->sprite.setPosition(667, 326);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(0);
     secondRoom.addEntity("mesa2", mesa2);
 
-    ObjectRoom* botella = new ObjectRoom("assets/textures/botella.png");
+    ObjectRoom* botella = new ObjectRoom("assets/textures/Past0/botella.png");
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1);  // Layer 1 = delante del jugador
     secondRoom.addEntity("botella", botella);
@@ -60,7 +75,17 @@ void Past0::init()
     bathroomRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/bath_colision.png");
     bathroomRoom.setGame(this->game);
 
-    // ============================================================
+    ObjectRoom* bathtub = new ObjectRoom("assets/textures/Past0/bathtub.png");
+    bathtub->sprite.setPosition(0, 391);
+    bathtub->setlayer(1);  // Layer 1 = delante del jugador
+    bathroomRoom.addEntity("bathtub", bathtub);
+
+    ObjectRoom* plant = new ObjectRoom("assets/textures/Past0/Plant.png");
+    plant->sprite.setPosition(703, 386);
+    plant->setlayer(1);  // Layer 1 = delante del jugador
+    bathroomRoom.addEntity("plant", plant);
+
+// ============================================================
     // HABITACIÓN 4: PATIO (Yard)
     // ============================================================
     auto& patioRoom = rooms["patio"] = Room();
@@ -80,82 +105,67 @@ void Past0::init()
     garageRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/garage_colision.png");
     garageRoom.setGame(this->game);
 
+    ObjectRoom* capo = new ObjectRoom("assets/textures/Past0/Capo.png");
+    capo->sprite.setPosition(273, 204);
+    capo->setlayer(1);  // Layer 1 = delante del jugador
+    garageRoom.addEntity("capo", capo);
+
+    ObjectRoom* esquina = new ObjectRoom("assets/textures/Past0/Esquina1.png");
+    esquina->sprite.setPosition(26, 254);
+    esquina->setlayer(1);  // Layer 1 = delante del jugador
+    garageRoom.addEntity("esquina", esquina);
+
+    ObjectRoom* esquina2 = new ObjectRoom("assets/textures/Past0/Esquina2.png");
+    esquina2->sprite.setPosition(628, 261);
+    esquina2->setlayer(1);  // Layer 1 = delante del jugador
+    garageRoom.addEntity("esquina2", esquina2);
+
+
+    //debugSprite = &esquina2->sprite;
+    //debugSpriteName = "esquina2";
+
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
     // ============================================================
-    // Los triggers son rectángulos invisibles que activan el cambio de habitación
-    // cuando el jugador hace clic en ellos
-    // Formato: sf::FloatRect(x, y, ancho, alto)
-    
-    // Cuarto: Solo tiene 1 puerta (arriba) que va al laboratorio
     doorTriggers["first"] = sf::FloatRect(477.f, 446.f, 150.f, 120.f);
-    
-    // Laboratorio: Tiene 4 puertas (arriba, derecha, abajo, izquierda)
-    doorTriggers["second_up"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);      // → Cuarto
-    doorTriggers["second_right"] = sf::FloatRect(720.f, 250.f, 80.f, 600.f);  // → Baño
-    doorTriggers["second_down"] = sf::FloatRect(230.f, 520.f, 400.f, 80.f);   // → Patio
-    doorTriggers["second_left"] = sf::FloatRect(0.f, 250.f, 80.f, 600.f);     // → Garage
-    
-    // Cada habitación secundaria tiene 1 puerta de regreso al laboratorio
-    doorTriggers["bathroom"] = sf::FloatRect(0.f, 250.f, 100.f, 300.f);       // Baño → Lab
-    doorTriggers["patio"] = sf::FloatRect(520.f, 100.f, 100.f, 110.f);        // Patio → Lab
-    doorTriggers["garage"] = sf::FloatRect(720.f, 250.f, 80.f, 80.f);         // Garage → Lab
+    doorTriggers["second_up"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);
+    doorTriggers["second_right"] = sf::FloatRect(720.f, 250.f, 80.f, 600.f);
+    doorTriggers["second_down"] = sf::FloatRect(230.f, 520.f, 400.f, 80.f);
+    doorTriggers["second_left"] = sf::FloatRect(0.f, 250.f, 80.f, 600.f);
+    doorTriggers["bathroom"] = sf::FloatRect(0.f, 250.f, 100.f, 300.f);
+    doorTriggers["patio"] = sf::FloatRect(520.f, 100.f, 100.f, 110.f);
+    doorTriggers["garage"] = sf::FloatRect(720.f, 250.f, 80.f, 80.f);
    
-    // Establecer el cuarto como habitación inicial
     currentRoom = &rooms["first"];
     
-    // Configurar posición y escala inicial del jugador
     auto& GM = GameManager::get();
     GM.getPlayer().setPosition(400.f, 300.f);
     GM.getPlayer().getSprite().setScale(2.0f, 2.0f);
 }
 
-/**
- * @brief Maneja todos los eventos de entrada del usuario
- * 
- * Principales funcionalidades:
- * - Detección de clics en puertas para cambiar de habitación
- * - Interacción con items del inventario
- * - Drag & drop de items entre slots del inventario
- * - Modo debug para ajustar posiciones de triggers (tecla D)
- */
 void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    // ============================================================
-    // MODO DEBUG: Activar/desactivar con la tecla D
-    // ============================================================
-    // Cuando está activo, muestra los triggers de puertas como rectángulos rojos
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D) {
-        isDebugPlacing = !isDebugPlacing;
-        std::cout << "Debug mode: " << (isDebugPlacing ? "ON" : "OFF") << std::endl;
+        isDebugPlacing = !isDebugPlacing;        std::cout << "Debug mode: " << (isDebugPlacing ? "ON" : "OFF") << std::endl;
     }
     
-    // ============================================================
-    // MANEJO DE CLICK IZQUIERDO
-    // ============================================================
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
         
-        // --- Prioridad 1: Interacción con inventario ---
         int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
         if (uiIdx >= 0) {
             const Item* it = GameManager::get().getInventory().itemAt((unsigned)uiIdx);
             if (it) it->onClick();
-            return;  // No procesar más eventos si clickeamos el inventario
+            return;
         }
         
-        // --- Prioridad 2: Interacción con puertas (solo si NO estamos en debug) ---
         if (!isDebugPlacing) {
             sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseWinPos);
             
-            // IMPORTANTE: Determinar qué triggers pertenecen a la habitación ACTUAL
-            // Esto evita conflictos cuando dos triggers se solapan en diferentes habitaciones
             std::vector<std::string> currentRoomTriggers;
-            
             if (currentRoom == &rooms["first"]) {
                 currentRoomTriggers.push_back("first");
             } else if (currentRoom == &rooms["second"]) {
-                // El laboratorio tiene 4 puertas diferentes
                 currentRoomTriggers.push_back("second_up");
                 currentRoomTriggers.push_back("second_right");
                 currentRoomTriggers.push_back("second_down");
@@ -168,13 +178,11 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 currentRoomTriggers.push_back("garage");
             }
             
-            // Chequear SOLO los triggers de la habitación actual
             for (const auto& triggerName : currentRoomTriggers) {
                 if (doorTriggers.count(triggerName) && doorTriggers[triggerName].contains(mouseWorldPos)) {
                     Vec2f targetPos(mouseWorldPos.x, mouseWorldPos.y);
                     Room* nextRoomPtr = nullptr;
 
-                    // Definir a qué habitación va cada puerta
                     if (triggerName == "first") nextRoomPtr = &rooms["second"];
                     else if (triggerName == "second_up") nextRoomPtr = &rooms["first"];
                     else if (triggerName == "second_right") nextRoomPtr = &rooms["bathroom"];
@@ -185,13 +193,11 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                     else if (triggerName == "garage") nextRoomPtr = &rooms["second"];
 
                     if (nextRoomPtr) {
-                        // Verificar que el punto clickeado sea caminable
                         auto& navGrid = currentRoom->getNavGrid();
                         Point start = navGrid.worldToGrid(GameManager::get().getPlayer().getPosition());
                         Point end = navGrid.worldToGrid(targetPos);
                         
                         if (navGrid.isWalkable(end)) {
-                            // Calcular ruta desde la posición actual hasta la puerta
                             std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
                             if (!path.empty()) {
                                 GameManager::get().getPlayer().setPath(path, navGrid);
@@ -200,25 +206,17 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                                 std::cout << "Walking to door (" << triggerName << ")..." << std::endl;
                             }
                         }
-                        return;  // Salir después de procesar el trigger
+                        return;
                     }
                 }
             }
 
-            // Si no clickeamos una puerta, cancelar cualquier cambio pendiente
             m_pendingRoomSwitch = false;
             m_pendingNextRoom = nullptr;
-            
-            // Pasar el evento a la habitación para interacciones con objetos
             if (currentRoom) currentRoom->handleEvent(event, window);
         }
     }
 
-    // ============================================================
-    // DRAG & DROP DE ITEMS EN INVENTARIO
-    // ============================================================
-    
-    // --- Iniciar arrastre con click derecho ---
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
         int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
@@ -228,120 +226,76 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         }
     }
 
-    // --- Soltar item al liberar click derecho ---
     if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right && draggingItem) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
         int idx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
-        
         if (idx >= 0) {
-            // Soltar en un slot específico
             GameManager::get().getInventory().insertAt(idx, *draggingItem);
         } else {
-            // Soltar fuera del inventario: devolver al slot original
-            GameManager::get().getInventory().insertAt(
-                draggingFrom >= 0 ? (unsigned)draggingFrom : GameManager::get().getInventory().size(), 
-                *draggingItem
-            );
+            GameManager::get().getInventory().insertAt(draggingFrom >= 0 ? (unsigned)draggingFrom : GameManager::get().getInventory().size(), *draggingItem);
         }
         draggingItem.reset();
         draggingFrom = -1;
     }
 }
 
-/**
- * @brief Actualiza la lógica del juego cada frame
- * 
- * Responsabilidades:
- * - Actualizar la habitación actual (animaciones, NPCs, etc.)
- * - Actualizar el jugador (movimiento, animaciones)
- * - Detectar cuándo el jugador llegó a una puerta y cambiar de habitación
- */
 void Past0::update(sf::Time dt)
 {
     currentRoom->update(dt);
     GameManager::get().getPlayer().update(dt);
 
-    // ============================================================
-    // SISTEMA DE CAMBIO DE HABITACIÓN
-    // ============================================================
-    // Solo cambiar de habitación cuando:
-    // 1. Hay un cambio pendiente (m_pendingRoomSwitch)
-    // 2. El jugador ya NO se está moviendo (llegó a la puerta)
     if (m_pendingRoomSwitch && !GameManager::get().getPlayer().isMoving()) {
         if (m_pendingNextRoom) {
-            // Guardar de qué habitación venimos (para saber en qué puerta aparecer)
             m_previousRoom = currentRoom;
-            
-            // Cambiar a la nueva habitación
             currentRoom = m_pendingNextRoom;
             
-            // ============================================================
-            // POSICIONES DE SPAWN AL ENTRAR A CADA HABITACIÓN
-            // ============================================================
-            
             if (currentRoom == &rooms["first"]) {
-                // Entrando al cuarto desde el laboratorio
                 GameManager::get().getPlayer().setPosition(542.f, 446.f);
-                
             } else if (currentRoom == &rooms["second"]) {
-                // Entrando al laboratorio: depende de dónde venimos
                 if (m_previousRoom == &rooms["first"]) {
-                    // Venimos del cuarto → aparecer en puerta de arriba
                     GameManager::get().getPlayer().setPosition(398.f, 200.f);
                 } else if (m_previousRoom == &rooms["bathroom"]) {
-                    // Venimos del baño → aparecer en puerta derecha
                     GameManager::get().getPlayer().setPosition(680.f, 400.f);
                 } else if (m_previousRoom == &rooms["patio"]) {
-                    // Venimos del patio → aparecer en puerta de abajo
                     GameManager::get().getPlayer().setPosition(400.f, 520.f);
                 } else if (m_previousRoom == &rooms["garage"]) {
-                    // Venimos del garage → aparecer en puerta izquierda
                     GameManager::get().getPlayer().setPosition(120.f, 300.f);
                 }
-                
             } else if (currentRoom == &rooms["bathroom"]) {
-                // Entrando al baño
                 GameManager::get().getPlayer().setPosition(100.f, 450.f);
-                
             } else if (currentRoom == &rooms["patio"]) {
-                // Entrando al patio
                 GameManager::get().getPlayer().setPosition(570.f, 140.f);
-                
             } else if (currentRoom == &rooms["garage"]) {
-                // Entrando al garage
                 GameManager::get().getPlayer().setPosition(700.f, 300.f);
             }
             
             std::cout << "Switched room!" << std::endl;
         }
-        
-        // Resetear el estado de cambio
         m_pendingRoomSwitch = false;
         m_pendingNextRoom = nullptr;
     }
 }
 
-/**
- * @brief Renderiza todo en pantalla
- * 
- * Orden de renderizado:
- * 1. Habitación actual (fondo, objetos, NPCs)
- * 2. Triggers de debug (solo si está activo)
- * 3. Interfaz de usuario (inventario)
- * 4. Item siendo arrastrado
- */
 void Past0::render(sf::RenderWindow& window)
 {
-    // Renderizar la habitación actual
     currentRoom->render(window);
     
     // ============================================================
-    // MODO DEBUG: Visualizar triggers de puertas
+    // SISTEMA DE DEBUG: Mover sprite con el mouse
     // ============================================================
+    if (isDebugPlacing && debugSprite != nullptr) {
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        debugSprite->setPosition(mousePos);
+        
+        // Mostrar coords en consola
+        std::cout << debugSpriteName << "->sprite.setPosition(" 
+                  << mousePos.x << ", " << mousePos.y << ");" << std::endl;
+    }
+    
+    // DEBUG: Visualizar triggers de puertas
     if (isDebugPlacing) {
         std::vector<std::string> currentRoomTriggers;
         
-        // Obtener triggers de la habitación actual
         if (currentRoom == &rooms["first"]) {
             currentRoomTriggers.push_back("first");
         } else if (currentRoom == &rooms["second"]) {
@@ -357,49 +311,26 @@ void Past0::render(sf::RenderWindow& window)
             currentRoomTriggers.push_back("garage");
         }
         
-        // Dibujar cada trigger como un rectángulo rojo semi-transparente
         for (const auto& triggerName : currentRoomTriggers) {
             if (doorTriggers.count(triggerName)) {
                 sf::RectangleShape debugRect;
                 debugRect.setPosition(doorTriggers[triggerName].left, doorTriggers[triggerName].top);
                 debugRect.setSize(sf::Vector2f(doorTriggers[triggerName].width, doorTriggers[triggerName].height));
-                debugRect.setFillColor(sf::Color(255, 0, 0, 80));  // Rojo semi-transparente
+                debugRect.setFillColor(sf::Color(255, 0, 0, 80));
                 debugRect.setOutlineColor(sf::Color::Red);
                 debugRect.setOutlineThickness(2.f);
                 window.draw(debugRect);
             }
         }
-        
-        // Mostrar coordenadas del trigger bajo el mouse
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        for (const auto& triggerName : currentRoomTriggers) {
-            if (doorTriggers.count(triggerName) && doorTriggers[triggerName].contains(mousePos)) {
-                std::cout << "Trigger [" << triggerName << "]: (" 
-                          << doorTriggers[triggerName].left << ", " 
-                          << doorTriggers[triggerName].top << ", " 
-                          << doorTriggers[triggerName].width << ", " 
-                          << doorTriggers[triggerName].height << ")" << std::endl;
-            }
-        }
     }
     
-    // ============================================================
-    // RENDERIZAR INTERFAZ DE USUARIO (UI)
-    // ============================================================
-    // La UI usa la vista por defecto para quedar fija en pantalla
     auto prevView = window.getView();
     window.setView(window.getDefaultView());
-    
-    // Posicionar inventario en la parte inferior de la pantalla
     sf::Vector2u ws = window.getSize();
     float margin = 8.f;
-    GameManager::get().getInventory().setBasePosition({ 
-        margin, 
-        float(ws.y) - margin - float(GameManager::get().getInventory().displaySlotHeight()) 
-    });
+    GameManager::get().getInventory().setBasePosition({ margin, float(ws.y) - margin - float(GameManager::get().getInventory().displaySlotHeight()) });
     GameManager::get().getInventory().draw(window);
 
-    // Dibujar item siendo arrastrado (si existe)
     if (draggingItem) {
         sf::Vector2i mp = sf::Mouse::getPosition(window);
         sf::Sprite s = draggingItem->sprite();
@@ -408,6 +339,5 @@ void Past0::render(sf::RenderWindow& window)
         window.draw(s);
     }
 
-    // Restaurar la vista anterior
     window.setView(prevView);
 }
