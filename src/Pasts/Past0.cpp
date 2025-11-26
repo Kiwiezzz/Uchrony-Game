@@ -15,6 +15,8 @@ void Past0::init()
     // ============================================================
     // Carga de Diálogos
     // ============================================================
+    dialogueStack = new DialogueStack(*game);
+
     loadDialogs();
 
     // ============================================================
@@ -238,9 +240,6 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos)) {
                 std::cout << "Clic en la mesa!" << std::endl;
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
-
-                // CAMBIAR ESTADO A DIALOGO esto borra el estado actual y pone el de dialogo
-                //this->game->changeState(new Dialogue1());
                 showDialogue = true;
         } 
     }
@@ -255,6 +254,29 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         }
         draggingItem.reset();
         draggingFrom = -1;
+    }
+    
+    // Evento al clickar continuar en el diálogo
+    if (dialogueUI.wasAdvanceClicked()) {
+        if (dialogueStack->isStackEmpty()) {
+            showDialogue = false;
+            return;
+        }
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
+        
+        if (currentDialogue.getType() == DialogueType::CHOICE) {
+            // Obtener la opción elegida
+            int chosenIndex = dialogueUI.getChosenOption();
+            if (chosenIndex >= 0) {
+                std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
+                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
+                // Aquí podrías cambiar de escena si nextSceneID no está vacío
+                // Por ahora, el diálogo continuará con el siguiente en el stack
+            }
+            return;
+        }
+        // Si es diálogo normal, avanza la línea
+        dialogueStack->advanceLine();
     }
 }
 
