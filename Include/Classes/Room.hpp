@@ -22,7 +22,7 @@ protected:
     NavGrid navGrid;
 
     unordered_map<string, Entity*> entities;
-    unordered_map<string, NPC*> npcs;
+    unordered_map<string, NPC> npcs;
     
 
 public:

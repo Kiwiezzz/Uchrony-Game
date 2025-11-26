@@ -32,3 +32,9 @@ int GameManager::getEjemplo()
 }
 
 void GameManager::guardarPartida() { /* Lógica */ }
+
+
+Player& GameManager::getPlayer()
+{
+    return player;
+}

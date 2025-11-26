@@ -126,7 +126,7 @@ GameState* Game::newPastByID(PastID id) {
         return new Past0();
     }
     else if (id == "SCREEN_1") {
-        return new Screen1();
+        //return new Screen1();
     }
     // Agrega aquí más escenas según las necesites
     

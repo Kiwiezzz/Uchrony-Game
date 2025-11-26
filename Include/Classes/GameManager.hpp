@@ -1,14 +1,17 @@
 #pragma once
 #include "Entities/Inventory.hpp"
+#include "Entities/Player.hpp"
 
 class GameManager {
 private:
     //Atributos
     Inventory inventory;
     int draggingFrom;
-    /*jugador
-    */
+
+    Player player;
+
     int ejemplo;
+
 
     GameManager(); 
 
@@ -29,4 +32,6 @@ public:
     int getEjemplo();
 
     void guardarPartida();
+
+    Player& getPlayer();
 };
