@@ -24,6 +24,27 @@ void MainMenu::render(sf::RenderWindow& window) {
     // --- SETUP DE VENTANA (Dimensiones y Posición) ---
     float window_width = (float)window.getSize().x;
     float window_height = (float)window.getSize().y;
+    // Tamaño original de la textura de fondo
+    float originalWidth = (float)m_backgroundTexture.getSize().x;
+    float originalHeight = (float)m_backgroundTexture.getSize().y;
+
+    // Opción: Mantiene la proporción y cubre toda la ventana (efecto "Cover")
+    float scaleX = window_width / originalWidth;
+    float scaleY = window_height / originalHeight;
+    float scale = std::max(scaleX, scaleY);
+        
+    // B. APLICAR ESCALA Y CENTRADO A SPRITE DE FONDO
+    m_backgroundSprite.setScale(scale, scale);
+
+    // C. Calcular el desplazamiento para centrar la imagen
+    float offsetX = (window_width - (originalWidth * scale)) * 0.5f;
+    float offsetY = (window_height - (originalHeight * scale)) * 0.5f;
+
+    m_backgroundSprite.setPosition(offsetX, offsetY);
+        
+    // D. DIBUJAR EL SPRITE
+    window.draw(m_backgroundSprite);
+
     // 1. Definir el TAMAÑO del menú basado en la ventana (Responsive Size)
     // Por ejemplo: El menú ocupa el 75% del ancho y el 80% de la altura de la ventana.
     const float MENU_WIDTH_PERCENT = 1.0f;
@@ -43,7 +64,7 @@ void MainMenu::render(sf::RenderWindow& window) {
     ImGuiWindowFlags flags = 
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |      
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |    
-        ImGuiWindowFlags_NoScrollbar;
+        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground;
     
     ImGui::Begin("Menu", nullptr, flags);
 
@@ -178,6 +199,13 @@ void MainMenu::init() {
 
     // Opcional: si quieres el logo más suave
     m_gameLogoTexture.setSmooth(true);
+
+    if (!m_backgroundTexture.loadFromFile("assets/textures/fondo_menu.png")) {
+        // Nota: El escalado lo haremos en la función render
+        std::cerr << "ERROR: No se pudo cargar el fondo 'fondo_menu.png'.\n";
+    }
+    
+    m_backgroundSprite.setTexture(m_backgroundTexture);
 }
 
 void MainMenu::handleEvent(sf::Event& event, sf::RenderWindow& window) {

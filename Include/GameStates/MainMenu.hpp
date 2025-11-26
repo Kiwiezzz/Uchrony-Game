@@ -15,6 +15,10 @@ private:
 
     sf::Texture m_gameLogoTexture;
 
+    sf::Texture m_backgroundTexture;
+
+    sf::Sprite m_backgroundSprite;
+
 public:
     
     void init() override;
