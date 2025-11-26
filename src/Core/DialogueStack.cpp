@@ -20,12 +20,9 @@ void DialogueStack::advanceLine() {
 
         size_t totalLines = currentDialogue.getLines().size();
 
-        std::cout << "Avanzando. Índice anterior: " << currentLineIndex - 1 << std::endl;
         currentLineIndex++;
-        std::cout << "Nuevo índice: " << currentLineIndex << " / Total de líneas: " << totalLines << std::endl;
         
         if (currentLineIndex >= totalLines) {
-        std::cout << "¡Diálogo terminado! POP" << std::endl;
         // La secuencia actual terminó.
         popDialogue(); 
         }
@@ -36,6 +33,25 @@ void DialogueStack::advanceLine() {
 
 // Devuelve el SceneID a donde se debe saltar si se toma una decisión
 std::string DialogueStack::chooseOption(size_t index) {
-    return  "";
-        // ... Lógica para elegir la opción y obtener el nextSceneID
+    if (isStackEmpty()) {
+        return "";
+    }
+    
+    const DialogueSequence& currentDialogue = activeDialogues.top();
+    
+    if (currentDialogue.getType() != DialogueType::CHOICE) {
+        return "";
+    }
+    
+    // Verificar que el índice sea válido
+    if (index >= currentDialogue.options.size()) {
+        return "";
+    }
+    
+    std::string nextSceneID = currentDialogue.options[index].nextSceneID;
+    
+    // Hacer pop del diálogo de elección para continuar con el siguiente
+    popDialogue();
+    
+    return nextSceneID;
 }

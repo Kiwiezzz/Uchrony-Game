@@ -36,6 +36,7 @@ public:
     void popDialogue() {
         if (!activeDialogues.empty()) {
             activeDialogues.pop();
+            currentLineIndex = 0; // Reiniciar el índice al cambiar de secuencia
         }
     }
 

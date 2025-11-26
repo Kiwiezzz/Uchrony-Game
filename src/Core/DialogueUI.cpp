@@ -1,6 +1,7 @@
 #include "Utils/DialogueUI.hpp"
 #include "Utils/Assets.hpp"
 #include <cstdint>
+#include <iostream>
 
 // --- Inicialización ---
 
@@ -10,7 +11,7 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-void DialogueUI::render(const sf::RenderWindow& window, const DialogueSequence& sequence, int currentLineIndex) {
+void DialogueUI::render(sf::RenderWindow& window, const DialogueSequence& sequence, const std::vector<DialogueSequence::choiceOption>& options, const sf::Font& font, int currentLineIndex)  {
 
     ImFont* fontPtr = nullptr;
 
@@ -26,7 +27,7 @@ void DialogueUI::render(const sf::RenderWindow& window, const DialogueSequence& 
     float window_width = static_cast<float>(window.getSize().x);
     float window_height = static_cast<float>(window.getSize().y);
 
-    // Altura fija para la caja de diálogo
+    // Altura fija para evitar cambio brusco
     float dialogHeight = 150.0f;
 
     // Establecer posición y tamaño para la próxima ventana de ImGui
@@ -69,10 +70,16 @@ void DialogueUI::render(const sf::RenderWindow& window, const DialogueSequence& 
 
     ImGui::Separator();
 
-    ImGui::SetCursorPos(ImVec2(16.f, 32.f));
+    // Usar padding horizontal pero dejar que el cursor Y fluya naturalmente
+    ImGui::SetCursorPosX(16.f);
     ImGui::TextWrapped("%s", m_dialogueText.c_str());
+    ImGui::Spacing();
 
-    // Botón de avance alineado a la derecha
+    // Si hay opciones, renderizarlas
+    if (sequence.getType() == DialogueType::CHOICE) {
+    renderOptions(window, sequence, sequence.options, game->getSFMLFont(), currentLineIndex);
+    } else {
+    // Botón de avance solo para diálogos normales
     float advanceButtonWidth = 120.0f;
     float padding = 10.0f;
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - advanceButtonWidth - padding);
@@ -80,9 +87,11 @@ void DialogueUI::render(const sf::RenderWindow& window, const DialogueSequence& 
     if (ImGui::Button("Continuar >", ImVec2(advanceButtonWidth, 0))) {
         m_advanceClicked = true;
     }
+    }
 
-    ImGui::End();
+    ImGui::End(); // <-- Este End() cierra la única ventana
 
+    // Pop the font AFTER ending the window
     if (fontPtr) {
         ImGui::PopFont();
     }
@@ -120,51 +129,31 @@ bool DialogueUI::wasAdvanceClicked(){
     return false;
 };
 
-void DialogueUI::renderOptions(sf::RenderWindow& window, const std::vector<DialogueSequence::choiceOption>& options, const sf::Font& font) 
+int DialogueUI::getChosenOption(){
+    int result = m_chosenOptionIndex;
+    m_chosenOptionIndex = -1; // Resetear después de leer
+    return result;
+}
+
+void DialogueUI::renderOptions(sf::RenderWindow& window, const DialogueSequence& sequence, const std::vector<DialogueSequence::choiceOption>& options, const sf::Font& font, int currentLineIndex) 
 {
-        ImGui::Begin("GameDialogueWindow", nullptr,
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoScrollWithMouse);
-
-        ImVec2 winPos = ImGui::GetWindowPos();
-        ImVec2 winSize = ImGui::GetWindowSize();
-        
-        // Color Negro (0, 0, 0) con 75% de opacidad (Alpha 191/255)
-        ImU32 semiTransparentBlack = IM_COL32(0, 0, 0, 191); 
-
-        // Dibuja un rectángulo relleno que cubre toda la ventana de diálogo
-        ImGui::GetWindowDrawList()->AddRectFilled(
-            winPos,                                     // Esquina superior izquierda (p_min)
-            ImVec2(winPos.x + winSize.x, winPos.y + winSize.y), // Esquina inferior derecha (p_max)
-            semiTransparentBlack                        // Color y opacidad
-        );
-    float advanceButtonWidth = 200.0f; // Aumentar ancho para que quepa el texto
-    float padding = 10.0f;
-
-    // 💡 IMPORTANTE: Asegúrate de que el ImGui::Begin() de la ventana principal
-    // de diálogo ya se haya llamado en Screen1::render().
-
-    ImGui::Spacing(); 
-    ImGui::Separator();
-    
-    for (size_t i = 0; i < options.size(); ++i) {
-
-        // ✅ USAR SOLO ImGui::Button para la interacción y el dibujo
-        if (ImGui::Button(options[i].optionText.c_str(), ImVec2(advanceButtonWidth, 0))) {
-            // 💡 ESTA ES LA ACCIÓN DE CLICK, la procesaremos en Screen1::handleEvent.
-
-            std::cout << "DEBUG: Clic en Opcion " << i << ": " << options[i].optionText << std::endl;
+    const DialogueLine& currentLine = sequence.getLines()[currentLineIndex];
             
-            // 🚨 Como no podemos cambiar el estado directamente desde render(), 
-            // la lógica de manejo de clic debe ir en handleEvent().
-            // Usaremos una bandera o un valor de retorno en DialogueUI.
+        float availableWidth = ImGui::GetContentRegionAvail().x;
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        
+        for (size_t i = 0; i < options.size(); ++i) {
+            ImGui::PushID(i); 
+            
+            if (ImGui::Button(options[i].optionText.c_str(), ImVec2(availableWidth, 0))) {
+                m_chosenOptionIndex = static_cast<int>(i);
+                m_advanceClicked = true;
+            }
+            
+            ImGui::PopID(); 
+            ImGui::Spacing();
         }
-    }
-
-    ImGui::End();
-
 }

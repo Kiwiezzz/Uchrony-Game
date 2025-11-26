@@ -196,9 +196,14 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
         const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue();
 
         if (currentDialogue.getType() == DialogueType::CHOICE) {
-            // Aquí NO se llama advanceLine().
-            // Se espera una entrada para elegir una opción (ej: tecla 1, 2, 3), 
-            // que llamaría a dialogueStack.chooseOption(index).
+            // Obtener la opción elegida
+            int chosenIndex = dialogueUI.getChosenOption();
+            if (chosenIndex >= 0) {
+                std::string nextSceneID = dialogueStack.chooseOption(chosenIndex);
+                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
+                // Aquí podrías cambiar de escena si nextSceneID no está vacío
+                // Por ahora, el diálogo continuará con el siguiente en el stack
+            }
             return;
         }
         // Si es diálogo normal, avanza la línea
@@ -276,14 +281,12 @@ void Screen1::render(sf::RenderWindow& window)
     window.setView(prevView);
 
     if (showDialogue && !dialogueStack.isStackEmpty()) {
-        dialogueUI.render(window, dialogueStack.getCurrentDialogue(), dialogueStack.getCurrentLineIndex()); 
+
+        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
+
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack.getCurrentLineIndex()); 
     }
 
-    const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
-    if (currentDialogue.getType() == DialogueType::CHOICE) {
-        // 💡 Renderiza las opciones SOLO si el diálogo es CHOICE:
-        dialogueUI.renderOptions(window, currentDialogue.options, game->getSFMLFont()); 
-    }
 }
 
 void Screen1::loadDialogs(){
@@ -294,7 +297,6 @@ void Screen1::loadDialogs(){
     DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
     DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
     
-    // 💡 Paso 2: Crea las secuencias de diálogos.
     // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
     DialogueSequence introDialogue(DialogueType::NORMAL);
     introDialogue.dialogueLines.emplace_back(line1);
@@ -304,21 +306,25 @@ void Screen1::loadDialogs(){
     
     // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
-    choiceDialogue.dialogueLines.emplace_back("Narrador", "A donde irás?", "id_retrato_heroe");
     
-    // Define las opciones de la elección
+    // ✅ CORRECCIÓN: Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
+    DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
+    choiceDialogue.dialogueLines.push_back(questionLine);
+    
+    // Define las opciones de la elección (este formato push_back está bien)
     choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
     choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
     
-    // 💡 Paso 3: Empuja las secuencias a la pila en orden inverso
-    // El último en entrar es el primero en salir (FIFO), así que si quieres que el Diálogo 1 se ejecute primero,
-    // empuja primero el Diálogo 2, y luego el Diálogo 1.
+    // --- Secuencia 3: Diálogo después de la elección
+    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
+    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
+    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
+    afterChoiceDialogue.dialogueLines.push_back(line5);
+    afterChoiceDialogue.dialogueLines.push_back(line6);
     
-    // (Ejemplo de orden de ejecución: Diálogo de Elección, luego Diálogo Normal)
-    dialogueStack.pushDialogue(choiceDialogue); 
-    dialogueStack.pushDialogue(introDialogue);
-
-    // Ahora, `introDialog` está en la cima y será lo último que aparezca.
-
+    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
+    // El último en entrar (introDialogue) será el primero en ejecutarse.
+    dialogueStack.pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
+    dialogueStack.pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack.pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 }
-
