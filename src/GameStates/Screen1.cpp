@@ -1,18 +1,22 @@
 #include "GameStates/Screen1.hpp"
-#include "GameStates/Dialogue1.hpp"
 #include "../Include/Core/Game.hpp"
-#include "Classes/GameManager.hpp"
+#include "../Include/Classes/GameManager.hpp"
+#include "../Include/Utils/DialogueSequence.hpp"
 
-
-Screen1::Screen1() {
-
+Screen1::Screen1(): dialogueStack(*game) {
     init();
+    // Carga inicial de todas las secuencias de diálogo en la pila (LIFO).
+    // Se realiza aquí para garantizar que la pila se llene solo una vez.
+    loadDialogs();
 }
 
 void Screen1::init()    
 {    
     using namespace std;
     
+    // Inicialización de variables y carga de recursos de dialogo
+    dialogueUI.init();
+    dialogueUI.setGame(this->game);
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -128,7 +132,10 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
                 std::cout << "Clic en la mesa!" << std::endl;
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
-                this->game->changeState(new Dialogue1());
+
+                // CAMBIAR ESTADO A DIALOGO esto borra el estado actual y pone el de dialogo
+                //this->game->changeState(new Dialogue1());
+                showDialogue = true;
             } 
             else 
             {
@@ -179,6 +186,30 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
             draggingItem.reset();
             draggingFrom = -1;
         }
+    }
+
+    // Evento al clickar continuar en el diálogo
+
+    if(dialogueUI.wasAdvanceClicked()){
+        if(dialogueStack.isStackEmpty()){
+            showDialogue = false;
+            return;
+        }
+        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue();
+
+        if (currentDialogue.getType() == DialogueType::CHOICE) {
+            // Obtener la opción elegida
+            int chosenIndex = dialogueUI.getChosenOption();
+            if (chosenIndex >= 0) {
+                std::string nextSceneID = dialogueStack.chooseOption(chosenIndex);
+                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
+                // Aquí podrías cambiar de escena si nextSceneID no está vacío
+                // Por ahora, el diálogo continuará con el siguiente en el stack
+            }
+            return;
+        }
+        // Si es diálogo normal, avanza la línea
+        dialogueStack.advanceLine();
     }
 }
 
@@ -247,5 +278,54 @@ void Screen1::render(sf::RenderWindow& window)
         window.draw(s);
     }
 
+    // Restaurar vista previa para dibujar diálogo
     window.setView(prevView);
+
+    if (showDialogue && !dialogueStack.isStackEmpty()) {
+
+        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
+
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack.getCurrentLineIndex()); 
+    }
+
+}
+
+void Screen1::loadDialogs(){
+
+    // 💡 Paso 1: Crea y puebla los DialogueLine.
+    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
+    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
+    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
+    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
+    
+    // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
+    DialogueSequence introDialogue(DialogueType::NORMAL);
+    introDialogue.dialogueLines.emplace_back(line1);
+    introDialogue.dialogueLines.emplace_back(line2);
+    introDialogue.dialogueLines.emplace_back(line3);
+    introDialogue.dialogueLines.emplace_back(line4);
+    
+    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    DialogueSequence choiceDialogue(DialogueType::CHOICE);
+    
+    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
+    DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
+    choiceDialogue.dialogueLines.push_back(questionLine);
+    
+    // Define las opciones de la elección (este formato push_back está bien)
+    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
+    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
+    
+    // --- Secuencia 3: Diálogo después de la elección
+    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
+    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
+    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
+    afterChoiceDialogue.dialogueLines.push_back(line5);
+    afterChoiceDialogue.dialogueLines.push_back(line6);
+    
+    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
+    // El último en entrar (introDialogue) será el primero en ejecutarse.
+    dialogueStack.pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
+    dialogueStack.pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack.pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 }

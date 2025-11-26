@@ -1,4 +1,6 @@
 #pragma once
+#include "Classes/PastTree.hpp"
+#include "Utils/Pathfinder.hpp"
 #include "Entities/Inventory.hpp"
 #include "Entities/Player.hpp"
 
@@ -11,12 +13,13 @@ private:
     Player player;
 
     int ejemplo;
-
-
-    GameManager(); 
-
-
+    
+    GameManager();
+    
 public:
+    TimeManager timeManager;
+    Pathfinder pathfinder;
+
     GameManager(const GameManager&) = delete;
     void operator=(const GameManager&) = delete;
 
@@ -26,7 +29,7 @@ public:
     static GameManager& get();
 
     Inventory& getInventory();
-
+    
     //Funciones publicas para modificar
 
     int getEjemplo();

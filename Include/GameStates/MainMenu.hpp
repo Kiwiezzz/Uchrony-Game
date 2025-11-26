@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/GameState.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "imgui-SFML.h"
 #include "imgui.h"
 #include "../Include/Utils/Enums.hpp"
@@ -15,6 +16,12 @@ private:
 
     sf::Texture m_gameLogoTexture;
 
+    sf::Texture m_backgroundTexture;
+
+    sf::Sprite m_backgroundSprite;
+
+    sf::Music m_menuMusic;
+
 public:
     
     void init() override;
@@ -25,4 +32,5 @@ public:
 
     void render(sf::RenderWindow& window) override;
 
+    void loadDialogs() override;
 };

@@ -14,6 +14,7 @@ private:
     sf::Clock clock;
     GameState* currentState = nullptr;
     ImFont* m_Font = nullptr;
+    sf::Font m_SFMLFont;
 
 public:
     Game();
@@ -30,6 +31,10 @@ public:
     GameState* newPastByID(PastID id);
 
     ImFont* getFont() const { return m_Font; }
+
+    const sf::Font& getSFMLFont() const { 
+        return m_SFMLFont; 
+    }
 
     void run();
 

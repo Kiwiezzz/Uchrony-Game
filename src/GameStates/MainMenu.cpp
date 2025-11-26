@@ -3,9 +3,12 @@
 #include "imgui.h" 
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
-#include "../../Include/Core/Game.hpp"
-#include "../../Include/Pasts/Past0.hpp"
-#include "../../Include/GameStates/Dialogue1.hpp"
+#include "Pasts/Past0.hpp"
+#include "GameStates/Dialogue1.hpp"
+#include "Core/Game.hpp"
+#include "GameStates/Screen1.hpp"
+#include "Utils/DialogueUI.hpp"
+#include "Utils/Assets.hpp"
 
 void MainMenu::render(sf::RenderWindow& window) {
     
@@ -21,10 +24,36 @@ void MainMenu::render(sf::RenderWindow& window) {
     }
 
     // --- SETUP DE VENTANA (Dimensiones y Posición) ---
-    float menuWidth = 800.0f;
-    float menuHeight = 600.0f;
     float window_width = (float)window.getSize().x;
     float window_height = (float)window.getSize().y;
+    // Tamaño original de la textura de fondo
+    float originalWidth = (float)m_backgroundTexture.getSize().x;
+    float originalHeight = (float)m_backgroundTexture.getSize().y;
+
+    // Opción: Mantiene la proporción y cubre toda la ventana (efecto "Cover")
+    float scaleX = window_width / originalWidth;
+    float scaleY = window_height / originalHeight;
+    float scale = std::max(scaleX, scaleY);
+        
+    // B. APLICAR ESCALA Y CENTRADO A SPRITE DE FONDO
+    m_backgroundSprite.setScale(scale, scale);
+
+    // C. Calcular el desplazamiento para centrar la imagen
+    float offsetX = (window_width - (originalWidth * scale)) * 0.5f;
+    float offsetY = (window_height - (originalHeight * scale)) * 0.5f;
+
+    m_backgroundSprite.setPosition(offsetX, offsetY);
+        
+    // D. DIBUJAR EL SPRITE
+    window.draw(m_backgroundSprite);
+
+    // 1. Definir el TAMAÑO del menú basado en la ventana (Responsive Size)
+    // Por ejemplo: El menú ocupa el 75% del ancho y el 80% de la altura de la ventana.
+    const float MENU_WIDTH_PERCENT = 1.0f;
+    const float MENU_HEIGHT_PERCENT = 1.0f;
+
+    float menuWidth = window_width * MENU_WIDTH_PERCENT;
+    float menuHeight = window_height * MENU_HEIGHT_PERCENT;
 
     // 1. Posicionar la ventana del menú en el centro de la pantalla
     ImGui::SetNextWindowSize(ImVec2(menuWidth, menuHeight));
@@ -37,13 +66,14 @@ void MainMenu::render(sf::RenderWindow& window) {
     ImGuiWindowFlags flags = 
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |      
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |    
-        ImGuiWindowFlags_NoScrollbar;
+        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground;
     
     ImGui::Begin("Menu", nullptr, flags);
 
     // --- CÁLCULO DE ESCALADO DE LOGO Y CENTRADO DE CONTENIDO ---
-    float buttonWidth = 300.0f;
     float contentWidth = ImGui::GetContentRegionAvail().x;
+    const float buttonPadding = contentWidth * 0.3f; // Espacio que quieres dejar a los lados
+    float buttonWidth = contentWidth - (2.0f * buttonPadding);
     
     float scaledLogoHeight = 0.0f;
     float targetLogoWidth = 0.0f;
@@ -108,6 +138,10 @@ void MainMenu::render(sf::RenderWindow& window) {
         ImGui::PopFont(); 
     }
 
+    // Parar la musica
+
+    m_menuMusic.stop();
+
     // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
     this->game->changeState(new Past0());
 
@@ -143,28 +177,6 @@ void MainMenu::render(sf::RenderWindow& window) {
         m_lastAction = MenuAction::CREDITS; 
     }
 
-     // Botón Salir
-    ImGui::SetCursorPosX(centerOffsetButtons);
-    if (ImGui::Button("Prueba de Diálogo", ImVec2(buttonWidth, 0))) {
-        m_lastAction = MenuAction::DIALOGUE; 
-
-    // 1. CERRAR LA VENTANA DE IMGUI INICIADA CON ImGui::Begin()
-    ImGui::End(); 
-
-    // 2. ¡CRÍTICO! LIMPIAR LA PILA DE FUENTES
-    // Esto balancea el ImGui::PushFont() del inicio de render()
-    if (m_customFont) {
-        ImGui::PopFont(); 
-    }
-
-    // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new Dialogue1());
-
-    // 4. Salir: Terminamos la función render() para que no se ejecuten
-    //    las líneas de ImGui::End() y PopFont() de más abajo.
-    return;
-
-    }
 
     ImGui::Spacing(); // Espaciado
 
@@ -174,7 +186,7 @@ void MainMenu::render(sf::RenderWindow& window) {
         m_lastAction = MenuAction::QUIT; 
         this->game->getWindow().close();
     }
-    
+
     ImGui::End(); 
 
     if (m_customFont) {
@@ -193,6 +205,27 @@ void MainMenu::init() {
 
     // Opcional: si quieres el logo más suave
     m_gameLogoTexture.setSmooth(true);
+
+    if (!m_backgroundTexture.loadFromFile("assets/textures/fondo_menu.png")) {
+        // Nota: El escalado lo haremos en la función render
+        std::cerr << "ERROR: No se pudo cargar el fondo 'fondo_menu.png'.\n";
+    }
+    
+    m_backgroundSprite.setTexture(m_backgroundTexture);
+
+    // 1. Cargar el archivo de música
+    if (!m_menuMusic.openFromFile("assets/music/main_menu_music.mp3")) {
+
+        std::cerr << "Error al cargar la música del menú." << std::endl;
+
+    } else {
+        // 2. Configurar la música
+        m_menuMusic.setVolume(50.0f); // 50% de volumen
+        m_menuMusic.setLoop(true);   // Repetir la música indefinidamente
+
+        // 3. Iniciar la reproducción
+        m_menuMusic.play();
+    }
 }
 
 void MainMenu::handleEvent(sf::Event& event, sf::RenderWindow& window) {
@@ -202,6 +235,8 @@ void MainMenu::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 void MainMenu::update(sf::Time dt) {
     // Si el menú no tiene lógica de animación o temporizador, déjalo vacío.
 }
+
+void MainMenu::loadDialogs() {}
 
 //MenuAction getAction() const { return m_lastAction; /* to do */}
 

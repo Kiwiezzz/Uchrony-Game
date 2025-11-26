@@ -39,6 +39,13 @@ Game::Game() {
         std::cerr << "ERROR: No se pudo cargar la fuente. Verifica la ruta.\n";
     }
 
+    if (!m_SFMLFont.loadFromFile("assets/textures/fonts/StackSansHeadline-Medium.ttf")) {
+        // Si el archivo no se encuentra o no se puede cargar:
+        std::cerr << "ERROR FATAL: No se pudo cargar la fuente de SFML. Verifica la ruta." << std::endl;
+        // Detener el programa para evitar el Segmentation Fault
+        exit(EXIT_FAILURE); 
+    }
+
     window.setFramerateLimit(60);
     currentState = nullptr;
 }

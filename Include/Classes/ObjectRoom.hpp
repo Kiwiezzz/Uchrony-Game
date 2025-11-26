@@ -11,11 +11,11 @@ public:
     ObjectRoom(const Entity& entityCopy);
 
     // Solo declaramos las funciones, sin el cuerpo "{}" y sin "ObjectRoom::"
-    void init();
+    void init() override;
     
     // NOTA: Entity suele pedir handleInput por referencia (sf::Event& event)
     // pero lo dejo como lo pusiste (por valor) por si acaso.
-    void handleEvent(sf::Event event); 
+    void handleEvent(sf::Event event) override; 
 
     void update(sf::Time dt) override;
     

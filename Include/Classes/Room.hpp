@@ -37,6 +37,7 @@ protected:
 
 
 public:
+
     void init();
 
     void handleEvent(sf::Event& event, sf::RenderWindow& window);
@@ -44,8 +45,6 @@ public:
     void update(sf::Time dt);
 
     void render(sf::RenderWindow& window);
-
-
 
     void setBackground(std::string path);
 

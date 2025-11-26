@@ -30,6 +30,7 @@ struct SpriteAsset {
         path(spriteAsset.path), texture(spriteAsset.texture), sprite(this->texture)
     {}
 
+    // Función para cambiar la ruta y actualizar la textura y el sprite
     void new_path_and_update(const std::string& newPath)
     {   
         path = newPath;
