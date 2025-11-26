@@ -1,13 +1,11 @@
-#include "GameStates/MainMenu.hpp"
+#include "../Include/GameStates/MainMenu.hpp"
 #include <iostream> 
-#include "imgui.h"
+#include "imgui.h" 
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
-#include "Core/Game.hpp"
-#include "GameStates/Screen1.hpp"
-#include "GameStates/Dialogue1.hpp"
-
-#include "Pasts/Past0.hpp"
+#include "../../Include/Core/Game.hpp"
+#include "../../Include/Pasts/Past0.hpp"
+#include "../../Include/GameStates/Dialogue1.hpp"
 
 void MainMenu::render(sf::RenderWindow& window) {
     

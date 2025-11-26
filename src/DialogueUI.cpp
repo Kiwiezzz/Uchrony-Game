@@ -1,23 +1,34 @@
-#include "../Include/GameStates/Dialogue1.hpp"
-#include "../Include/GameStates/MainMenu.hpp"
-#include "../../Include/Core/Game.hpp"
-#include "imgui.h" 
-#include "imgui-SFML.h"
-#include <SFML/Graphics.hpp>
+// src/Utils/DialogueUI.cpp
 
-void Dialogue1::render(sf::RenderWindow& window) {
+#include "Utils/DialogueUI.hpp"
 
-    // Usar la fuente
+// --- Inicialización ---
 
-    ImFont* fontPtr;
+DialogueUI::DialogueUI() : m_advanceClicked(false) {
+    // Inicialización de valores por defecto
+    m_speakerName = "Narrador";
+    m_dialogueText = "¡Bienvenido a Uchrony Game!";
+}
 
-    if (this->game != nullptr) {     // Verificamos que el jefe exista
-        fontPtr = this->game->getFont(); // Le pedimos la fuente
-    }
+// --- Métodos de Control de Datos ---
 
-    if (fontPtr) {
-        ImGui::PushFont(fontPtr); 
-    }
+void DialogueUI::setText(const std::string& speaker, const std::string& text) {
+    m_speakerName = speaker;
+    m_dialogueText = text;
+    // Reiniciamos el flag de avance
+    m_advanceClicked = false;
+}
+
+bool DialogueUI::canAdvance() {
+    // Retorna el estado del clic y luego lo reinicia
+    bool result = m_advanceClicked;
+    m_advanceClicked = false; 
+    return result;
+}
+
+// --- Renderizado con ImGui ---
+
+void DialogueUI::render(sf::RenderWindow& window) {
     
     // 1. Calcular la posición y tamaño de la ventana de diálogo (parte inferior)
     float window_width = (float)window.getSize().x;
@@ -64,25 +75,4 @@ void Dialogue1::render(sf::RenderWindow& window) {
     }
 
     ImGui::End();
-
-    if (fontPtr) {
-        ImGui::PopFont();
-    }
 }
-
-void Dialogue1::init() {
-    // Variables iniciales de diálogo
-    m_type = DialogueType::NORMAL;
-    m_speakerName = "John Barr";
-    m_dialogueText = "La mesa está vacía, busca en otro sitio.";
-    m_advanceClicked = false;
-}
-
-void Dialogue1::handleEvent(sf::Event& event, sf::RenderWindow& window) {
-        // Si no procesas eventos, déjalo vacío.
-}
-
-void Dialogue1::update(sf::Time dt) {
-        // Si no hay lógica de actualización, déjalo vacío.
-}
-
