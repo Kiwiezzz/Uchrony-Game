@@ -72,3 +72,11 @@ void Animator::updateTextureRect() {
     
     m_sprite->setTextureRect(sf::IntRect(left, top, m_frameWidth, m_frameHeight));
 }
+
+void Animator::setSprite(sf::Sprite& sprite) {
+    m_sprite = &sprite;
+    // Actualizar el texture rect si hay una animación activa
+    if (m_currentAnimation != nullptr) {
+        updateTextureRect();
+    }
+}

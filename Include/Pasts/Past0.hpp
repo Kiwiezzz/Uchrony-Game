@@ -5,6 +5,9 @@
 #include "Classes/Past.hpp"
 #include "Entities/NPC.hpp"
 #include "Classes/GameManager.hpp"
+#include "Entities/Item.hpp"
+#include <memory>
+#include <optional>
 
 class Past0 : public Past //:GameState
 {
@@ -21,4 +24,14 @@ public:
     void update(sf::Time dt) override;
 
     void render(sf::RenderWindow& window) override;
+
+private:
+    // Variables para drag & drop de items en inventario
+    std::optional<Item> draggingItem;
+    int draggingFrom = -1;
+
+    sf::FloatRect doorTrigger;
+    
+    bool m_pendingRoomSwitch = false;
+    Pathfinder pathfinder;
 };

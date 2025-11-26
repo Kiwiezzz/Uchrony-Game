@@ -25,7 +25,7 @@ public:
     // La función de actualización principal
     void update(sf::Time dt);
 
-    void render(sf::RenderWindow window);
+    void render(sf::RenderWindow& window);
 
     // Configura la posición inicial y cancela cualquier ruta
     void setPosition(float x, float y);

@@ -44,6 +44,9 @@ public:
     sf::Sprite& getSprite();
     Vec2f getPosition() const;
 
+    // Método para reconectar el Animator con el sprite después de copiar el NPC
+    void updateAnimatorSprite();
+
     // Atributos de Diálogo del NPC:
     std::string id;                // ID único del NPC (ej: "Guardia_123").
     std::string dialogueKey;       // CLAVE: Qué diálogo ofrecer.

@@ -5,7 +5,7 @@
 #include <vector>
 
 void NPC::init(std::string path, Vec2f position, bool walkable) {
-    m_animator = Animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT);
+    // Primero inicializamos variables básicas
     m_speed = NPC_SPEED;
     m_isMoving = false;
     m_walkable = walkable;
@@ -14,16 +14,27 @@ void NPC::init(std::string path, Vec2f position, bool walkable) {
     m_state = NPCState::Idle;
     m_stateTimer = 0.f;
 
+    // Cargar la textura ANTES de inicializar el Animator
     if (!m_texture.loadFromFile(path)) {
-        std::cerr << "Error: No se pudo cargar el sprite del NPC" << path << std::endl;
+        std::cerr << "Error: No se pudo cargar el sprite del NPC: " << path << std::endl;
     }
 
+    // Asignar la textura al sprite
     m_sprite.setTexture(m_texture);
     m_sprite.setOrigin(NPC_FRAME_WIDTH / 2.f, NPC_FRAME_HEIGHT);
 
+    // Inicializar el Animator con las dimensiones de frame
+    m_animator = Animator(m_sprite, NPC_FRAME_WIDTH, NPC_FRAME_HEIGHT);
+    
+    // IMPORTANTE: Actualizar explícitamente el puntero del sprite en el Animator
+    // Esto es necesario porque el operador de asignación puede no copiar correctamente el puntero
+    m_animator.setSprite(m_sprite);
+
+    // Configurar y reproducir animaciones
     setupAnimations();
     m_animator.play("idle_down");
     m_currentAnimation = "idle_down";
+    m_animator.update(sf::Time::Zero); // Aplicar frame inicial inmediatamente
 
     setPosition(position.x, position.y);
 }
@@ -152,6 +163,20 @@ sf::Sprite& NPC::getSprite() {
 
 Vec2f NPC::getPosition() const {
     return m_position;
+}
+
+void NPC::updateAnimatorSprite() {
+    // CRÍTICO: Después de copiar el NPC, el sprite de la copia 
+    // todavía apunta a la textura del NPC original.
+    // Necesitamos reconectar el sprite con SU PROPIA textura (la copiada)
+    m_sprite.setTexture(m_texture);
+    m_sprite.setOrigin(NPC_FRAME_WIDTH / 2.f, NPC_FRAME_HEIGHT);
+    
+    // Luego reconectar el Animator con el sprite actualizado
+    m_animator.setSprite(m_sprite);
+
+    // Asegurar que el sprite tenga el frame correcto aplicado inmediatamente
+    m_animator.update(sf::Time::Zero);
 }
 
 void NPC::setupAnimations() {

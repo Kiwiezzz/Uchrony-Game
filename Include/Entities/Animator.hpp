@@ -33,6 +33,9 @@ public:
     /* Avanza la animación en función del tiempo transcurrido */
     void update(sf::Time dt);
 
+    /* Actualiza la referencia al sprite */
+    void setSprite(sf::Sprite& sprite);
+
 private:
     // Helper interno
     void updateTextureRect();

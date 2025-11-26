@@ -5,20 +5,24 @@
 
 
 Player::Player()
-    : m_animator(m_sprite, PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT),
-      m_speed(PLAYER_SPEED),
+    : m_speed(PLAYER_SPEED),
       m_isMoving(false),
       m_lastDirection(ROW_P_IDLE_DOWN),
       m_currentIndex(0)
 {
-    // Cargar textura del jugador
+    // Cargar textura del jugador PRIMERO
     if (!m_texture.loadFromFile("assets/textures/player_spritesheet.png")) {
         std::cerr << "Error: No se pudo cargar player_spritesheet.png" << std::endl;
     }
 
+    // Asignar textura al sprite
     m_sprite.setTexture(m_texture);
     // Origen del sprite para que la posición se refiera al pie del personaje
     m_sprite.setOrigin(PLAYER_FRAME_WIDTH / 2.f, PLAYER_FRAME_HEIGHT);
+
+    // AHORA inicializar el Animator con el sprite que ya tiene textura
+    m_animator = Animator(m_sprite, PLAYER_FRAME_WIDTH, PLAYER_FRAME_HEIGHT);
+    m_animator.setSprite(m_sprite); // Asegurar que el puntero esté correcto
 
     // Registrar animaciones (walk/idle para 4 direcciones)
     setupAnimations();
@@ -89,6 +93,10 @@ void Player::update(sf::Time dt) {
     // Actualiza la posición del sprite y la animación
     m_sprite.setPosition(m_position.x, m_position.y);
     m_animator.update(dt);
+}
+
+void Player::render(sf::RenderWindow& window) {
+    window.draw(m_sprite);
 }
 
 // setPath
