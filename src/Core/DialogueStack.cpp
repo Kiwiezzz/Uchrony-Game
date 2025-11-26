@@ -26,7 +26,7 @@ void DialogueStack::advanceLine() {
         // La secuencia actual terminó.
         popDialogue(); 
         }
-        
+
     }
 
 }
