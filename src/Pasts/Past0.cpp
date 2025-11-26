@@ -168,7 +168,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             return;
         }
         
-        if (!isDebugPlacing) {
+        if (!isDebugPlacing && !showDialogue) {
             sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseWinPos);
             
             std::vector<std::string> currentRoomTriggers;
@@ -236,6 +236,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
     }
     // Eventos de presionar botón izquierdo
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+        if (showDialogue) return;
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
         if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos)) {
@@ -271,13 +272,19 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (chosenIndex >= 0) {
                 std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
                 std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                // Aquí podrías cambiar de escena si nextSceneID no está vacío
-                // Por ahora, el diálogo continuará con el siguiente en el stack
+                
+                if (dialogueStack->isStackEmpty()) {
+                    showDialogue = false;
+                }
             }
             return;
         }
         // Si es diálogo normal, avanza la línea
         dialogueStack->advanceLine();
+
+        if (dialogueStack->isStackEmpty()) {
+            showDialogue = false;
+        }
     }
 }
 
