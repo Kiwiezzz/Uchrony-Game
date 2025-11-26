@@ -22,6 +22,8 @@
 #include "Utils/Collision.hpp"
 #include "Entities/Inventory.hpp"
 #include "Utils/DialogueUI.hpp"
+#include "Utils/DialogueStack.hpp"
+
 
 class Screen1 : public GameState {
 private:
@@ -53,6 +55,8 @@ private:
     // Diálogo UI
     DialogueUI dialogueUI;
     bool showDialogue = false;
+    // Pila de diálogos
+    DialogueStack dialogueStack;
 
 public:
     Screen1();
@@ -64,5 +68,7 @@ public:
     void update(sf::Time dt) override;
     
     void render(sf::RenderWindow& window) override;
+
+    void loadDialogs() override;
 
 };

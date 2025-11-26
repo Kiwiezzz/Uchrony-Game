@@ -10,9 +10,7 @@ DialogueUI::DialogueUI() : m_advanceClicked(false) {
     m_dialogueText = "¡Bienvenido a Uchrony Game!";
 }
 
-// QUEDE POR AQUI
-
-void DialogueUI::render(const sf::RenderWindow& window) {
+void DialogueUI::render(const sf::RenderWindow& window, DialogueSequence& sequence, int currentLineIndex) {
 
     ImFont* fontPtr = nullptr;
 
@@ -59,6 +57,10 @@ void DialogueUI::render(const sf::RenderWindow& window) {
         );
 
     // Contenido del diálogo (texto encima del fondo)
+
+    const DialogueLine& currentLine = sequence.getLines()[currentLineIndex];
+    m_speakerName = currentLine.getSpeakerName();
+    m_dialogueText = currentLine.getDialogueText();
     
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.95f, 0.95f, 0.95f, 1.0f));
     ImGui::SetCursorPos(ImVec2(16.f, 8.f));
@@ -88,9 +90,9 @@ void DialogueUI::render(const sf::RenderWindow& window) {
 
 void DialogueUI::init() {
     // Variables iniciales de diálogo
-    m_type = DialogueType::NORMAL;
-    m_speakerName = "John Barr";
-    m_dialogueText = "La mesa está vacía, busca en otro sitio.";
+    //m_type = DialogueType::NORMAL;
+    //m_speakerName = "John Barr";
+    //m_dialogueText = "La mesa está vacía, busca en otro sitio.";
     m_advanceClicked = false;
 
     // para que ImGui no tenga bordes redondeados ni transparencia
@@ -110,4 +112,10 @@ void DialogueUI::renderLinearText(const DialogueLine& line){ };
     
 int DialogueUI::renderDecisionPrompt(const std::vector<DialogueSequence::choiceOption>& options){ return -1; };
 
-bool DialogueUI::wasAdvanceClicked(){ return false; };
+bool DialogueUI::wasAdvanceClicked(){
+    if (m_advanceClicked) {
+            m_advanceClicked = false; // CONSUMIR EL CLICK AQUÍ
+            return true;
+        }
+    return false;
+};

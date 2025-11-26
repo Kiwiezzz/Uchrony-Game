@@ -201,6 +201,8 @@ void MainMenu::update(sf::Time dt) {
     // Si el menú no tiene lógica de animación o temporizador, déjalo vacío.
 }
 
+void MainMenu::loadDialogs() {}
+
 //MenuAction getAction() const { return m_lastAction; /* to do */}
 
 //void setCustomFont(ImFont* fontPtr) { m_customFont = fontPtr; /* to do */}

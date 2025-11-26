@@ -20,15 +20,19 @@ public:
 
     /// @brief Se encarga de manejar los eventos (inputs) que suceden.
     /// Es para cambiar cosas por voluntad del jugador.
+    /// @param event El evento a gestionar.
+    /// @param window La ventana donde se dibuja.
     virtual void handleEvent(sf::Event& event, sf::RenderWindow& window) = 0;
 
-    /// @brief Es para actualizar cosas automaticamente
-    /// Es para cambiar cosas por el paso de tiempo
-    /// @param dt 
+    /// @brief Sirve para actualizar cosas automáticamente
+    /// Es para cambiar cosas por el paso de tiempo (involuntatiamente).
+    /// @param dt El tiempo transcurrido desde la última actualización.
     virtual void update(sf::Time dt) = 0;
 
-    /// @brief Es para dibujar esas cosas en la ventana
-    /// @param window 
+    /// @brief Sirve para dibujar todo en las escenas.
+    /// @param window La ventana donde se dibuja.
     virtual void render(sf::RenderWindow& window) = 0;
 
+    /// @brief Sirve para cargar todos los diálogos de la escena.
+    virtual void loadDialogs() = 0;
 };

@@ -1,8 +1,9 @@
 #include "GameStates/Screen1.hpp"
 #include "../Include/Core/Game.hpp"
 #include "../Include/Classes/GameManager.hpp"
+#include "../Include/Utils/DialogueSequence.hpp"
 
-Screen1::Screen1() {
+Screen1::Screen1(): dialogueStack(*game) {
     init();
 }
 
@@ -13,6 +14,7 @@ void Screen1::init()
     // Inicialización de variables y carga de recursos de dialogo
     dialogueUI.init();
     dialogueUI.setGame(this->game);
+    loadDialogs();
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -183,6 +185,26 @@ void Screen1::handleEvent(sf::Event& event, sf::RenderWindow& window)
             draggingFrom = -1;
         }
     }
+
+    // Evento al clickar continuar en el diálogo
+
+    if(dialogueUI.wasAdvanceClicked()){
+        if(dialogueStack.isStackEmpty()){
+            showDialogue = false;
+            return;
+        }
+        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue();
+
+        if (currentDialogue.getType() == DialogueType::CHOICE) {
+            // Aquí NO se llama advanceLine().
+            // Se espera una entrada para elegir una opción (ej: tecla 1, 2, 3), 
+            // que llamaría a dialogueStack.chooseOption(index).
+            return;
+        }
+        // Si es diálogo normal, avanza la línea
+        dialogueStack.advanceLine();
+        std::cout << dialogueStack.getCurrentLineIndex() << std::endl;
+    }
 }
 
 void Screen1::update(sf::Time dt)
@@ -253,7 +275,44 @@ void Screen1::render(sf::RenderWindow& window)
     // Restaurar vista previa para dibujar diálogo
     window.setView(prevView);
 
-    if (showDialogue) {
-        dialogueUI.render(window); 
+    if (showDialogue && !dialogueStack.isStackEmpty()) {
+        dialogueUI.render(window, dialogueStack.getCurrentDialogue(), dialogueStack.getCurrentLineIndex()); 
     }
 }
+
+void Screen1::loadDialogs(){
+
+    // 💡 Paso 1: Crea y puebla los DialogueLine.
+    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
+    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
+    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
+    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
+    
+    // 💡 Paso 2: Crea las secuencias de diálogos.
+    // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
+    DialogueSequence introDialogue(DialogueType::NORMAL);
+    introDialogue.dialogueLines.emplace_back(line1);
+    introDialogue.dialogueLines.emplace_back(line2);
+    introDialogue.dialogueLines.emplace_back(line3);
+    introDialogue.dialogueLines.emplace_back(line4);
+    
+    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    DialogueSequence choiceDialogue(DialogueType::CHOICE);
+    choiceDialogue.dialogueLines.emplace_back("Narrador", "A donde irás?", "id_retrato_heroe");
+    
+    // Define las opciones de la elección
+    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
+    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
+    
+    // 💡 Paso 3: Empuja las secuencias a la pila en orden inverso
+    // El último en entrar es el primero en salir (LIFO), así que si quieres que el Diálogo 1 se ejecute primero,
+    // empuja primero el Diálogo 2, y luego el Diálogo 1.
+    
+    // (Ejemplo de orden de ejecución: Diálogo de Elección, luego Diálogo Normal)
+    dialogueStack.pushDialogue(choiceDialogue); 
+    dialogueStack.pushDialogue(introDialogue); 
+
+    // Ahora, `introDialog` está en la cima y será lo último que aparezca.
+
+}
+

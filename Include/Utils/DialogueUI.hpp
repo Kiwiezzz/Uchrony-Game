@@ -30,10 +30,12 @@ public:
     void setGame(Game* gamePtr) {
         this->game = gamePtr;
     }
-    // DEBE SER ASI
-    //void render(DialogueSequence& sequence, int currentLineIndex);
 
-    void render(const sf::RenderWindow& window);
+    ///@brief Método principal de renderizado de la UI de diálogo.
+    ///@param window Ventana de renderizado.
+    ///@param sequence Secuencia de diálogo actual.
+    ///@param currentLineIndex Índice de la línea de diálogo actual.
+    void render(const sf::RenderWindow& window, DialogueSequence& sequence, int currentLineIndex);
 
     void handleEvent(sf::Event& event, sf::RenderWindow& window);
 

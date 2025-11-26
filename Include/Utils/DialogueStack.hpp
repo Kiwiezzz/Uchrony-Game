@@ -11,9 +11,9 @@
 class DialogueStack {
 private:
     // La pila para gestionar el orden de los diálogos
-    std::stack<DialogueSequence> activeDialogs;
+    std::stack<DialogueSequence> activeDialogues;
     
-    // Índice actual para secuencias NORMAL
+    // Índice actual para secuencia NORMAL
     int currentLineIndex = 0;
     
     DialogueUI ui;
@@ -21,30 +21,39 @@ private:
     Game& game;
 
 public:
-    DialogueStack(Game& game) : game(game) {}
+
+    // Constructor
+    DialogueStack(Game& g) : game(g) {  
+        // El cuerpo del constructor puede estar vacío si no hay más lógica
+    }
 
     // Métodos de la Pila (Interfaz LIFO)
-    void pushDialog(const DialogueSequence& dialog) {
-        activeDialogs.push(dialog);
+    void pushDialogue(const DialogueSequence& dialogue) {
+        activeDialogues.push(dialogue);
         currentLineIndex = 0; // Reiniciar índice al empezar una nueva secuencia
     }
 
-    // Elimina el diálogo tope de la pila
-    void popDialog() {
-        if (!activeDialogs.empty()) {
-            activeDialogs.pop();
+    void popDialogue() {
+        if (!activeDialogues.empty()) {
+            activeDialogues.pop();
         }
     }
 
-    // Consulta si la pila está vacía
     bool isStackEmpty() const {
-        return activeDialogs.empty();
+        return activeDialogues.empty();
     }
     
     // Métodos para el flujo del diálogo actual
-    const DialogueSequence& getCurrentDialog() const {
-        // Asume que la pila no está vacía antes de llamar
-        return activeDialogs.top();
+    DialogueSequence& getCurrentDialogue() {
+        return activeDialogues.top();
+    }
+
+    DialogueLine& getCurrentLine() {
+        return getCurrentDialogue().dialogueLines[currentLineIndex];
+    }
+
+    int getCurrentLineIndex() {
+        return currentLineIndex;
     }
     
     // Avanza la línea si es NORMAL, o llama a popDialog si termina.
