@@ -130,7 +130,7 @@ GameState* Game::newPastByID(PastID id) {
     // Sistema antiguo: cada escena tiene su propia clase
     
     if (id == "PAST_0_ROOM_1") {
-        return new Past0();
+        //return new Past0();
     }
     else if (id == "SCREEN_1") {
         //return new Screen1();

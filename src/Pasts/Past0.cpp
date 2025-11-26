@@ -1,5 +1,6 @@
 #include "Pasts/Past0.hpp"
 #include <iostream>
+#include "../Include/Utils/DialogueSequence.hpp"
 
 /**
  * @brief Inicializa todas las habitaciones (rooms) del Past0
@@ -11,6 +12,11 @@
  */
 void Past0::init()
 {
+    // ============================================================
+    // Carga de Diálogos
+    // ============================================================
+    loadDialogs();
+
     // ============================================================
     // HABITACIÓN 1: CUARTO (Bedroom)
     // ============================================================
@@ -225,6 +231,19 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (draggingItem) draggingFrom = uiIdx;
         }
     }
+    // Eventos de presionar botón izquierdo
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+        sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
+
+        if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos)) {
+                std::cout << "Clic en la mesa!" << std::endl;
+                // Tocar la mesa desencadena el evento de un cuadro de diálogo
+
+                // CAMBIAR ESTADO A DIALOGO esto borra el estado actual y pone el de dialogo
+                //this->game->changeState(new Dialogue1());
+                showDialogue = true;
+        } 
+    }
 
     if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right && draggingItem) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
@@ -339,5 +358,53 @@ void Past0::render(sf::RenderWindow& window)
         window.draw(s);
     }
 
+    // Restaurar vista previa para dibujar diálogo
     window.setView(prevView);
+
+    if (showDialogue && !dialogueStack.isStackEmpty()) {
+
+        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
+
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack.getCurrentLineIndex()); 
+    }
+}
+
+void Past0::loadDialogs() {
+    // 💡 Paso 1: Crea y puebla los DialogueLine.
+    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
+    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
+    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
+    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
+    
+    // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
+    DialogueSequence introDialogue(DialogueType::NORMAL);
+    introDialogue.dialogueLines.emplace_back(line1);
+    introDialogue.dialogueLines.emplace_back(line2);
+    introDialogue.dialogueLines.emplace_back(line3);
+    introDialogue.dialogueLines.emplace_back(line4);
+    
+    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    DialogueSequence choiceDialogue(DialogueType::CHOICE);
+    
+    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
+    DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
+    choiceDialogue.dialogueLines.push_back(questionLine);
+    
+    // Define las opciones de la elección (este formato push_back está bien)
+    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
+    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
+    
+    // --- Secuencia 3: Diálogo después de la elección
+    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
+    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
+    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
+    afterChoiceDialogue.dialogueLines.push_back(line5);
+    afterChoiceDialogue.dialogueLines.push_back(line6);
+    
+    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
+    // El último en entrar (introDialogue) será el primero en ejecutarse.
+    dialogueStack.pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
+    dialogueStack.pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack.pushDialogue(introDialogue);        // Se ejecuta PRIMERO
+
 }
