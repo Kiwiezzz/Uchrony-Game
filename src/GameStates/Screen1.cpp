@@ -5,6 +5,9 @@
 
 Screen1::Screen1(): dialogueStack(*game) {
     init();
+    // Carga inicial de todas las secuencias de diálogo en la pila (LIFO).
+    // Se realiza aquí para garantizar que la pila se llene solo una vez.
+    loadDialogs();
 }
 
 void Screen1::init()    
@@ -14,7 +17,6 @@ void Screen1::init()
     // Inicialización de variables y carga de recursos de dialogo
     dialogueUI.init();
     dialogueUI.setGame(this->game);
-    loadDialogs();
     
     background = SpriteAsset("assets/textures/suelo.png"),
     collision = ImageAsset("assets/textures/escenario_colision.png"),
@@ -307,7 +309,7 @@ void Screen1::loadDialogs(){
     // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
     
-    // ✅ CORRECCIÓN: Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
+    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
     DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
     choiceDialogue.dialogueLines.push_back(questionLine);
     

@@ -1,12 +1,13 @@
 #include <stack>
 #include <unordered_map>
+#include <iostream>
 #include "Utils/DialogueStack.hpp"
 #include "Utils/DialogueSequence.hpp"
 #include "Utils/Enums.hpp"
   
 // Avanza la línea si es NORMAL, o llama a popDialog si termina.
 void DialogueStack::advanceLine() {
-        // ... Lógica para avanzar currentLineIndex si es NORMAL
+    // ... Lógica para avanzar currentLineIndex si es NORMAL
     if (isStackEmpty()) {
         // No hay nada que avanzar.
         return;
@@ -23,16 +24,15 @@ void DialogueStack::advanceLine() {
         currentLineIndex++;
         
         if (currentLineIndex >= totalLines) {
-        // La secuencia actual terminó.
-        popDialogue(); 
+            // La secuencia actual terminó.
+            popDialogue();
         }
-
     }
-
 }
 
 // Devuelve el SceneID a donde se debe saltar si se toma una decisión
 std::string DialogueStack::chooseOption(size_t index) {
+    
     if (isStackEmpty()) {
         return "";
     }

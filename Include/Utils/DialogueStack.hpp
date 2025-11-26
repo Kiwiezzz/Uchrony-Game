@@ -44,6 +44,10 @@ public:
         return activeDialogues.empty();
     }
     
+    size_t getStackSize() const {
+        return activeDialogues.size();
+    }
+    
     // Métodos para el flujo del diálogo actual
     const DialogueSequence& getCurrentDialogue() {
         return activeDialogues.top();
