@@ -1,8 +1,7 @@
 #include "Classes/GameManager.hpp"
 
 
-GameManager::GameManager() :
-    player()
+GameManager::GameManager()
 {
     //~~~~~~~INVENTARIO~~~~~~~
     inventory.Init("assets/textures/Inventory.png", 0, 0, 4, 8.f);

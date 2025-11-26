@@ -1,3 +1,4 @@
+#pragma once
 #include "Entities/Inventory.hpp"
 
 class GameManager {

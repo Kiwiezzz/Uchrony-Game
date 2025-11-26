@@ -4,7 +4,7 @@
 
 #include "Classes/Past.hpp"
 #include "Entities/NPC.hpp"
-#include "GameManager.hpp"
+#include "Classes/GameManager.hpp"
 
 class Past0 : public Past //:GameState
 {
