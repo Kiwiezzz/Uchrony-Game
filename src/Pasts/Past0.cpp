@@ -300,7 +300,7 @@ void Past0::update(sf::Time dt)
                 } else if (m_previousRoom == &rooms["patio"]) {
                     GameManager::get().getPlayer().setPosition(400.f, 520.f);
                 } else if (m_previousRoom == &rooms["garage"]) {
-                    GameManager::get().getPlayer().setPosition(120.f, 300.f);
+                    GameManager::get().getPlayer().setPosition(120.f, 450.f);
                 }
             } else if (currentRoom == &rooms["bathroom"]) {
                 GameManager::get().getPlayer().setPosition(100.f, 450.f);
