@@ -18,7 +18,7 @@ public:
     
     void draw(sf::RenderWindow& window) const;
     
-
+    bool hasItem(int id);
 
     unsigned capacity() const;
     unsigned size() const;

@@ -58,6 +58,13 @@ std::optional<Item> Inventory::pickAt(unsigned index) {
 	return copy;
 }
 
+bool Inventory::hasItem(int id) {
+    for (const auto& item : m_items) {
+        if (item.id() == id) return true;
+    }
+    return false;
+}
+
 void Inventory::removeAt(unsigned index) {
 	if (index >= m_items.size()) return;
 	auto it = m_items.begin();
