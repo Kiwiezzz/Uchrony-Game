@@ -472,6 +472,7 @@ void Past0::update(sf::Time dt)
 
 void Past0::render(sf::RenderWindow& window)
 {
+    window.clear();
     currentRoom->render(window);
     
     auto prevView = window.getView();
