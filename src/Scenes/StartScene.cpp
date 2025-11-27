@@ -133,31 +133,52 @@ void StartScene::render(sf::RenderWindow& window) {
 
 void StartScene::loadDialogs() {
 
-    // 💡 Paso 1: Crea y puebla los DialogueLine.
-    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
-    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
-    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
-    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
-    
-    // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
-    DialogueSequence introDialogue(DialogueType::NORMAL);
-    introDialogue.dialogueLines.emplace_back(line1);
-    introDialogue.dialogueLines.emplace_back(line2);
-    introDialogue.dialogueLines.emplace_back(line3);
-    introDialogue.dialogueLines.emplace_back(line4);
-    
-    // --- Secuencia 3: Diálogo después de la elección
-    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
-    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
-    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
-    afterChoiceDialogue.dialogueLines.push_back(line5);
-    afterChoiceDialogue.dialogueLines.push_back(line6);
-    
-    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
-    // El último en entrar (introDialogue) será el primero en ejecutarse.
-    dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
+    // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
+    const std::string ID_JOHN = "John_Barr_Neutral";
+    const std::string ID_WIFE_PORTRAIT = "Wife_Portrait_Focus"; // Retrato de la esposa
 
-};
+    // ============================================================
+    // 💡 Paso 1: Crea y puebla los DialogueLine (Diálogo del Retrato).
+    // ============================================================
 
-void StartScene::loadNeighborDialogs() {};*/
+    // Líneas de John Barr (Monólogo)
+    DialogueLine line1("John Barr", "...", ID_JOHN); // Pausa inicial
+    DialogueLine line2("Narrador", "John mira fijamente el retrato sobre la repisa. Es una mujer joven, sonriendo.", ID_WIFE_PORTRAIT);
+    DialogueLine line3("John Barr", "Esta mujer... Sé que la conozco. Su rostro... me causa una punzada.", ID_JOHN);
+    DialogueLine line4("John Barr", "Pero, ¿Quién es? Mi mente es un lienzo en blanco. Un nombre, un recuerdo... nada.", ID_JOHN);
+    DialogueLine line5("Narrador", "El recuerdo es una sombra escurridiza, pero la sensación de pérdida es real.", ID_WIFE_PORTRAIT);
+    DialogueLine line6("Narrador", "Un escalofrío recorre su espalda al darse cuenta de la soledad que lo rodea.", ID_JOHN);
+    
+    // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
+    DialogueSequence portraitDialogue(DialogueType::NORMAL);
+    portraitDialogue.dialogueLines.emplace_back(line1);
+    portraitDialogue.dialogueLines.emplace_back(line2);
+    portraitDialogue.dialogueLines.emplace_back(line3);
+    portraitDialogue.dialogueLines.emplace_back(line4);
+    portraitDialogue.dialogueLines.emplace_back(line5);
+    portraitDialogue.dialogueLines.emplace_back(line6);
+    
+    // ============================================================
+    // 💡 Paso 2: Crear el Diálogo de Transición (El misterio).
+    // ============================================================
+
+    // Líneas de transición
+    DialogueLine line8("Narrador", "De repente, un ruido metálico sordo proviene de la cochera.", "id_narrador");
+    DialogueLine line9("John Barr", "Un momento... ¿Qué fue eso? Tendré que averiguarlo...", ID_JOHN);
+    
+    DialogueSequence noiseDialogue(DialogueType::NORMAL);
+    noiseDialogue.dialogueLines.emplace_back(line8);
+    noiseDialogue.dialogueLines.emplace_back(line9);
+
+    // ============================================================
+    // 💡 Paso 3: Empuja las secuencias a la pila (El último en entrar es el primero en ejecutarse).
+    // ============================================================
+    
+    // El juego ejecutará primero noiseDialogue, y luego portraitDialogue.
+    
+    dialogueStack->pushDialogue(noiseDialogue);      // Se ejecuta SEGUNDO (Lo que lo saca de la habitación)
+    dialogueStack->pushDialogue(portraitDialogue);   // Se ejecuta PRIMERO (El monólogo del retrato)
+
+}
+
+void StartScene::loadNeighborDialogs() {};
