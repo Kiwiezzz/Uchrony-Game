@@ -48,21 +48,6 @@ void Past0::init()
     mesa->setlayer(0);  // Layer 0 = detrás del jugador
     secondRoom.addEntity("mesa", mesa);
     
-    // ============================================================
-    // SISTEMA DE DEBUG DE SPRITES
-    // ============================================================
-    // Para posicionar un sprite con el sistema de debug:
-    // 1. Descomenta las siguientes 2 líneas
-    // 2. Compila y ejecuta el juego
-    // 3. Presiona 'D' para activar modo debug
-    // 4. El sprite seguirá al mouse
-    // 5. La consola mostrará las coordenadas en tiempo real
-    // 6. Copia las coordenadas y pégalas en setPosition()
-    // 7. Comenta de nuevo las líneas y recompila
-    //
-    
-    // ============================================================
-    
     ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(667, 326);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
@@ -129,10 +114,6 @@ void Past0::init()
     esquina2->setlayer(1);  // Layer 1 = delante del jugador
     garageRoom.addEntity("esquina2", esquina2);
 
-
-    //debugSprite = &esquina2->sprite;
-    //debugSpriteName = "esquina2";
-
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
     // ============================================================
@@ -154,9 +135,6 @@ void Past0::init()
 
 void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D) {
-        isDebugPlacing = !isDebugPlacing;        std::cout << "Debug mode: " << (isDebugPlacing ? "ON" : "OFF") << std::endl;
-    }
     
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
@@ -168,7 +146,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             return;
         }
         
-        if (!isDebugPlacing && !showDialogue) {
+        if (!showDialogue) {
             sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseWinPos);
             
             std::vector<std::string> currentRoomTriggers;
@@ -212,7 +190,6 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                                 GameManager::get().getPlayer().setPath(path, navGrid);
                                 m_pendingRoomSwitch = true;
                                 m_pendingNextRoom = nextRoomPtr;
-                                std::cout << "Walking to door (" << triggerName << ")..." << std::endl;
                             }
                         }
                         return;
@@ -239,7 +216,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         if (showDialogue) return;
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
-        if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos)) {
+        if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["second"]) {
                 std::cout << "Clic en la mesa!" << std::endl;
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
                 showDialogue = true;
@@ -317,8 +294,6 @@ void Past0::update(sf::Time dt)
             } else if (currentRoom == &rooms["garage"]) {
                 GameManager::get().getPlayer().setPosition(700.f, 300.f);
             }
-            
-            std::cout << "Switched room!" << std::endl;
         }
         m_pendingRoomSwitch = false;
         m_pendingNextRoom = nullptr;
@@ -329,49 +304,34 @@ void Past0::render(sf::RenderWindow& window)
 {
     currentRoom->render(window);
     
-    // ============================================================
-    // SISTEMA DE DEBUG: Mover sprite con el mouse
-    // ============================================================
-    if (isDebugPlacing && debugSprite != nullptr) {
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        debugSprite->setPosition(mousePos);
+    /*std::vector<std::string> currentRoomTriggers;
         
-        // Mostrar coords en consola
-        std::cout << debugSpriteName << "->sprite.setPosition(" 
-                  << mousePos.x << ", " << mousePos.y << ");" << std::endl;
+    if (currentRoom == &rooms["first"]) {
+        currentRoomTriggers.push_back("first");
+    } else if (currentRoom == &rooms["second"]) {
+        currentRoomTriggers.push_back("second_up");
+        currentRoomTriggers.push_back("second_right");
+        currentRoomTriggers.push_back("second_down");
+        currentRoomTriggers.push_back("second_left");
+    } else if (currentRoom == &rooms["bathroom"]) {
+        currentRoomTriggers.push_back("bathroom");
+    } else if (currentRoom == &rooms["patio"]) {
+        currentRoomTriggers.push_back("patio");
+    } else if (currentRoom == &rooms["garage"]) {
+        currentRoomTriggers.push_back("garage");
     }
-    
-    // DEBUG: Visualizar triggers de puertas
-    if (isDebugPlacing) {
-        std::vector<std::string> currentRoomTriggers;
         
-        if (currentRoom == &rooms["first"]) {
-            currentRoomTriggers.push_back("first");
-        } else if (currentRoom == &rooms["second"]) {
-            currentRoomTriggers.push_back("second_up");
-            currentRoomTriggers.push_back("second_right");
-            currentRoomTriggers.push_back("second_down");
-            currentRoomTriggers.push_back("second_left");
-        } else if (currentRoom == &rooms["bathroom"]) {
-            currentRoomTriggers.push_back("bathroom");
-        } else if (currentRoom == &rooms["patio"]) {
-            currentRoomTriggers.push_back("patio");
-        } else if (currentRoom == &rooms["garage"]) {
-            currentRoomTriggers.push_back("garage");
+    /*for (const auto& triggerName : currentRoomTriggers) {
+        if (doorTriggers.count(triggerName)) {
+            sf::RectangleShape debugRect;
+            debugRect.setPosition(doorTriggers[triggerName].left, doorTriggers[triggerName].top);
+            debugRect.setSize(sf::Vector2f(doorTriggers[triggerName].width, doorTriggers[triggerName].height));
+            debugRect.setFillColor(sf::Color(255, 0, 0, 80));
+            debugRect.setOutlineColor(sf::Color::Red);
+            debugRect.setOutlineThickness(2.f);
+            window.draw(debugRect);
         }
-        
-        for (const auto& triggerName : currentRoomTriggers) {
-            if (doorTriggers.count(triggerName)) {
-                sf::RectangleShape debugRect;
-                debugRect.setPosition(doorTriggers[triggerName].left, doorTriggers[triggerName].top);
-                debugRect.setSize(sf::Vector2f(doorTriggers[triggerName].width, doorTriggers[triggerName].height));
-                debugRect.setFillColor(sf::Color(255, 0, 0, 80));
-                debugRect.setOutlineColor(sf::Color::Red);
-                debugRect.setOutlineThickness(2.f);
-                window.draw(debugRect);
-            }
-        }
-    }
+    }*/
     
     auto prevView = window.getView();
     window.setView(window.getDefaultView());
