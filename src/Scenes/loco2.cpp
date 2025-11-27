@@ -1,8 +1,9 @@
-#include "Scenes/StartScene.hpp"
+#include "Scenes/loco2.hpp"
+#include "Scenes/loco3.hpp"
 #include "Pasts/Past0.hpp"
 #include <filesystem>
     
-void StartScene::init(){
+void loco2::init(){
 
     // Inicializar sistema de diálogos
     dialogueUI.init();
@@ -10,7 +11,7 @@ void StartScene::init(){
     dialogueStack = new DialogueStack(*game);
     loadDialogs();
 
-    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/1.png")) {
+    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/loco2.png")) {
         // Nota: El escalado lo haremos en la función render
         std::cerr << "ERROR: No se pudo cargar el fondo '1.png'.\n";
     }
@@ -33,7 +34,7 @@ void StartScene::init(){
     }
 }
 
-void StartScene::handleEvent(sf::Event& event, sf::RenderWindow& window) {
+void loco2::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 
     // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
@@ -46,16 +47,16 @@ void StartScene::handleEvent(sf::Event& event, sf::RenderWindow& window) {
         // Si la pila ya está vacía antes de avanzar, cambiar al siguiente estado
             if (!dialogueStack || dialogueStack->isStackEmpty()){
                 m_sceneMusic.stop(); 
-                this->game->changeState(new Past0());
+                this->game->changeState(new loco3());
                 showDialogue = false;
                 return;
             }
     }
 }
 
-void StartScene::update(sf::Time dt){}
+void loco2::update(sf::Time dt){}
 
-void StartScene::render(sf::RenderWindow& window) {
+void loco2::render(sf::RenderWindow& window) {
 
     window.clear();
 
@@ -131,7 +132,7 @@ void StartScene::render(sf::RenderWindow& window) {
 
 }
 
-void StartScene::loadDialogs() {
+void loco2::loadDialogs() {
 
     // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
     const std::string ID_JOHN = "John_Barr_Neutral";
@@ -142,33 +143,23 @@ void StartScene::loadDialogs() {
     // ============================================================
 
     // Líneas de John Barr (Monólogo)
-    DialogueLine line1("John Barr", "...", ID_JOHN); // Pausa inicial
-    DialogueLine line2("Narrador", "John mira fijamente el retrato sobre la repisa. Es una mujer joven, sonriendo.", ID_WIFE_PORTRAIT);
-    DialogueLine line3("John Barr", "Esta mujer... Sé que la conozco. Su rostro... me causa una punzada.", ID_JOHN);
-    DialogueLine line4("John Barr", "Pero, ¿Quién es? Mi mente es un lienzo en blanco. Un nombre, un recuerdo... nada.", ID_JOHN);
-    DialogueLine line5("Narrador", "El recuerdo es una sombra escurridiza, pero la sensación de pérdida es real.", ID_WIFE_PORTRAIT);
-    DialogueLine line6("Narrador", "Un escalofrío recorre su espalda al darse cuenta de la soledad que lo rodea.", ID_JOHN);
+    DialogueLine line1("Narrador", "Una noche decidió escaparse junto con su 'esposa'", ID_JOHN); // Pausa inicial
+    DialogueLine line2("Narrador", "Salió por una ventana de un 4to piso", ID_WIFE_PORTRAIT);
+    DialogueLine line3("Narrador", "Los doctores se dieron cuenta pero...", ID_JOHN);
     
     // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
     DialogueSequence portraitDialogue(DialogueType::NORMAL);
     portraitDialogue.dialogueLines.emplace_back(line1);
     portraitDialogue.dialogueLines.emplace_back(line2);
     portraitDialogue.dialogueLines.emplace_back(line3);
-    portraitDialogue.dialogueLines.emplace_back(line4);
-    portraitDialogue.dialogueLines.emplace_back(line5);
-    portraitDialogue.dialogueLines.emplace_back(line6);
     
     // ============================================================
     // 💡 Paso 2: Crear el Diálogo de Transición (El misterio).
     // ============================================================
 
     // Líneas de transición
-    DialogueLine line8("Narrador", "De repente, un ruido metálico sordo proviene de la cochera.", "id_narrador");
-    DialogueLine line9("John Barr", "Un momento... ¿Qué fue eso? Tendré que averiguarlo...", ID_JOHN);
     
     DialogueSequence noiseDialogue(DialogueType::NORMAL);
-    noiseDialogue.dialogueLines.emplace_back(line8);
-    noiseDialogue.dialogueLines.emplace_back(line9);
 
     // ============================================================
     // 💡 Paso 3: Empuja las secuencias a la pila (El último en entrar es el primero en ejecutarse).
@@ -181,4 +172,4 @@ void StartScene::loadDialogs() {
 
 }
 
-void StartScene::loadNeighborDialogs() {};
+void loco2::loadNeighborDialogs() {};

@@ -11,12 +11,12 @@
 #include <optional>
 #include <map>
 
-class StartScene : public GameState
+class loco3 : public GameState
 {
 public:
     // Constructor y destructor
-    StartScene() : dialogueStack(nullptr) {}
-    ~StartScene() {
+    loco3() : dialogueStack(nullptr) {}
+    ~loco3() {
         if (dialogueStack) {
             delete dialogueStack;
             dialogueStack = nullptr;
@@ -44,4 +44,5 @@ private:
     DialogueUI dialogueUI;
     // Pila de diálogos (se inicializa en init() con new)
     DialogueStack* dialogueStack;
+
 };

@@ -72,6 +72,9 @@ public:
     /// @brief Seteas una intereacción a una entity de la tabla hash de entities
     void setInteractionToEntity(const std::string& entityName, std::function<void()> interaction);
 
+    /// @brief Seteas una intereacción a un npc de la tabla hash de npcs
+    void setInteractionToNpc(const std::string& npcName, std::function<void()> interaction);
+
     /// @brief Busca en la tabla hash de entities y retorna una referencia a ella
     Entity& getEntity(std::string name);
 

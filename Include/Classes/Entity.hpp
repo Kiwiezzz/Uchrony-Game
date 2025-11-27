@@ -11,17 +11,17 @@ class Entity : public SpriteAsset
 public:
     Entity() : SpriteAsset()
     {
-
+        m_interaction = [](){};
     }
 
     Entity(const std::string& path) : SpriteAsset(path)
     {
-        
+        m_interaction = [](){};
     }
 
     Entity(const Entity& entityCopy) : SpriteAsset(*this)
     {
-
+        m_interaction = [](){};
     }
 
     virtual ~Entity() = default;

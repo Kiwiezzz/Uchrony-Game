@@ -151,6 +151,11 @@ void Room::setInteractionToEntity(const std::string& entityName, std::function<v
     entities[entityName]->setInteraction(interaction);
 }
 
+void Room::setInteractionToNpc(const std::string& npcName, std::function<void()> interaction)
+{
+    npcs[npcName].setInteraction(interaction);
+}
+
 
 void Room::addNpc(const std::string& name, NPC& npc){
     npcs[name] = npc;

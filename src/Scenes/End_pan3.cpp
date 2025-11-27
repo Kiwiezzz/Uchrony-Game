@@ -1,8 +1,9 @@
 #include "Scenes/StartScene.hpp"
+#include "Scenes/End_pan3.hpp"
 #include "Pasts/Past0.hpp"
-#include <filesystem>
-    
-void StartScene::init(){
+
+
+void End_pan3::init(){
 
     // Inicializar sistema de diálogos
     dialogueUI.init();
@@ -10,9 +11,9 @@ void StartScene::init(){
     dialogueStack = new DialogueStack(*game);
     loadDialogs();
 
-    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/1.png")) {
+    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/pan3.png")) {
         // Nota: El escalado lo haremos en la función render
-        std::cerr << "ERROR: No se pudo cargar el fondo '1.png'.\n";
+        std::cerr << "ERROR: No se pudo cargar el fondo 'pan3.png'.\n";
     }
     
     m_backgroundSprite.setTexture(m_backgroundTexture);
@@ -33,7 +34,8 @@ void StartScene::init(){
     }
 }
 
-void StartScene::handleEvent(sf::Event& event, sf::RenderWindow& window) {
+void End_pan3::handleEvent(sf::Event& event, sf::RenderWindow& window) {
+
 
     // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
@@ -53,9 +55,9 @@ void StartScene::handleEvent(sf::Event& event, sf::RenderWindow& window) {
     }
 }
 
-void StartScene::update(sf::Time dt){}
+void End_pan3::update(sf::Time dt){}
 
-void StartScene::render(sf::RenderWindow& window) {
+void End_pan3::render(sf::RenderWindow& window) {
 
     window.clear();
 
@@ -131,7 +133,7 @@ void StartScene::render(sf::RenderWindow& window) {
 
 }
 
-void StartScene::loadDialogs() {
+void End_pan3::loadDialogs() {
 
     // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
     const std::string ID_JOHN = "John_Barr_Neutral";
@@ -181,4 +183,4 @@ void StartScene::loadDialogs() {
 
 }
 
-void StartScene::loadNeighborDialogs() {};
+void End_pan3::loadNeighborDialogs() {};

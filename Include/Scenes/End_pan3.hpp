@@ -11,12 +11,12 @@
 #include <optional>
 #include <map>
 
-class StartScene : public GameState
+class End_pan3 : public GameState
 {
 public:
     // Constructor y destructor
-    StartScene() : dialogueStack(nullptr) {}
-    ~StartScene() {
+    End_pan3() : dialogueStack(nullptr) {}
+    ~End_pan3() {
         if (dialogueStack) {
             delete dialogueStack;
             dialogueStack = nullptr;
