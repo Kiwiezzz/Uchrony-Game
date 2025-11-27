@@ -3,6 +3,7 @@
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
+/*
 /// @brief Si logra encontrar camino para aproximarse retorna true
 bool aproachEntity(const NavGrid& navGrid, Vec2f targetPos)
 {
@@ -26,7 +27,7 @@ bool aproachEntity(const NavGrid& navGrid, Vec2f targetPos)
     }
 
     return false;
-}
+}*/
 
 
 /**
@@ -144,6 +145,7 @@ void Past0::init()
     auto& curr = currentRoom;
     auto& m_approaching = m_approachingNPC;
     // No necesitas declarar los 'auto&' afuera
+    /*
     rooms["yard"].getNpc("neighbor").setInteraction([this]() 
     {
         // Al capturar [this], podemos acceder a 'rooms' directamente
@@ -162,7 +164,7 @@ void Past0::init()
 
         m_approachingNPC = aproachEntity(navGrid, targetPos);
     });
-
+    */
 
     
 

@@ -33,7 +33,7 @@ public:
     //no hacen nada
     void init() override {}
     void handleEvent(sf::Event event) override {}
-    void update(sf::Time dt) {}
+    void update(sf::Time dt) override {}
     void draw(sf::RenderWindow& window) override {}
     
     NPC();
