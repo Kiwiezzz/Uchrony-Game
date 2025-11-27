@@ -17,22 +17,22 @@ void PastExample::init()
     
     // Carga de objetos
     
-    ObjectRoom* mesa = new ObjectRoom("assets/textures/mesa.png");
+    auto mesa = std::make_unique<ObjectRoom>("assets/textures/mesa.png");
     mesa->sprite.setPosition(397, 494);
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
     mesa->setlayer(0);
-    firstRoom.addEntity("mesa", mesa);
+    firstRoom.addEntity("mesa", std::move(mesa));
     
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
+    auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(673, 284);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(0);
-    firstRoom.addEntity("mesa2", mesa2);
+    firstRoom.addEntity("mesa2", std::move(mesa2));
 
-    ObjectRoom* botella = new ObjectRoom("assets/textures/botella.png");
+    auto botella = std::make_unique<ObjectRoom>("assets/textures/botella.png");
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1); // la botella debe renderizarse por encima de la mesa
-    firstRoom.addEntity("botella", botella);
+    firstRoom.addEntity("botella", std::move(botella));
     
 
 
@@ -58,17 +58,17 @@ void PastExample::init()
     secondRoom.setGame(this->game);
 
     // Add objects to second room (same tables)
-    ObjectRoom* mesa_r2 = new ObjectRoom("assets/textures/mesa.png");
+    auto mesa_r2 = std::make_unique<ObjectRoom>("assets/textures/mesa.png");
     mesa_r2->sprite.setPosition(397, 494);
     mesa_r2->sprite.setOrigin(float(mesa_r2->texture.getSize().x) / 2.f, float(mesa_r2->texture.getSize().y));
     mesa_r2->setlayer(0);
-    secondRoom.addEntity("mesa", mesa_r2);
+    secondRoom.addEntity("mesa", std::move(mesa_r2));
 
-    ObjectRoom* mesa2_r2 = new ObjectRoom("assets/textures/mesa_2.png");
+    auto mesa2_r2 = std::make_unique<ObjectRoom>("assets/textures/mesa_2.png");
     mesa2_r2->sprite.setPosition(673, 284);
     mesa2_r2->sprite.setOrigin(float(mesa2_r2->texture.getSize().x) / 2.f, float(mesa2_r2->texture.getSize().y));
     mesa2_r2->setlayer(0);
-    secondRoom.addEntity("mesa2", mesa2_r2);
+    secondRoom.addEntity("mesa2", std::move(mesa2_r2));
 
     doorTriggers["second"] = sf::FloatRect(360.f, 50.f, 80.f, 120.f);
       

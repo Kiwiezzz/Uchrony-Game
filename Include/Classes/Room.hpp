@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <memory>
 
 #include "Utils/Assets.hpp"
 #include "Entities/NPC.hpp"
@@ -27,7 +28,7 @@ protected:
     /// @brief Se usa para path finder. Depende del collision
     NavGrid navGrid;
 
-    unordered_map<string, Entity*> entities;
+    unordered_map<string, unique_ptr<Entity>> entities;
     unordered_map<string, NPC> npcs;
     
     /// @brief Pathfinder para calcular rutas en el room
@@ -56,7 +57,7 @@ public:
     /// @brief Agrega a la tabla hash de entities una entity
     /// @param name
     /// @param entity 
-    void addEntity(const std::string& name, Entity* entity);
+    void addEntity(const std::string& name, std::unique_ptr<Entity> entity);
 
     /// @brief Agg a la tabla hash directamente un objeto.
     /// Le pasas: un NOMBRE, un PATH, su posición X Y (las que se muestran en el debug), y opcionalmente el LAYER.

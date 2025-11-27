@@ -10,8 +10,8 @@ void Past0::init()
     // Carga de Diálogos
     // ============================================================
     dialogueUI.setGame(this->game);
-    dialogueStack = new DialogueStack(*game);
-    dialogueStack_npc = new DialogueStack(*game);
+    dialogueStack = std::make_unique<DialogueStack>(*game);
+    dialogueStack_npc = std::make_unique<DialogueStack>(*game);
 
     loadDialogs();
 
@@ -42,22 +42,22 @@ void Past0::init()
     secondRoom.setGame(this->game);
     
     // --- Objetos decorativos en el laboratorio ---
-    ObjectRoom* mesa = new ObjectRoom("assets/textures/mesa.png");
+    auto mesa = std::make_unique<ObjectRoom>("assets/textures/mesa.png");
     mesa->sprite.setPosition(397, 494);
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
     mesa->setlayer(0);  // Layer 0 = detrás del jugador
-    secondRoom.addEntity("mesa", mesa);
+    secondRoom.addEntity("mesa", std::move(mesa));
     
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
+    auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(667, 326);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(0);
-    secondRoom.addEntity("mesa2", mesa2);
+    secondRoom.addEntity("mesa2", std::move(mesa2));
 
-    ObjectRoom* botella = new ObjectRoom("assets/textures/Past0/botella.png");
+    auto botella = std::make_unique<ObjectRoom>("assets/textures/Past0/botella.png");
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1);  // Layer 1 = delante del jugador
-    secondRoom.addEntity("botella", botella);
+    secondRoom.addEntity("botella", std::move(botella));
 
     // ============================================================
     // HABITACIÓN 3: BAÑO (Bathroom)
@@ -69,15 +69,15 @@ void Past0::init()
     bathroomRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/bath_colision.png");
     bathroomRoom.setGame(this->game);
 
-    ObjectRoom* bathtub = new ObjectRoom("assets/textures/Past0/bathtub.png");
+    auto bathtub = std::make_unique<ObjectRoom>("assets/textures/Past0/bathtub.png");
     bathtub->sprite.setPosition(0, 391);
     bathtub->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("bathtub", bathtub);
+    bathroomRoom.addEntity("bathtub", std::move(bathtub));
 
-    ObjectRoom* plant = new ObjectRoom("assets/textures/Past0/Plant.png");
+    auto plant = std::make_unique<ObjectRoom>("assets/textures/Past0/Plant.png");
     plant->sprite.setPosition(703, 386);
     plant->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("plant", plant);
+    bathroomRoom.addEntity("plant", std::move(plant));
 
 // ============================================================
     // HABITACIÓN 4: PATIO (Yard)
@@ -111,20 +111,20 @@ void Past0::init()
     garageRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/garage_colision.png");
     garageRoom.setGame(this->game);
 
-    ObjectRoom* capo = new ObjectRoom("assets/textures/Past0/Capo.png");
+    auto capo = std::make_unique<ObjectRoom>("assets/textures/Past0/Capo.png");
     capo->sprite.setPosition(273, 204);
     capo->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("capo", capo);
+    garageRoom.addEntity("capo", std::move(capo));
 
-    ObjectRoom* esquina = new ObjectRoom("assets/textures/Past0/Esquina1.png");
+    auto esquina = std::make_unique<ObjectRoom>("assets/textures/Past0/Esquina1.png");
     esquina->sprite.setPosition(26, 254);
     esquina->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina", esquina);
+    garageRoom.addEntity("esquina", std::move(esquina));
 
-    ObjectRoom* esquina2 = new ObjectRoom("assets/textures/Past0/Esquina2.png");
+    auto esquina2 = std::make_unique<ObjectRoom>("assets/textures/Past0/Esquina2.png");
     esquina2->sprite.setPosition(628, 261);
     esquina2->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina2", esquina2);
+    garageRoom.addEntity("esquina2", std::move(esquina2));
 
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS

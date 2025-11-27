@@ -10,7 +10,7 @@ void PastA::init()
     // Carga de Diálogos
     // ============================================================
     dialogueUI.setGame(this->game);
-    dialogueStack = new DialogueStack(*game);
+    dialogueStack = std::make_unique<DialogueStack>(*game);
 
     loadDialogs();
 

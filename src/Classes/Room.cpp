@@ -129,15 +129,15 @@ void Room::setCollisionAndGrid(std::string path)
 }
 
 
-void Room::addEntity(const std::string& name, Entity* entity)
+void Room::addEntity(const std::string& name, std::unique_ptr<Entity> entity)
 {
-    entities[name] = entity;
+    entities[name] = std::move(entity);
 }
 
 
 void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer, float fraction_Origin)
 {
-    entities[name] = new ObjectRoom(path, x, y, layer, fraction_Origin);
+    entities[name] = std::make_unique<ObjectRoom>(path, x, y, layer, fraction_Origin);
 }
 
 

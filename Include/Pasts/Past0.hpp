@@ -15,7 +15,7 @@ class Past0 : public Past
 public:
     // Constructor y destructor
     Past0() : dialogueStack(nullptr) {}
-    ~Past0() { if (dialogueStack) delete dialogueStack; }
+    ~Past0() {}
 
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
@@ -43,8 +43,8 @@ private:
     bool showDialogue = false;
     bool showNeighborDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
-    DialogueStack* dialogueStack;
-    DialogueStack* dialogueStack_npc;
+    std::unique_ptr<DialogueStack> dialogueStack;
+    std::unique_ptr<DialogueStack> dialogueStack_npc;
     
     // Estado para interacción con NPC
     bool m_approachingNPC = false;

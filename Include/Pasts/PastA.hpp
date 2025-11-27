@@ -16,7 +16,7 @@ class PastA : public Past
 public:
     // Constructor y destructor
     PastA() : dialogueStack(nullptr) {}
-    ~PastA() { if (dialogueStack) delete dialogueStack; }
+    ~PastA() {}
 
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
@@ -42,5 +42,5 @@ private:
     DialogueUI dialogueUI;
     bool showDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
-    DialogueStack* dialogueStack;
+    std::unique_ptr<DialogueStack> dialogueStack;
 };
