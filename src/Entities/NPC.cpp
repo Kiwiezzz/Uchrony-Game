@@ -4,7 +4,12 @@
 #include <cstdlib>
 #include <vector>
 
-void NPC::init(std::string path, Vec2f position, bool walkable) {
+NPC::NPC() : Entity("")
+{
+    
+}
+
+void NPC::init(std::string path, Vec2f position, bool walkable){
     // Primero inicializamos variables básicas
     m_speed = NPC_SPEED;
     m_isMoving = false;

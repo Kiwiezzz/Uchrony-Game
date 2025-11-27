@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <functional>
 
 // Implementaciones vacías. La lógica es: "Esta función existe, pero no hace nada aún".
 
@@ -140,6 +141,11 @@ void Room::addObject(const std::string& name, const std::string& path, int x, in
     entities[name] = std::make_unique<ObjectRoom>(path, x, y, layer, fraction_Origin);
 }
 
+void Room::setInteractionToEntity(const std::string& entityName, std::function<void()> interaction)
+{
+    entities[entityName]->setInteraction(interaction);
+}
+
 
 void Room::addNpc(const std::string& name, NPC& npc){
     npcs[name] = npc;
@@ -160,6 +166,11 @@ Entity& Room::getEntity(std::string name)
     // Nota: Esto lanzará una excepción si la key no existe.
     // Deberías manejarlo o usar find() si no estás seguro.
     return *entities.at(name);
+}
+
+unordered_map<string, unique_ptr<Entity>>& Room::getEntities()
+{
+    return entities;
 }
 
 NPC& Room::getNpc(std::string name)

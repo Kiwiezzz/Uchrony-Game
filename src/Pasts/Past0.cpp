@@ -54,18 +54,31 @@ void Past0::init()
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
     mesa->setlayer(0);  // Layer 0 = detrás del jugador
     secondRoom.addEntity("mesa", std::move(mesa));
+    secondRoom.setInteractionToEntity("mesa", 
+        [this]()
+        {
+            std::cout << "Hola, hiciste click en la mesa, sí sirve" << std::endl;
+            showDialogue = true;
+        }
+    );
     
     auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(667, 326);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(0);
     secondRoom.addEntity("mesa2", std::move(mesa2));
-
+    
     auto botella = std::make_unique<ObjectRoom>("assets/textures/Past0/botella.png");
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1);  // Layer 1 = delante del jugador
     secondRoom.addEntity("botella", std::move(botella));
-
+    secondRoom.setInteractionToEntity("botella", 
+        [this]()
+        {
+            std::cout << "a" << std::endl;
+        }
+    );
+    
     // ============================================================
     // HABITACIÓN 3: BAÑO (Bathroom)
     // ============================================================
@@ -98,7 +111,38 @@ void Past0::init()
 
     NPC neighbor_npc;
     neighbor_npc.init("assets/textures/Past0/neighbor_npc.png", Vec2f(520.f, 250.f), true);
+    
     yardRoom.addNpc("neighbor", neighbor_npc);
+    yardRoom.getNpc("neighbor").setInteraction([this]()
+    {
+        auto& neighbor_npc = this->rooms["yard"].getNpc("neighbor");
+        std::cout << "Clic en Neighbor!" << std::endl;
+        
+        // 1. Detener al NPC
+        neighbor_npc.stopMovement();
+
+        // 2. Mover al jugador cerca del NPC
+        auto& navGrid = currentRoom->getNavGrid();
+        Vec2f npcPos = neighbor_npc.getPosition();
+        Vec2f playerPos = GameManager::get().getPlayer().getPosition();
+        
+        // Encontrar un punto cercano al NPC que sea caminable
+        // Intentamos acercarnos a 80px de distancia
+        Vec2f dirToPlayer = (playerPos - npcPos).normalized();
+        Vec2f targetPos = npcPos + dirToPlayer * 80.f;
+        
+        Point start = navGrid.worldToGrid(playerPos);
+        Point end = navGrid.worldToGrid(targetPos);
+        
+        if (navGrid.isWalkable(end)) {
+            std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
+            if (!path.empty()) {
+                GameManager::get().getPlayer().setPath(path, navGrid);
+                m_approachingNPC = true;
+            }
+        }
+    });
+
 
     rooms["yard"].getNpc("neighbor").getSprite().setPosition(520.f, 250.f);
     rooms["yard"].getNpc("neighbor").getSprite().setScale(2.0f, 2.0f);
@@ -236,41 +280,20 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         if (showDialogue) return;
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
-        if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["second"]) {
-                std::cout << "Clic en la mesa!" << std::endl;
-                // Tocar la mesa desencadena el evento de un cuadro de diálogo
-                showDialogue = true;
+
+        /// Aquí todas las interacciones de second
+        for(auto& pair : rooms["second"].getEntities()){
+            Entity& entity = *pair.second;
+            if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["second"]) {
+                entity.interact();
+            }
         } 
 
         // Interacción con NPC Neighbor en Yard
         if (currentRoom == &rooms["yard"]) {
             NPC& neighbor = currentRoom->getNpc("neighbor");
             if (neighbor.getSprite().getGlobalBounds().contains(clickPos)) {
-                std::cout << "Clic en Neighbor!" << std::endl;
-                
-                // 1. Detener al NPC
-                neighbor.stopMovement();
-
-                // 2. Mover al jugador cerca del NPC
-                auto& navGrid = currentRoom->getNavGrid();
-                Vec2f npcPos = neighbor.getPosition();
-                Vec2f playerPos = GameManager::get().getPlayer().getPosition();
-                
-                // Encontrar un punto cercano al NPC que sea caminable
-                // Intentamos acercarnos a 80px de distancia
-                Vec2f dirToPlayer = (playerPos - npcPos).normalized();
-                Vec2f targetPos = npcPos + dirToPlayer * 80.f;
-                
-                Point start = navGrid.worldToGrid(playerPos);
-                Point end = navGrid.worldToGrid(targetPos);
-                
-                if (navGrid.isWalkable(end)) {
-                    std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
-                    if (!path.empty()) {
-                        GameManager::get().getPlayer().setPath(path, navGrid);
-                        m_approachingNPC = true;
-                    }
-                }
+                neighbor.interact();
             }
         }
     }

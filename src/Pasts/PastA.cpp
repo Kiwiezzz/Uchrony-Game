@@ -24,8 +24,8 @@ void PastA::init()
     cuartoRoom.setCollisionAndGrid("assets/textures/PastA/Colisiones/cuarto_colision.png");
     cuartoRoom.setGame(this->game);
 
-    cuartoRoom.addObject("sillon", "assets/textures/PastA/sillon.png", 633, 240, 0, 0.2);
-    cuartoRoom.addObject("silla", "assets/textures/PastA/silla.png", 247, 283, 0);
+    cuartoRoom.addObject("sillon", "assets/textures/PastA/sillon.png", 633, 240, 0);
+    cuartoRoom.addObject("silla", "assets/textures/PastA/silla.png", 247, 283, 0, 0.7);
     cuartoRoom.addObject("mesa", "assets/textures/PastA/mesa.png", 483, 304, 0);
     
 
@@ -42,6 +42,7 @@ void PastA::init()
     pasilloRoom.addObject("agua", "assets/textures/PastA/agua.png", 719, 416);
     pasilloRoom.addObject("escritorio", "assets/textures/PastA/escritorio.png", 16, 291);
     pasilloRoom.addObject("carrito", "assets/textures/PastA/carrito.png", 192, 361);
+
     
     //pasilloRoom.addObject("sillita", "assets/textures/PastA/sillita.png", 552, 299);
     
@@ -128,12 +129,11 @@ void PastA::init()
     ObjectRoom* esquina2 = new ObjectRoom("assets/textures/PastA/Esquina2.png");
     esquina2->sprite.setPosition(628, 261);
     esquina2->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina2", esquina2);
+    garageRoom.addEntity("esquina2", esquina2);*/
 
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
     // ============================================================
-    */
     doorTriggers["pasillo"] = sf::FloatRect(305.f, 518.f, 150.f, 120.f);
     doorTriggers["cuarto"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);
    

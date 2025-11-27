@@ -146,7 +146,7 @@ void MainMenu::render(sf::RenderWindow& window) {
     m_menuMusic.stop();
 
     // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new PastB());
+    this->game->changeState(new Past0());
 
     // 4. Salir: Terminamos la función render() para que no se ejecuten
     //    las líneas de ImGui::End() y PopFont() de más abajo.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Utils/Assets.hpp"
 
 /// @brief Es una entidad cualquiera generica:
@@ -18,6 +20,16 @@ public:
     }
 
     virtual ~Entity() = default;
+
+    void setInteraction(std::function<void()> interaction)
+    {
+        m_interaction = interaction;
+    }
+
+    void interact()
+    {
+        m_interaction();
+    }
     
 private:
     //Virtual le pide al compilador que revise lo que hace la función en tiempo de ejecución
@@ -26,4 +38,6 @@ private:
     virtual void update(sf::Time dt) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
 
+
+    std::function<void()> m_interaction;
 };
