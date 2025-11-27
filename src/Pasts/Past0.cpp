@@ -159,27 +159,8 @@ void Past0::init()
         auto& navGrid = currentRoom->getNavGrid(); 
         
         Vec2f targetPos = neighbor_npc.getPosition();
-        Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
-        
-        // Calcular punto destino (80px cerca)
-        Vec2f dirToPlayer = (playerPos - targetPos).normalized();
-        Vec2f targetPos = targetPos + dirToPlayer * 80.f;
-        
-        Point start = navGrid.worldToGrid(playerPos);
-        Point end = navGrid.worldToGrid(targetPos);
-        
-        if (navGrid.isWalkable(end)) {
-            std::vector<Point> path = GameManager::get().pathfinder.findPath(navGrid, start, end);
-            
-            if (!path.empty()) {
-                GameManager::get().getPlayer().setPath(path, navGrid);
-                
-                // Acceso directo a la variable miembro gracias a [this]
-                m_approachingNPC = true; 
-            }
-        }
 
-        //m_approachingNPC = aproachEntity(navGrid, targetPos);
+        m_approachingNPC = aproachEntity(navGrid, targetPos);
     });
 
 
