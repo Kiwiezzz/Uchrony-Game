@@ -7,6 +7,7 @@
 #include "Classes/Entity.hpp"
 #include "Utils/Pathfinder.hpp"
 #include "Utils/GameUtilities.hpp"
+#include "Classes/ObjectRoom.hpp"
 
 // Forward declaration
 class Game;
@@ -56,6 +57,11 @@ public:
     /// @param name
     /// @param entity 
     void addEntity(const std::string& name, Entity* entity);
+
+    /// @brief Agg a la tabla hash directamente un objeto.
+    /// Le pasas: un NOMBRE, un PATH, su posición X Y (las que se muestran en el debug), y opcionalmente el LAYER.
+    /// Él se encarga de lo demás
+    void addObject(const std::string& name, const std::string& path, int x, int y, int layer = 0, float origin = 1);
 
     /// @brief Busca en la tabla hash de entities y retorna una referencia a ella
     /// @param name 

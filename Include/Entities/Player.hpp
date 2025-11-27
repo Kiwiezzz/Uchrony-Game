@@ -42,6 +42,9 @@ public:
 
     // Devuelve true si el jugador está siguiendo una ruta
     bool isMoving() const;
+    
+    // Fuerza al jugador a mirar en una dirección (y pone idle)
+    void faceDirection(Vec2f direction);
 
     // Atributos de Diálogo del Jugador:
     std::string id;                // ID único del Jugador (ej: "Guardia_123").

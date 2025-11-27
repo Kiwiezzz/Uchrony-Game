@@ -22,17 +22,8 @@ void Room::handleEvent(sf::Event& event, sf::RenderWindow& window)
             sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
             // Verificar si se hizo click en alguna entidad interactiva
-            // Ejemplo: Click en la mesa -> abrir diálogo
-            if (entities.count("mesa") && entities["mesa"]->sprite.getGlobalBounds().contains(clickPos)) {
-                std::cout << "Clic en la mesa!" << std::endl;
-                // Cambiar a estado de diálogo si tenemos referencia a Game
-                if (game) {
-                    // Necesitaremos incluir Dialogue1.hpp en Past0.cpp para esto
-                    // game->changeState(new Dialogue1());
-                    std::cout << "Trigger: Abrir diálogo (implementar en Past0)" << std::endl;
-                }
-                return;
-            }
+            // (Lógica genérica de interacción podría ir aquí en el futuro)
+
 
             // Si no hay evento especial, calcular ruta para el jugador
             Player& player = GameManager::get().getPlayer();
@@ -142,6 +133,13 @@ void Room::addEntity(const std::string& name, Entity* entity)
 {
     entities[name] = entity;
 }
+
+
+void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer, float fraction_Origin)
+{
+    entities[name] = new ObjectRoom(path, x, y, layer, fraction_Origin);
+}
+
 
 void Room::addNpc(const std::string& name, NPC& npc){
     npcs[name] = npc;

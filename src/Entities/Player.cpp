@@ -190,3 +190,15 @@ void Player::playIdleAnimation() {
         m_currentAnimation = newAnimation;
     }
 }
+
+void Player::faceDirection(Vec2f direction) {
+    Vec2f normDir = direction.normalized();
+    if (std::abs(normDir.x) > std::abs(normDir.y)) {
+        if (normDir.x > 0) m_lastDirection = ROW_P_IDLE_RIGHT;
+        else m_lastDirection = ROW_P_IDLE_LEFT;
+    } else {
+        if (normDir.y > 0) m_lastDirection = ROW_P_IDLE_DOWN;
+        else m_lastDirection = ROW_P_IDLE_UP;
+    }
+    playIdleAnimation();
+}

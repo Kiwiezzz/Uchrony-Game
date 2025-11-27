@@ -47,6 +47,10 @@ public:
     // Método para reconectar el Animator con el sprite después de copiar el NPC
     void updateAnimatorSprite();
 
+    void stopMovement();
+    void setWalkable(bool walkable);
+    void faceDirection(Vec2f direction);
+
     // Atributos de Diálogo del NPC:
     std::string id;                // ID único del NPC (ej: "Guardia_123").
     std::string dialogueKey;       // CLAVE: Qué diálogo ofrecer.

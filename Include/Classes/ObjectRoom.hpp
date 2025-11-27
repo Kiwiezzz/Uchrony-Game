@@ -6,7 +6,13 @@
 class ObjectRoom : public Entity
 {
 public:
+
     ObjectRoom(const std::string& path);
+
+    /// @brief Crea un objeto con un path, su posición x y (las que se muestran en el debug), y opcionalmente el layer
+    /// @param fractionOrigin numero entre 0 y 1 que representa que tan abajo será el origen el objeto, 
+    /// es decir, que tan abajo el jugador pasa de estar atrás a estar al frente del objeto
+    ObjectRoom(const std::string& path, int x, int y, int layer = 0, float fractionOrigin = 1);
 
     ObjectRoom(const Entity& entityCopy);
 
