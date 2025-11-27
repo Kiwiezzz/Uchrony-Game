@@ -134,6 +134,13 @@ void Room::addEntity(const std::string& name, Entity* entity)
     entities[name] = entity;
 }
 
+
+void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer)
+{
+    entities[name] = new ObjectRoom(path, x, y, layer);
+}
+
+
 void Room::addNpc(const std::string& name, NPC& npc){
     npcs[name] = npc;
     

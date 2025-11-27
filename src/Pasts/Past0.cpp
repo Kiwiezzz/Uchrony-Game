@@ -25,6 +25,11 @@ void Past0::init()
     firstRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/cuarto_colision.png");
     firstRoom.setGame(this->game);
 
+    firstRoom.addObject("marco_puerta", "assets/textures/Past0/marco_puerta.png", 333, 412, 1);
+    firstRoom.addObject("planta", "assets/textures/Past0/planta.png", 42, 418, 1);
+    firstRoom.addObject("mesa_cuarto", "assets/textures/Past0/mesa_cuarto.png", 621, 283);
+    firstRoom.addObject("sillita", "assets/textures/Past0/sillita.png", 552, 299);
+
     // ============================================================
     // HABITACIÓN 2: LABORATORIO (Lab)
     // ============================================================
@@ -123,7 +128,7 @@ void Past0::init()
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
     // ============================================================
-    doorTriggers["first"] = sf::FloatRect(477.f, 446.f, 150.f, 120.f);
+    doorTriggers["first"] = sf::FloatRect(305.f, 518.f, 150.f, 120.f);
     doorTriggers["second_up"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);
     doorTriggers["second_right"] = sf::FloatRect(720.f, 250.f, 80.f, 600.f);
     doorTriggers["second_down"] = sf::FloatRect(230.f, 520.f, 400.f, 80.f);
@@ -141,7 +146,9 @@ void Past0::init()
 
 void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    
+    //GameUtils::logPosition(GameUtils::getMouseWorldPosition(window));
+    //GameUtils::debugFollowMouse(rooms["first"].getEntity("sillita").sprite, window);
+
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
         
@@ -306,7 +313,7 @@ void Past0::update(sf::Time dt)
             currentRoom = m_pendingNextRoom;
             
             if (currentRoom == &rooms["first"]) {
-                GameManager::get().getPlayer().setPosition(542.f, 446.f);
+                GameManager::get().getPlayer().setPosition(400.f, 560.f);
             } else if (currentRoom == &rooms["second"]) {
                 if (m_previousRoom == &rooms["first"]) {
                     GameManager::get().getPlayer().setPosition(398.f, 200.f);

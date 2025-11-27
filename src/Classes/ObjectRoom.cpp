@@ -44,7 +44,16 @@ ObjectRoom::ObjectRoom(const std::string& path) : Entity(path)
     
 }
 
-ObjectRoom::ObjectRoom(const Entity& entityCopy) : Entity(*this)
+ObjectRoom::ObjectRoom(const std::string& path, int x, int y, int layer) : Entity(path)
+{
+    this->layer = layer;
+    float origin_x = texture.getSize().x/2.f;
+    float origin_y = texture.getSize().y;
+    sprite.setOrigin(origin_x, origin_y);
+    sprite.setPosition(x + origin_x, y + origin_y);
+}
+
+ObjectRoom::ObjectRoom(const Entity& entityCopy) : Entity(entityCopy)
 {
 
 }

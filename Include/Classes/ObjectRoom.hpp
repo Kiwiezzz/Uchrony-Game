@@ -6,7 +6,11 @@
 class ObjectRoom : public Entity
 {
 public:
+
     ObjectRoom(const std::string& path);
+
+    /// @brief Crea un objeto con un path, su posición x y (las que se muestran en el debug), y opcionalmente el layer
+    ObjectRoom(const std::string& path, int x, int y, int layer = 0);
 
     ObjectRoom(const Entity& entityCopy);
 
