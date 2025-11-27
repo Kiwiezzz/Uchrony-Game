@@ -4,7 +4,11 @@
 #include <cstdlib>
 #include <vector>
 
-NPC::NPC() : Entity("")
+NPC::NPC() : Entity()
+{
+}
+
+NPC::~NPC()
 {
     
 }

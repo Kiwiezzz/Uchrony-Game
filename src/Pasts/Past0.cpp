@@ -3,6 +3,32 @@
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
+/// @brief Si logra encontrar camino para aproximarse retorna true
+bool aproachEntity(const NavGrid& navGrid, Vec2f targetPos)
+{
+    Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
+    
+    // Calcular punto destino (80px cerca)
+    Vec2f dirToPlayer = (playerPos - targetPos).normalized();
+    Vec2f targetPos = targetPos + dirToPlayer * 80.f;
+    
+    Point start = navGrid.worldToGrid(playerPos);
+    Point end = navGrid.worldToGrid(targetPos);
+    
+    if (navGrid.isWalkable(end)) {
+        std::vector<Point> path = GameManager::get().pathfinder.findPath(navGrid, start, end);
+        
+        if (!path.empty()) {
+            GameManager::get().getPlayer().setPath(path, navGrid);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 /**
  * @brief Inicializa todas las habitaciones (rooms) del Past0
  * 
@@ -113,35 +139,51 @@ void Past0::init()
     neighbor_npc.init("assets/textures/Past0/neighbor_npc.png", Vec2f(520.f, 250.f), true);
     
     yardRoom.addNpc("neighbor", neighbor_npc);
-    yardRoom.getNpc("neighbor").setInteraction([this]()
+
+    auto& yard = rooms["yard"];                 //paso por referencia
+    auto& curr = currentRoom;
+    auto& m_approaching = m_approachingNPC;
+    // No necesitas declarar los 'auto&' afuera
+    rooms["yard"].getNpc("neighbor").setInteraction([this]() 
     {
-        auto& neighbor_npc = this->rooms["yard"].getNpc("neighbor");
+        // Al capturar [this], podemos acceder a 'rooms' directamente
+        auto& neighbor_npc = rooms["yard"].getNpc("neighbor");
+        
         std::cout << "Clic en Neighbor!" << std::endl;
         
         // 1. Detener al NPC
         neighbor_npc.stopMovement();
 
         // 2. Mover al jugador cerca del NPC
-        auto& navGrid = currentRoom->getNavGrid();
-        Vec2f npcPos = neighbor_npc.getPosition();
-        Vec2f playerPos = GameManager::get().getPlayer().getPosition();
+        // Accedemos a 'currentRoom' directamente gracias a [this]
+        auto& navGrid = currentRoom->getNavGrid(); 
         
-        // Encontrar un punto cercano al NPC que sea caminable
-        // Intentamos acercarnos a 80px de distancia
-        Vec2f dirToPlayer = (playerPos - npcPos).normalized();
-        Vec2f targetPos = npcPos + dirToPlayer * 80.f;
+        Vec2f targetPos = neighbor_npc.getPosition();
+        Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
+        
+        // Calcular punto destino (80px cerca)
+        Vec2f dirToPlayer = (playerPos - targetPos).normalized();
+        Vec2f targetPos = targetPos + dirToPlayer * 80.f;
         
         Point start = navGrid.worldToGrid(playerPos);
         Point end = navGrid.worldToGrid(targetPos);
         
         if (navGrid.isWalkable(end)) {
-            std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
+            std::vector<Point> path = GameManager::get().pathfinder.findPath(navGrid, start, end);
+            
             if (!path.empty()) {
                 GameManager::get().getPlayer().setPath(path, navGrid);
-                m_approachingNPC = true;
+                
+                // Acceso directo a la variable miembro gracias a [this]
+                m_approachingNPC = true; 
             }
         }
+
+        //m_approachingNPC = aproachEntity(navGrid, targetPos);
     });
+
+
+    
 
 
     rooms["yard"].getNpc("neighbor").getSprite().setPosition(520.f, 250.f);
@@ -400,10 +442,10 @@ void Past0::update(sf::Time dt)
                 
                 // Calcular direcciones para mirarse mutuamente
                 Vec2f playerPos = player.getPosition();
-                Vec2f npcPos = neighbor.getPosition();
+                Vec2f targetPos = neighbor.getPosition();
                 
-                Vec2f dirToNPC = npcPos - playerPos;
-                Vec2f dirToPlayer = playerPos - npcPos;
+                Vec2f dirToNPC = targetPos - playerPos;
+                Vec2f dirToPlayer = playerPos - targetPos;
                 
                 player.faceDirection(dirToNPC);
                 neighbor.faceDirection(dirToPlayer);

@@ -31,12 +31,13 @@ enum class NPCState {
 class NPC : public Entity{
 public:
     //no hacen nada
-    void init();
-    void handleEvent(sf::Event event);
-    void update(sf::Time dt);
-    void draw(sf::RenderWindow& window);
+    void init() override {}
+    void handleEvent(sf::Event event) override {}
+    void update(sf::Time dt) {}
+    void draw(sf::RenderWindow& window) override {}
     
     NPC();
+    ~NPC();
     void init(std::string path, Vec2f position, bool walkable);
     void update(sf::Time dt, const NavGrid& grid);
     void render(sf::RenderWindow& window);

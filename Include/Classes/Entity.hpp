@@ -9,6 +9,11 @@
 class Entity : public SpriteAsset
 {
 public:
+    Entity() : SpriteAsset()
+    {
+
+    }
+
     Entity(const std::string& path) : SpriteAsset(path)
     {
         
@@ -37,6 +42,7 @@ private:
     virtual void handleEvent(sf::Event event) = 0;
     virtual void update(sf::Time dt) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
+    virtual void aproach();
 
 
     std::function<void()> m_interaction;
