@@ -258,6 +258,8 @@ void PastB::update(sf::Time dt)
 
 void PastB::render(sf::RenderWindow& window)
 {
+    window.clear();
+    
     currentRoom->render(window);
     
     // ============================================================
