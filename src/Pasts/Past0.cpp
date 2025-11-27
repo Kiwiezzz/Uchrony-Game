@@ -10,7 +10,7 @@ bool aproachEntity(const NavGrid& navGrid, Vec2f targetPos)
     
     // Calcular punto destino (80px cerca)
     Vec2f dirToPlayer = (playerPos - targetPos).normalized();
-    Vec2f targetPos = targetPos + dirToPlayer * 80.f;
+    targetPos = targetPos + dirToPlayer * 80.f;
     
     Point start = navGrid.worldToGrid(playerPos);
     Point end = navGrid.worldToGrid(targetPos);
