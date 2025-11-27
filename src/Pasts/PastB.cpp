@@ -15,7 +15,7 @@ void PastB::init()
     // ============================================================
     // Carga de Diálogos
     // ============================================================
-    dialogueStack = new DialogueStack(*game);
+    dialogueStack = std::make_unique<DialogueStack>(*game);
 
     loadDialogs();
 
@@ -31,29 +31,29 @@ void PastB::init()
     firstRoom.setGame(this->game);
     
     // --- Objetos decorativos en el salón ---
-    ObjectRoom* mesa = new ObjectRoom("assets/textures/PastB/silla_1.png");
+    auto mesa = std::make_unique<ObjectRoom>("assets/textures/PastB/silla_1.png");
     mesa->sprite.setPosition(397, 494);
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
     mesa->setlayer(1);  // Layer 0 = detrás del jugador
-    firstRoom.addEntity("mesa", mesa);
+    firstRoom.addEntity("mesa", std::move(mesa));
 
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/PastB/mesa_2.png");
+    auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_2.png");
     mesa2->sprite.setPosition(667, 326);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
     mesa2->setlayer(1);
-    firstRoom.addEntity("mesa2", mesa2);
+    firstRoom.addEntity("mesa2", std::move(mesa2));
 
-    ObjectRoom* mesa3 = new ObjectRoom("assets/textures/PastB/mesa_3.png");
+    auto mesa3 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_3.png");
     mesa3->sprite.setPosition(667, 326);
     mesa3->sprite.setOrigin(float(mesa3->texture.getSize().x) / 2.f, float(mesa3->texture.getSize().y));
     mesa3->setlayer(1);
-    firstRoom.addEntity("mesa3", mesa3);
+    firstRoom.addEntity("mesa3", std::move(mesa3));
 
-    ObjectRoom* mesa4 = new ObjectRoom("assets/textures/PastB/mesa_4.png");
+    auto mesa4 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_4.png");
     mesa4->sprite.setPosition(667, 326);
     mesa4->sprite.setOrigin(float(mesa4->texture.getSize().x) / 2.f, float(mesa4->texture.getSize().y));
     mesa4->setlayer(1);
-    firstRoom.addEntity("mesa4", mesa4);
+    firstRoom.addEntity("mesa4", std::move(mesa4));
 
     // ============================================================
     // HABITACIÓN 2: PARQUESITO (Park)
