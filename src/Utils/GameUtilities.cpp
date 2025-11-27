@@ -73,5 +73,9 @@ namespace GameUtils {
         sprite.setOrigin(0,0);
         debugFollowMouse(sprite, window, prefix);/**/
     }
+
+    Vec2f toVec2f(const sf::Vector2f& v) {
+        return Vec2f(v.x, v.y);
+    }
 }
 

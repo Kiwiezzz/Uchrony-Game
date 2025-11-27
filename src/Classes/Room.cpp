@@ -135,6 +135,11 @@ void Room::addEntity(const std::string& name, std::unique_ptr<Entity> entity)
     entities[name] = std::move(entity);
 }
 
+void Room::removeEntity(const std::string& name)
+{
+    entities.erase(name);
+}
+
 
 void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer, float fraction_Origin)
 {

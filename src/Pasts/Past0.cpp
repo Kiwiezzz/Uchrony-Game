@@ -45,6 +45,7 @@ void Past0::init()
     dialogueUI.setGame(this->game);
     dialogueStack = std::make_unique<DialogueStack>(*game);
     dialogueStack_npc = std::make_unique<DialogueStack>(*game);
+    showDialogue = true;
 
     loadDialogs();
 
@@ -63,6 +64,22 @@ void Past0::init()
     firstRoom.addObject("planta", "assets/textures/Past0/planta.png", 42, 418);
     firstRoom.addObject("mesa_cuarto", "assets/textures/Past0/mesa_cuarto.png", 621, 283);
     firstRoom.addObject("sillita", "assets/textures/Past0/sillita.png", 552, 299);
+
+    auto red_key = std::make_unique<ObjectRoom>("assets/textures/Past0/llave_roja.png");
+    red_key->sprite.setPosition(0, 391);
+    red_key->setlayer(1);  // Layer 1 = delante del jugador
+    firstRoom.addEntity("red_key", std::move(red_key));
+    firstRoom.setInteractionToEntity("red_key", 
+        [this]()
+        {
+           /* items["red_key"] = TextureAsset("assets/textures/Past0/llave_roja.png");
+            Item red_keyItem(1, red_key.texture);
+            bool added = GameManager::get().getInventory()->add(red_keyItem);
+
+            firstRoom.removeEntity("red_key");*/
+            
+        }
+    );
 
     // ============================================================
     // HABITACIÓN 2: LABORATORIO (Lab)
@@ -84,7 +101,7 @@ void Past0::init()
         [this]()
         {
             std::cout << "Hola, hiciste click en la mesa, sí sirve" << std::endl;
-            showDialogue = true;
+            //showDialogue = true;
         }
     );
     
@@ -140,10 +157,6 @@ void Past0::init()
     
     yardRoom.addNpc("neighbor", neighbor_npc);
 
-    auto& yard = rooms["yard"];                 //paso por referencia
-    auto& curr = currentRoom;
-    auto& m_approaching = m_approachingNPC;
-    // No necesitas declarar los 'auto&' afuera
     rooms["yard"].getNpc("neighbor").setInteraction([this]() 
     {
         // Al capturar [this], podemos acceder a 'rooms' directamente
@@ -160,7 +173,7 @@ void Past0::init()
         
         Vec2f targetPos = neighbor_npc.getPosition();
 
-        m_approachingNPC = aproachEntity(navGrid, targetPos);
+        m_approachingEntity = aproachEntity(navGrid, targetPos);
     });
 
 
@@ -199,6 +212,25 @@ void Past0::init()
     esquina2->sprite.setPosition(628, 261);
     esquina2->setlayer(1);  // Layer 1 = delante del jugador
     garageRoom.addEntity("esquina2", std::move(esquina2));
+
+    auto machine = std::make_unique<ObjectRoom>("assets/textures/Past0/maquina_del_tiempo.png");
+    machine->sprite.setPosition(334, 400);
+    machine->sprite.setScale(0.13f, 0.13f);
+    machine->setlayer(1);  // Layer 1 = delante del jugador
+    garageRoom.addEntity("machine", std::move(machine));
+
+    rooms["garage"].getEntity("machine").setInteraction([this]()
+    {
+        auto& machine = rooms["garage"].getEntity("machine");
+        auto& navGrid = currentRoom->getNavGrid(); 
+        
+        Vec2f targetPos = GameUtils::toVec2f(machine.sprite.getPosition());
+
+        m_approachingEntity = aproachEntity(navGrid, targetPos);
+
+        loadMachineDialogs();
+        showMachineDialogue = true;
+    });
 
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
@@ -312,6 +344,14 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             }
         } 
 
+        for(auto& pair : rooms["garage"].getEntities()){
+            //PAIR SECOND
+            Entity& entity = *pair.second;
+            if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["garage"]) {
+                entity.interact();
+            }
+        } 
+
         // Interacción con NPC Neighbor en Yard
         if (currentRoom == &rooms["yard"]) {
             NPC& neighbor = currentRoom->getNpc("neighbor");
@@ -381,6 +421,20 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 }
             }
         }
+        else if (showMachineDialogue) {
+            if (dialogueStack_machine->isStackEmpty()) {
+                showMachineDialogue = false;
+                return;
+            }
+            const DialogueSequence& currentDialogue = dialogueStack_machine->getCurrentDialogue();
+            
+            // Si es diálogo normal, avanza la línea
+            dialogueStack_machine->advanceLine();
+
+            if (dialogueStack_machine->isStackEmpty()) {
+                showMachineDialogue = false;
+            }
+        }
     }
 }
 
@@ -411,12 +465,12 @@ void Past0::update(sf::Time dt)
         currentRoom->getNpc("neighbor").update(dt, currentRoom->getNavGrid());
     }
 
-    // Lógica de acercamiento al NPC
-    if (m_approachingNPC) {
+    // Lógica de acercamiento a la Entidad
+    if (m_approachingEntity) {
         auto& player = GameManager::get().getPlayer();
         if (!player.isMoving()) {
             // El jugador ha llegado (o se ha detenido)
-            m_approachingNPC = false;
+            m_approachingEntity = false;
             
             if (currentRoom == &rooms["yard"]) {
                 NPC& neighbor = currentRoom->getNpc("neighbor");
@@ -493,14 +547,14 @@ void Past0::render(sf::RenderWindow& window)
     if (showDialogue && !dialogueStack->isStackEmpty()) {
 
         const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue(); 
-
+        
         dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack->getCurrentLineIndex()); 
     }
 
     if (showNeighborDialogue && !dialogueStack_npc->isStackEmpty()) {
 
         const DialogueSequence& currentDialogue = dialogueStack_npc->getCurrentDialogue(); 
-
+        
         dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack_npc->getCurrentLineIndex()); 
     }
 }
@@ -519,7 +573,7 @@ void Past0::loadDialogs() {
     introDialogue.dialogueLines.emplace_back(line3);
     introDialogue.dialogueLines.emplace_back(line4);
     
-    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    /*// --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
     
     // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
@@ -540,7 +594,7 @@ void Past0::loadDialogs() {
     // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
     // El último en entrar (introDialogue) será el primero en ejecutarse.
     dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO*/
     dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 }
 
@@ -557,4 +611,29 @@ void Past0::loadNeighborDialogs() {
     neighborDialogue.dialogueLines.emplace_back(line4);
 
     dialogueStack_npc->pushDialogue(neighborDialogue);
+}
+
+void Past0::loadMachineDialogs() {
+    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    DialogueSequence choiceDialogue(DialogueType::CHOICE);
+    
+    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
+    DialogueLine questionLine("Maquina del tiempo", "¿A dónde irás?", "id_retrato_heroe"); 
+    choiceDialogue.dialogueLines.push_back(questionLine);
+    
+    // Define las opciones de la elección (este formato push_back está bien)
+    choiceDialogue.options.push_back({"Ir al Hospital", "hospital_id"}); 
+    choiceDialogue.options.push_back({"Entrar a la Escuela", "school_id"});
+    
+    // --- Secuencia 3: Diálogo después de la elección
+    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
+    DialogueLine line1("Maquina del tiempo", "Excelente elección. Que tengas buen viaje", "id_narrador");
+    DialogueLine line2("John Barr", "Espero que esto sea una buena idea.", "id_john");
+    afterChoiceDialogue.dialogueLines.push_back(line1);
+    afterChoiceDialogue.dialogueLines.push_back(line2);
+    
+    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
+    // El último en entrar (introDialogue) será el primero en ejecutarse.
+    dialogueStack_machine->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
+    dialogueStack_machine->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
 }

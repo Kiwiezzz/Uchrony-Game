@@ -28,6 +28,11 @@ public:
     void removeAt(unsigned index);
     void move(unsigned fromIndex, unsigned toIndex);
 
+    // Agrega un item al primer espacio vacío (al final de la lista si hay capacidad). Retorna true si se agregó.
+    bool add(const Item& item);
+    // Elimina el primer item con el id dado
+    void removeById(int id);
+
     int indexAtScreenPos(sf::Vector2i mousePos, const sf::RenderWindow& window) const;
     void setBasePosition(sf::Vector2f basePos);
     // Dibuja el fondo de un slot (la textura completa) en la posición top-left indicada

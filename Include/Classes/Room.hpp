@@ -60,6 +60,9 @@ public:
     /// @param entity 
     void addEntity(const std::string& name, std::unique_ptr<Entity> entity);
 
+    /// @brief Elimina una entidad de la tabla hash
+    void removeEntity(const std::string& name);
+
 
     /// @brief Agg a la tabla hash directamente un objeto.
     /// Le pasas: un NOMBRE, un PATH, su posición X Y (las que se muestran en el debug), y opcionalmente el LAYER.

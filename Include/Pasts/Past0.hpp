@@ -23,11 +23,13 @@ public:
     void render(sf::RenderWindow& window) override;
     virtual void loadDialogs() override;
     void loadNeighborDialogs();
+    void loadMachineDialogs();
 
 private:
 
     std::optional<Item> draggingItem;
     int draggingFrom = -1;
+    std::map<std::string, TextureAsset> items;
 
     std::map<std::string, sf::FloatRect> doorTriggers;
     
@@ -42,10 +44,12 @@ private:
     DialogueUI dialogueUI;
     bool showDialogue = false;
     bool showNeighborDialogue = false;
+    bool showMachineDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
     std::unique_ptr<DialogueStack> dialogueStack;
     std::unique_ptr<DialogueStack> dialogueStack_npc;
+    std::unique_ptr<DialogueStack> dialogueStack_machine;
     
     // Estado para interacción con NPC
-    bool m_approachingNPC = false;
+    bool m_approachingEntity = false;
 };
