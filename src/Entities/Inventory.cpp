@@ -75,6 +75,23 @@ void Inventory::move(unsigned fromIndex, unsigned toIndex) {
 	m_items.splice(itTo, m_items, itFrom);
 }
 
+bool Inventory::add(const Item& item) {
+    if (m_items.size() < m_capacity) {
+        m_items.push_back(item);
+        return true;
+    }
+    return false;
+}
+
+void Inventory::removeById(int id) {
+    for (auto it = m_items.begin(); it != m_items.end(); ++it) {
+        if (it->id() == id) {
+            m_items.erase(it);
+            return;
+        }
+    }
+}
+
 sf::Vector2f Inventory::slotPosition(unsigned index) const {
 	float drawW = float(m_slotW) * m_displayScale;
 	float drawSpacing = m_spacing * m_displayScale;

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include "Utils/Geometry.hpp"
 
 namespace GameUtils {
 
@@ -45,5 +46,10 @@ namespace GameUtils {
      * @brief Normaliza un vector (lo convierte en un vector de longitud 1).
      */
     sf::Vector2f normalizeVector(sf::Vector2f v);
+
+    /**
+     * @brief Convierte un sf::Vector2f a Vec2f custom
+     */
+    Vec2f toVec2f(const sf::Vector2f& v);
 
 }

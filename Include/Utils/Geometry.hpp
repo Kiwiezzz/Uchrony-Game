@@ -29,7 +29,7 @@ struct Vec2f {
 
     Vec2f() : x(0.0f), y(0.0f) {}
     Vec2f(float x, float y) : x(x), y(y) {}
-
+    
     // Resta de vectores (para obtener dirección)
     Vec2f operator-(const Vec2f& other) const {
         return Vec2f(x - other.x, y - other.y);

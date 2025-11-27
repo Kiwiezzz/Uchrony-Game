@@ -60,6 +60,9 @@ public:
     /// @param entity 
     void addEntity(const std::string& name, std::unique_ptr<Entity> entity);
 
+    /// @brief Elimina una entidad de la tabla hash
+    void removeEntity(const std::string& name);
+
 
     /// @brief Agg a la tabla hash directamente un objeto.
     /// Le pasas: un NOMBRE, un PATH, su posición X Y (las que se muestran en el debug), y opcionalmente el LAYER.
@@ -68,6 +71,9 @@ public:
 
     /// @brief Seteas una intereacción a una entity de la tabla hash de entities
     void setInteractionToEntity(const std::string& entityName, std::function<void()> interaction);
+
+    /// @brief Seteas una intereacción a un npc de la tabla hash de npcs
+    void setInteractionToNpc(const std::string& npcName, std::function<void()> interaction);
 
     /// @brief Busca en la tabla hash de entities y retorna una referencia a ella
     Entity& getEntity(std::string name);
