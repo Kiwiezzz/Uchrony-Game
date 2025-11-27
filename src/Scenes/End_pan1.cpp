@@ -1,5 +1,6 @@
 #include "Scenes/StartScene.hpp"
 #include "Scenes/End_pan1.hpp"
+#include "Scenes/End_pan2.hpp"
 #include "Pasts/Past0.hpp"
 #include <filesystem>
     
