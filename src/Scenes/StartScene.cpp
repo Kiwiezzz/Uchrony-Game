@@ -1,11 +1,18 @@
 #include "Scenes/StartScene.hpp"
 #include "Pasts/Past0.hpp"
-/*    
+#include <filesystem>
+    
 void StartScene::init(){
 
-    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/Inicio_1.png")) {
+    // Inicializar sistema de diálogos
+    dialogueUI.init();
+    dialogueUI.setGame(this->game);
+    dialogueStack = new DialogueStack(*game);
+    loadDialogs();
+
+    if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/1.png")) {
         // Nota: El escalado lo haremos en la función render
-        std::cerr << "ERROR: No se pudo cargar el fondo 'Inicio_1.png'.\n";
+        std::cerr << "ERROR: No se pudo cargar el fondo '1.png'.\n";
     }
     
     m_backgroundSprite.setTexture(m_backgroundTexture);
@@ -22,65 +29,35 @@ void StartScene::init(){
 
         // 3. Iniciar la reproducción
         m_sceneMusic.play();
+
     }
-};
+}
 
 void StartScene::handleEvent(sf::Event& event, sf::RenderWindow& window) {
-    if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left) {
-
-            // Obtener posición del mouse en coordenadas del mundo
-            sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
-
-            // Evento especial: si clicamos en la mesa, mostramos un mensaje
-            if (objects["mesa"].sprite.getGlobalBounds().contains(clickPos)) {
-                std::cout << "Clic en la mesa!" << std::endl;
-                // Tocar la mesa desencadena el evento de un cuadro de diálogo
-
-                // CAMBIAR ESTADO A DIALOGO esto borra el estado actual y pone el de dialogo
-                //this->game->changeState(new Dialogue1());
-                showDialogue = true;
-            } 
-
-        }
-    }
 
     // Evento al clickar continuar en el diálogo
-
     if(dialogueUI.wasAdvanceClicked()){
-        if(dialogueStack.isStackEmpty()){
-            showDialogue = false;
-            return;
-        }
-        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue();
+    
+        // Lógica normal de avance
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
+        dialogueStack->advanceLine();
 
-        if (currentDialogue.getType() == DialogueType::CHOICE) {
-            // Obtener la opción elegida
-            int chosenIndex = dialogueUI.getChosenOption();
-            if (chosenIndex >= 0) {
-                std::string nextSceneID = dialogueStack.chooseOption(chosenIndex);
-                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                // Aquí podrías cambiar de escena si nextSceneID no está vacío
-                // Por ahora, el diálogo continuará con el siguiente en el stack
+        // 3. Ir al NODO CORRESPONDIENTE (Destruye el objeto MainMenu, pero ahora está limpio)
+        // Si la pila ya está vacía antes de avanzar, cambiar al siguiente estado
+            if (!dialogueStack || dialogueStack->isStackEmpty()){
+                m_sceneMusic.stop(); 
+                this->game->changeState(new Past0());
+                showDialogue = false;
+                return;
             }
-            return;
-        }
-        // Si es diálogo normal, avanza la línea
-        dialogueStack.advanceLine();
     }
 }
 
 void StartScene::update(sf::Time dt){}
 
 void StartScene::render(sf::RenderWindow& window) {
- 
-    if (this->game != nullptr) {     // Verificamos que el jefe exista
-        m_customFont = this->game->getFont(); // Le pedimos la fuente
-    }
 
-    if (m_customFont) {
-        ImGui::PushFont(m_customFont); 
-    }
+    window.clear();
 
     // --- SETUP DE VENTANA (Dimensiones y Posición) ---
     float window_width = (float)window.getSize().x;
@@ -105,6 +82,14 @@ void StartScene::render(sf::RenderWindow& window) {
         
     // D. DIBUJAR EL SPRITE
     window.draw(m_backgroundSprite);
+ 
+    if (this->game != nullptr) {     // Verificamos que el jefe exista
+        m_customFont = this->game->getFont(); // Le pedimos la fuente
+    }
+
+    if (m_customFont) {
+        ImGui::PushFont(m_customFont); 
+    }
 
     // 1. Definir el TAMAÑO del menú basado en la ventana (Responsive Size)
     // Por ejemplo: El menú ocupa el 75% del ancho y el 80% de la altura de la ventana.
@@ -129,28 +114,22 @@ void StartScene::render(sf::RenderWindow& window) {
     
     ImGui::Begin("Scene", nullptr, flags);
 
-    m_sceneMusic.stop();
+    window.setView(window.getView());
 
-    // 3. Ir al NODO CORRESPONDIENTE (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new Past0());
+    if (showDialogue && dialogueStack && !dialogueStack->isStackEmpty()) {
 
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue(); 
 
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack->getCurrentLineIndex()); 
+    }    
+    
     ImGui::End(); 
 
     if (m_customFont) {
         ImGui::PopFont();
     }
 
-    window.setView(prevView);
-
-    if (showDialogue && !dialogueStack.isStackEmpty()) {
-
-        const DialogueSequence& currentDialogue = dialogueStack.getCurrentDialogue(); 
-
-        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack.getCurrentLineIndex()); 
-    }
-
-};
+}
 
 void StartScene::loadDialogs() {
 
@@ -167,17 +146,6 @@ void StartScene::loadDialogs() {
     introDialogue.dialogueLines.emplace_back(line3);
     introDialogue.dialogueLines.emplace_back(line4);
     
-    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
-    DialogueSequence choiceDialogue(DialogueType::CHOICE);
-    
-    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
-    DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
-    choiceDialogue.dialogueLines.push_back(questionLine);
-    
-    // Define las opciones de la elección (este formato push_back está bien)
-    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
-    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
-    
     // --- Secuencia 3: Diálogo después de la elección
     DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
     DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
@@ -188,7 +156,6 @@ void StartScene::loadDialogs() {
     // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
     // El último en entrar (introDialogue) será el primero en ejecutarse.
     dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
     dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 
 };

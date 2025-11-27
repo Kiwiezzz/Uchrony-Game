@@ -16,7 +16,12 @@ class StartScene : public GameState
 public:
     // Constructor y destructor
     StartScene() : dialogueStack(nullptr) {}
-    ~StartScene() {}
+    ~StartScene() {
+        if (dialogueStack) {
+            delete dialogueStack;
+            dialogueStack = nullptr;
+        }
+    }
 
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
@@ -27,19 +32,16 @@ public:
 
 private:
 
-    DialogueType m_type;
-    std::string m_speakerName;
-    std::string m_dialogueText;
-    bool m_advanceClicked;
+    bool m_advanceClicked = false;
     ImFont* m_customFont = nullptr;
     sf::Texture m_backgroundTexture;
     sf::Sprite m_backgroundSprite;
     sf::Music m_sceneMusic;
+    bool showDialogue = true;
 
     // Diálogos
     // UI de Diálogos
     DialogueUI dialogueUI;
-    bool showDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
     DialogueStack* dialogueStack;
 
