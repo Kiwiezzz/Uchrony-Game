@@ -42,7 +42,7 @@ private:
     virtual void handleEvent(sf::Event event) = 0;
     virtual void update(sf::Time dt) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;
-    virtual void aproach() {}
+    virtual void approach() {}
 
 
     std::function<void()> m_interaction;
