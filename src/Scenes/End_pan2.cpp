@@ -132,7 +132,7 @@ void End_pan2::render(sf::RenderWindow& window) {
 
 }
 
-void PastEncuentro::loadDialogs() {
+void End_pan2::loadDialogs() {
 
     // IDs de Retratos (Asegurando la coherencia)
     const std::string ID_JOHN = "John_Barr_Neutral"; // John adulto (reflexión)

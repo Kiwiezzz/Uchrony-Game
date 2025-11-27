@@ -133,7 +133,7 @@ void End_pan3::render(sf::RenderWindow& window) {
 
 }
 
-void EscenaConclusion::loadDialogs() {
+void End_pan3::loadDialogs() {
 
     // IDs de Retratos (Asegurando la coherencia)
     const std::string ID_JOHN = "John_Barr_Determinado"; 

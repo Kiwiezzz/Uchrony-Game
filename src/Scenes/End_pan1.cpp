@@ -132,7 +132,7 @@ void End_pan1::render(sf::RenderWindow& window) {
 
 }
 
-void PastRecuerdo::loadDialogs() {
+void End_pan1::loadDialogs() {
     // IDs de personajes (Asumiendo que ya están definidos y cargados)
     const std::string ID_JOHN = "John_Barr_Neutral";
     const std::string ID_JOVEN_JOHN = "John_Barr_Joven_Avergonzado";

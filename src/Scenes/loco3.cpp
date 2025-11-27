@@ -146,7 +146,7 @@ void loco3::loadDialogs() {
     DialogueLine line1("Narrador", "...", ID_JOHN); // Pausa inicial
     DialogueLine line2("Narrador", "En realidad no le pasó casi nada, de milagro...", ID_WIFE_PORTRAIT);
     DialogueLine line3("Narrador", "Se dió un golpe en la cabeza que lo hizo actuar más normal", ID_WIFE_PORTRAIT);
-    DialogueLine line4("Narrador", "Y lo internaron en otro hospital", ID_WIFE_PORTRAIT);
+    DialogueLine line4("Narrador", "Y lo internaron en otro hospital...", ID_WIFE_PORTRAIT);
     
     // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
     DialogueSequence portraitDialogue(DialogueType::NORMAL);
