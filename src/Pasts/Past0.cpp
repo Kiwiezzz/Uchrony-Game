@@ -3,8 +3,9 @@
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
+
 /// @brief Si logra encontrar camino para aproximarse retorna true
-bool aproachEntity(const NavGrid& navGrid, Vec2f targetPos)
+bool Past0::approachEntity(const NavGrid& navGrid, Vec2f targetPos)
 {
     Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
     
@@ -173,9 +174,9 @@ void Past0::init()
         
         Vec2f targetPos = neighbor_npc.getPosition();
 
-        m_approachingEntity = aproachEntity(navGrid, targetPos);
+        m_approachingEntity = approachEntity(navGrid, targetPos);
     });
-
+    
 
     
 
@@ -226,7 +227,7 @@ void Past0::init()
         
         Vec2f targetPos = GameUtils::toVec2f(machine.sprite.getPosition());
 
-        m_approachingEntity = aproachEntity(navGrid, targetPos);
+        m_approachingEntity = approachEntity(navGrid, targetPos);
 
         loadMachineDialogs();
         showMachineDialogue = true;

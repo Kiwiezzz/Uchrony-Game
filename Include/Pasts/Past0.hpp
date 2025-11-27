@@ -17,6 +17,7 @@ public:
     Past0() : dialogueStack(nullptr) {}
     ~Past0() {}
 
+    bool approachEntity(const NavGrid& navGrid, Vec2f targetPos);
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
     void update(sf::Time dt) override;
