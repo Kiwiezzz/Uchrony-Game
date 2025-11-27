@@ -68,4 +68,10 @@ namespace GameUtils {
         return v;
     }
 
+    void testSpritePosition(sf::Sprite& sprite, sf::RenderWindow& window, const std::string& prefix)
+    {
+        sprite.setOrigin(0,0);
+        debugFollowMouse(sprite, window, prefix);/**/
+    }
 }
+

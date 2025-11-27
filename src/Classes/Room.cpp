@@ -135,9 +135,9 @@ void Room::addEntity(const std::string& name, Entity* entity)
 }
 
 
-void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer)
+void Room::addObject(const std::string& name, const std::string& path, int x, int y, int layer, float fraction_Origin)
 {
-    entities[name] = new ObjectRoom(path, x, y, layer);
+    entities[name] = new ObjectRoom(path, x, y, layer, fraction_Origin);
 }
 
 

@@ -27,7 +27,7 @@ void Past0::init()
     firstRoom.setGame(this->game);
 
     firstRoom.addObject("marco_puerta", "assets/textures/Past0/marco_puerta.png", 333, 412, 1);
-    firstRoom.addObject("planta", "assets/textures/Past0/planta.png", 42, 418, 1);
+    firstRoom.addObject("planta", "assets/textures/Past0/planta.png", 42, 418);
     firstRoom.addObject("mesa_cuarto", "assets/textures/Past0/mesa_cuarto.png", 621, 283);
     firstRoom.addObject("sillita", "assets/textures/Past0/sillita.png", 552, 299);
 

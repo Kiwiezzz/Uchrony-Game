@@ -24,6 +24,10 @@ namespace GameUtils {
     // Dibuja el bounding box de un sprite para depuración (hitbox visual)
     void drawBoundingBox(sf::RenderWindow& window, const sf::Sprite& sprite, sf::Color color = sf::Color::Green);
 
+    /// @brief Ponme al principio de handle events. Verás como el sprite sigue tu mouse y sale su posicion en la pantalla
+    /// Muy util para saber qué posicion debe tener un objeto
+    void testSpritePosition(sf::Sprite& sprite, sf::RenderWindow& window, const std::string& prefix = "Test Pos");
+
     /**
      * @brief Comprueba si el mouse está actualmente sobre un sprite.
      */

@@ -4,6 +4,8 @@
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 #include "Pasts/Past0.hpp"
+#include "Pasts/PastA.hpp"
+
 #include "GameStates/Dialogue1.hpp"
 #include "Core/Game.hpp"
 #include "GameStates/Screen1.hpp"
