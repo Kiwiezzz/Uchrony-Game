@@ -48,7 +48,7 @@ void End_pan3::handleEvent(sf::Event& event, sf::RenderWindow& window) {
         // Si la pila ya está vacía antes de avanzar, cambiar al siguiente estado
             if (!dialogueStack || dialogueStack->isStackEmpty()){
                 m_sceneMusic.stop(); 
-                this->game->changeState(new Past0());
+                this->game->changeState(new End_pan4());
                 showDialogue = false;
                 return;
             }
