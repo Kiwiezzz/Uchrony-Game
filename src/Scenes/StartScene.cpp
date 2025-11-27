@@ -1,6 +1,6 @@
 #include "Scenes/StartScene.hpp"
 #include "Pasts/Past0.hpp"
-    
+/*    
 void StartScene::init(){
 
     if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/Inicio_1.png")) {
@@ -193,4 +193,4 @@ void StartScene::loadDialogs() {
 
 };
 
-void StartScene::loadNeighborDialogs() {};
+void StartScene::loadNeighborDialogs() {};*/

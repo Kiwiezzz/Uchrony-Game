@@ -119,7 +119,9 @@ void Past0::init()
     secondRoom.setInteractionToEntity("botella", 
         [this]()
         {
-            std::cout << "a" << std::endl;
+            auto& pos = rooms["second"].getEntity("botella").sprite.getPosition();
+            approachEntity(rooms["second"].getNavGrid(), Vec2f(pos.x, pos.y));
+            game->getWindow().close();
         }
     );
     
@@ -158,12 +160,12 @@ void Past0::init()
     
     yardRoom.addNpc("neighbor", neighbor_npc);
 
-    rooms["yard"].getNpc("neighbor").setInteraction([this]() 
+    yardRoom.setInteractionToNpc("neighbor", [this]() 
     {
         // Al capturar [this], podemos acceder a 'rooms' directamente
         auto& neighbor_npc = rooms["yard"].getNpc("neighbor");
         
-        std::cout << "Clic en Neighbor!" << std::endl;
+        //std::cout << "Clic en Neighbor!" << std::endl;
         
         // 1. Detener al NPC
         neighbor_npc.stopMovement();
@@ -220,7 +222,7 @@ void Past0::init()
     machine->setlayer(1);  // Layer 1 = delante del jugador
     garageRoom.addEntity("machine", std::move(machine));
 
-    rooms["garage"].getEntity("machine").setInteraction([this]()
+    rooms["garage"].setInteractionToEntity("machine", [this]()
     {
         auto& machine = rooms["garage"].getEntity("machine");
         auto& navGrid = currentRoom->getNavGrid(); 
