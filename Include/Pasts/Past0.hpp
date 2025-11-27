@@ -34,11 +34,7 @@ private:
     Room* m_pendingNextRoom = nullptr;
     Room* m_previousRoom = nullptr;
     Pathfinder pathfinder;
-    
-    // Sistema de debug
-    bool isDebugPlacing = false;
-    sf::Sprite* debugSprite = nullptr;  // Sprite siendo posicionado
-    std::string debugSpriteName = "";   // Nombre del sprite
+    sf::Time m_npcAnimationTimer;
 
     // Diálogos
     // UI de Diálogos

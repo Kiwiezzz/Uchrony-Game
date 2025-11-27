@@ -1,15 +1,9 @@
 #include "Pasts/Past0.hpp"
 #include <iostream>
+#include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
-/**
- * @brief Inicializa todas las habitaciones (rooms) del Past0
- * 
- * Este método se llama una sola vez al inicio para configurar:
- * - Las 5 habitaciones del juego (cuarto, laboratorio, baño, patio, garage)
- * - Los triggers de puertas que permiten cambiar entre habitaciones
- * - La posición inicial del jugador
- */
+
 void Past0::init()
 {
     // ============================================================
@@ -82,12 +76,24 @@ void Past0::init()
 // ============================================================
     // HABITACIÓN 4: PATIO (Yard)
     // ============================================================
-    auto& patioRoom = rooms["patio"] = Room();
-    patioRoom.setBackground("assets/textures/Past0/yard.png");
-    patioRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    patioRoom.getBackground().sprite.setPosition(0, 0);
-    patioRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/yard_colision.png");
-    patioRoom.setGame(this->game);
+    auto& yardRoom = rooms["yard"] = Room();
+    yardRoom.setBackground("assets/textures/Past0/yard.png");
+    yardRoom.getBackground().sprite.setScale(1.0f, 1.0f);
+    yardRoom.getBackground().sprite.setPosition(0, 0);
+    yardRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/yard_colision.png");
+    yardRoom.setGame(this->game);
+
+    NPC neighbor_npc;
+    neighbor_npc.init("assets/textures/Past0/neighbor_npc.png", Vec2f(520.f, 250.f), true);
+    yardRoom.addNpc("neighbor", neighbor_npc);
+
+    rooms["yard"].getNpc("neighbor").getSprite().setPosition(520.f, 250.f);
+    rooms["yard"].getNpc("neighbor").getSprite().setScale(2.0f, 2.0f);
+    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Espalda", 0, 1, 3.0f, false, 2);
+    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Espalda2", 0, 1, 3.0f, false, 5);
+    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Pectorales", 2, 1, 3.0f, false, 6);
+    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Contento", 3, 1, 5.0f, false, 2);
+                            //row(r), frameCount(fc), duration(d), loop(l), startColumn(sc)
 
     // ============================================================
     // HABITACIÓN 5: GARAGE
@@ -123,7 +129,7 @@ void Past0::init()
     doorTriggers["second_down"] = sf::FloatRect(230.f, 520.f, 400.f, 80.f);
     doorTriggers["second_left"] = sf::FloatRect(0.f, 250.f, 80.f, 600.f);
     doorTriggers["bathroom"] = sf::FloatRect(0.f, 250.f, 100.f, 300.f);
-    doorTriggers["patio"] = sf::FloatRect(520.f, 100.f, 100.f, 110.f);
+    doorTriggers["yard"] = sf::FloatRect(520.f, 100.f, 100.f, 110.f);
     doorTriggers["garage"] = sf::FloatRect(720.f, 250.f, 80.f, 80.f);
    
     currentRoom = &rooms["first"];
@@ -159,8 +165,8 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 currentRoomTriggers.push_back("second_left");
             } else if (currentRoom == &rooms["bathroom"]) {
                 currentRoomTriggers.push_back("bathroom");
-            } else if (currentRoom == &rooms["patio"]) {
-                currentRoomTriggers.push_back("patio");
+            } else if (currentRoom == &rooms["yard"]) {
+                currentRoomTriggers.push_back("yard");
             } else if (currentRoom == &rooms["garage"]) {
                 currentRoomTriggers.push_back("garage");
             }
@@ -173,10 +179,10 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                     if (triggerName == "first") nextRoomPtr = &rooms["second"];
                     else if (triggerName == "second_up") nextRoomPtr = &rooms["first"];
                     else if (triggerName == "second_right") nextRoomPtr = &rooms["bathroom"];
-                    else if (triggerName == "second_down") nextRoomPtr = &rooms["patio"];
+                    else if (triggerName == "second_down") nextRoomPtr = &rooms["yard"];
                     else if (triggerName == "second_left") nextRoomPtr = &rooms["garage"];
                     else if (triggerName == "bathroom") nextRoomPtr = &rooms["second"];
-                    else if (triggerName == "patio") nextRoomPtr = &rooms["second"];
+                    else if (triggerName == "yard") nextRoomPtr = &rooms["second"];
                     else if (triggerName == "garage") nextRoomPtr = &rooms["second"];
 
                     if (nextRoomPtr) {
@@ -269,7 +275,31 @@ void Past0::update(sf::Time dt)
 {
     currentRoom->update(dt);
     GameManager::get().getPlayer().update(dt);
+    m_npcAnimationTimer += dt;
+    
+    if(currentRoom == &rooms["yard"]) {
+        
+        if (m_npcAnimationTimer.asSeconds() > 6.0f)
+        {
+            m_npcAnimationTimer = sf::Time::Zero; 
+            int random = rand() % 100;
 
+            if (random < 20) {
+                currentRoom->getNpc("neighbor").playAction("Posicion_Espalda", 2.f);
+            } else if (random >= 20 && random < 30) {
+                currentRoom->getNpc("neighbor").playAction("Posicion_Espalda2", 2.f);
+            } else if (random >= 30 && random < 40) {
+                currentRoom->getNpc("neighbor").playAction("Posicion_Pectorales", 2.f);
+            } else if (random >= 40 && random < 50) {
+                currentRoom->getNpc("neighbor").playAction("Posicion_Contento", 2.f);
+            }
+        }
+
+        currentRoom->getNpc("neighbor").update(dt, currentRoom->getNavGrid());
+    }
+
+    
+    
     if (m_pendingRoomSwitch && !GameManager::get().getPlayer().isMoving()) {
         if (m_pendingNextRoom) {
             m_previousRoom = currentRoom;
@@ -282,14 +312,14 @@ void Past0::update(sf::Time dt)
                     GameManager::get().getPlayer().setPosition(398.f, 200.f);
                 } else if (m_previousRoom == &rooms["bathroom"]) {
                     GameManager::get().getPlayer().setPosition(680.f, 400.f);
-                } else if (m_previousRoom == &rooms["patio"]) {
+                } else if (m_previousRoom == &rooms["yard"]) {
                     GameManager::get().getPlayer().setPosition(400.f, 520.f);
                 } else if (m_previousRoom == &rooms["garage"]) {
                     GameManager::get().getPlayer().setPosition(120.f, 450.f);
                 }
             } else if (currentRoom == &rooms["bathroom"]) {
                 GameManager::get().getPlayer().setPosition(100.f, 450.f);
-            } else if (currentRoom == &rooms["patio"]) {
+            } else if (currentRoom == &rooms["yard"]) {
                 GameManager::get().getPlayer().setPosition(570.f, 140.f);
             } else if (currentRoom == &rooms["garage"]) {
                 GameManager::get().getPlayer().setPosition(700.f, 300.f);
@@ -303,35 +333,6 @@ void Past0::update(sf::Time dt)
 void Past0::render(sf::RenderWindow& window)
 {
     currentRoom->render(window);
-    
-    /*std::vector<std::string> currentRoomTriggers;
-        
-    if (currentRoom == &rooms["first"]) {
-        currentRoomTriggers.push_back("first");
-    } else if (currentRoom == &rooms["second"]) {
-        currentRoomTriggers.push_back("second_up");
-        currentRoomTriggers.push_back("second_right");
-        currentRoomTriggers.push_back("second_down");
-        currentRoomTriggers.push_back("second_left");
-    } else if (currentRoom == &rooms["bathroom"]) {
-        currentRoomTriggers.push_back("bathroom");
-    } else if (currentRoom == &rooms["patio"]) {
-        currentRoomTriggers.push_back("patio");
-    } else if (currentRoom == &rooms["garage"]) {
-        currentRoomTriggers.push_back("garage");
-    }
-        
-    /*for (const auto& triggerName : currentRoomTriggers) {
-        if (doorTriggers.count(triggerName)) {
-            sf::RectangleShape debugRect;
-            debugRect.setPosition(doorTriggers[triggerName].left, doorTriggers[triggerName].top);
-            debugRect.setSize(sf::Vector2f(doorTriggers[triggerName].width, doorTriggers[triggerName].height));
-            debugRect.setFillColor(sf::Color(255, 0, 0, 80));
-            debugRect.setOutlineColor(sf::Color::Red);
-            debugRect.setOutlineThickness(2.f);
-            window.draw(debugRect);
-        }
-    }*/
     
     auto prevView = window.getView();
     window.setView(window.getDefaultView());
