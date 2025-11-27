@@ -3,7 +3,6 @@
 #include "Scenes/End_pan4.hpp"
 #include "Pasts/Past0.hpp"
 
-
 void End_pan3::init(){
 
     // Inicializar sistema de diálogos
@@ -37,7 +36,7 @@ void End_pan3::init(){
 
 void End_pan3::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 
-
+    // Evento al clickar continuar en el diálogo
     // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
     
@@ -48,7 +47,6 @@ void End_pan3::handleEvent(sf::Event& event, sf::RenderWindow& window) {
         // 3. Ir al NODO CORRESPONDIENTE (Destruye el objeto MainMenu, pero ahora está limpio)
         // Si la pila ya está vacía antes de avanzar, cambiar al siguiente estado
             if (!dialogueStack || dialogueStack->isStackEmpty()){
-                m_sceneMusic.stop(); 
                 this->game->changeState(new End_pan4());
                 showDialogue = false;
                 return;

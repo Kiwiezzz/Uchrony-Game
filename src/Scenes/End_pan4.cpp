@@ -38,6 +38,7 @@ void End_pan4::init(){
 void End_pan4::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 
     // Evento al clickar continuar en el diálogo
+    // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
     
         // Lógica normal de avance

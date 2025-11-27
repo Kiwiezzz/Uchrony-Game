@@ -1,6 +1,32 @@
 #include "Pasts/PastB.hpp"
 #include <iostream>
+#include "Scenes/End_pan1.hpp"
 #include "../Include/Utils/DialogueSequence.hpp"
+
+bool PastB::approachEntity(const NavGrid& navGrid, Vec2f targetPos, float stopDistance)
+{
+    Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
+    
+    // Calcular punto destino (80px cerca)
+    Vec2f dirToPlayer = (playerPos - targetPos).normalized();
+    targetPos = targetPos + dirToPlayer * stopDistance;
+    
+    Point start = navGrid.worldToGrid(playerPos);
+    Point end = navGrid.worldToGrid(targetPos);
+    
+    if (navGrid.isWalkable(end)) {
+        std::vector<Point> path = GameManager::get().pathfinder.findPath(navGrid, start, end);
+        
+        if (!path.empty()) {
+            GameManager::get().getPlayer().setPath(path, navGrid);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 /**
  * @brief Inicializa todas las habitaciones (rooms) del PastB
@@ -32,27 +58,27 @@ void PastB::init()
     
     // --- Objetos decorativos en el salón ---
     auto mesa = std::make_unique<ObjectRoom>("assets/textures/PastB/silla_1.png");
-    mesa->sprite.setPosition(397, 494);
+    mesa->sprite.setPosition(129, 450);
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
-    mesa->setlayer(1);  // Layer 0 = detrás del jugador
+    mesa->setlayer(0);  // Layer 0 = detrás del jugador
     firstRoom.addEntity("mesa", std::move(mesa));
 
-    auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_2.png");
-    mesa2->sprite.setPosition(667, 326);
+    auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/PastB/silla_2.png");
+    mesa2->sprite.setPosition(292, 450);
     mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
-    mesa2->setlayer(1);
+    mesa2->setlayer(0);
     firstRoom.addEntity("mesa2", std::move(mesa2));
 
-    auto mesa3 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_3.png");
-    mesa3->sprite.setPosition(667, 326);
+    auto mesa3 = std::make_unique<ObjectRoom>("assets/textures/PastB/silla_3.png");
+    mesa3->sprite.setPosition(477, 450);
     mesa3->sprite.setOrigin(float(mesa3->texture.getSize().x) / 2.f, float(mesa3->texture.getSize().y));
-    mesa3->setlayer(1);
+    mesa3->setlayer(0);
     firstRoom.addEntity("mesa3", std::move(mesa3));
 
-    auto mesa4 = std::make_unique<ObjectRoom>("assets/textures/PastB/mesa_4.png");
-    mesa4->sprite.setPosition(667, 326);
+    auto mesa4 = std::make_unique<ObjectRoom>("assets/textures/PastB/silla_4.png");
+    mesa4->sprite.setPosition(663, 450);
     mesa4->sprite.setOrigin(float(mesa4->texture.getSize().x) / 2.f, float(mesa4->texture.getSize().y));
-    mesa4->setlayer(1);
+    mesa4->setlayer(0);
     firstRoom.addEntity("mesa4", std::move(mesa4));
 
     // ============================================================
@@ -103,11 +129,17 @@ void PastB::init()
     firstRoom.addNpc("nina", nina);
 
     rooms["first"].getNpc("nina").getSprite().setScale(1.0f, 1.0f);
+    firstRoom.setInteractionToNpc("nina", [this](){
+
+        showDialogue = true;
+    });
+
+    
 }
 
 void PastB::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    GameUtils::logPosition(GameUtils::getMouseWorldPosition(window));
+    //GameUtils::logPosition(GameUtils::getMouseWorldPosition(window));
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D) {
         isDebugPlacing = !isDebugPlacing;        std::cout << "Debug mode: " << (isDebugPlacing ? "ON" : "OFF") << std::endl;
     }
@@ -189,6 +221,21 @@ void PastB::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
                 showDialogue = true;
         } */
+
+        if (currentRoom == &rooms["first"]) {
+            NPC& nina = currentRoom->getNpc("nina");
+            if (nina.getSprite().getGlobalBounds().contains(clickPos)) {
+                nina.interact();
+            }
+
+            for(auto& pair : rooms["first"].getEntities()){
+                Entity& entity = *pair.second;
+                if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["first"]) {
+                    entity.interact();
+                    break;
+                }
+            }
+        }
     }
 
     if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right && draggingItem) {
@@ -203,28 +250,55 @@ void PastB::handleEvent(sf::Event& event, sf::RenderWindow& window)
         draggingFrom = -1;
     }
     
-    // Evento al clickar continuar en el diálogo
+    // Evento al clickar continuar en el diálogo final de la pila
     if (dialogueUI.wasAdvanceClicked()) {
-        if (dialogueStack->isStackEmpty()) {
-            showDialogue = false;
+        // 1. Verificar si la PILA total está vacía (fin del juego/escena)
+        if (!dialogueStack || dialogueStack->isStackEmpty()) {
+            this->game->changeState(new End_pan1());
             return;
         }
-        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
         
-        if (currentDialogue.getType() == DialogueType::CHOICE) {
-            // Obtener la opción elegida
-            int chosenIndex = dialogueUI.getChosenOption();
-            if (chosenIndex >= 0) {
-                std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
-                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                // Aquí podrías cambiar de escena si nextSceneID no está vacío
-                // Por ahora, el diálogo continuará con el siguiente en el stack
-            }
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
+        // OBTENER el índice de la línea que se está mostrando AHORA
+        int currentLineIndex = dialogueStack->getCurrentLineIndex(); 
+        
+        // --- LÓGICA DE DETECCIÓN DE ÚLTIMA LÍNEA PERSONALIZADA ---
+        
+        // 2. Usar el índice actual para obtener la línea (la que se acaba de leer)
+        const auto& currentLine = currentDialogue.getLines()[currentLineIndex];
+
+        std::cout << "Línea actual (Índice " << currentLineIndex << "): " 
+                << currentLine.getPortraitID() << std::endl;
+
+        if (currentLine.getPortraitID() == "Last_line") {
+            // La condición de finalización custom se ha cumplido.
+            std::cout << "¡Fin detectado por ID 'Last_line'!" << std::endl;
+            this->game->changeState(new End_pan1());
             return;
         }
-        // Si es diálogo normal, avanza la línea
+        
+        // --- LÓGICA DE AVANCE ---
+        
+        // 3. Avanzar la línea (prepara la siguiente línea para el render)
         dialogueStack->advanceLine();
+
+        // --- 4. VERIFICAR SI LA SECUENCIA TERMINÓ (Lógica de POP) ---
+        // (CRÍTICO: Esto debe hacerse después de advanceLine, y antes de render)
+        
+        // Si el nuevo índice es igual o mayor al tamaño total de las líneas,
+        // significa que la secuencia actual ha terminado.
+        if (dialogueStack->getCurrentLineIndex() >= currentDialogue.dialogueLines.size()) {
+            
+            dialogueStack->popDialogue(); // Eliminar la secuencia completada de la pila.
+            
+            // Verificar si la pila total está vacía DESPUÉS del pop.
+            if (dialogueStack->isStackEmpty()) {
+                this->game->changeState(new End_pan1());
+                return;
+            }
+        }
     }
+
 }
 
 void PastB::update(sf::Time dt)
@@ -242,10 +316,10 @@ void PastB::update(sf::Time dt)
             currentRoom = m_pendingNextRoom;
             
             if (currentRoom == &rooms["first"]) {
-                GameManager::get().getPlayer().setPosition(542.f, 446.f);
+                GameManager::get().getPlayer().setPosition(555.f, 212.f);
             } else if (currentRoom == &rooms["second"]) {
                 if (m_previousRoom == &rooms["first"]) {
-                    GameManager::get().getPlayer().setPosition(398.f, 200.f);
+                    GameManager::get().getPlayer().setPosition(446.f, 582.f);
                 }
             
             std::cout << "Switched room!" << std::endl;
@@ -329,7 +403,7 @@ void PastB::loadDialogs() {
     DialogueLine line1("", "...", "Pause");
     DialogueLine line2("Niña", "Hey, John! Vamos a jugar!", "Niña_01");
     DialogueLine line3("John Barr", "Jugar? Dónde estoy? Creo recordar algunas cosas...", "Main_Character");
-    DialogueLine line4("", "Parece que suena el timbre del recreo... Todos deben salir de aquí.", "Sonido");
+    DialogueLine line4("", "Parece que suena el timbre del recreo... Todos deben salir de aquí.", "Last_line");
     
     // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
     DialogueSequence introDialogue(DialogueType::NORMAL);
@@ -338,26 +412,8 @@ void PastB::loadDialogs() {
     introDialogue.dialogueLines.emplace_back(line3);
     introDialogue.dialogueLines.emplace_back(line4);
     
-    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
-    DialogueSequence choiceDialogue(DialogueType::CHOICE);
-    
-    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
-    DialogueLine questionLine("Narrador", "Creo que se te viene a la mente algo...", "id_narrador"); 
-    choiceDialogue.dialogueLines.push_back(questionLine);
-    
-    // Define las opciones de la elección (este formato push_back está bien)
-    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
-    
-    // --- Secuencia 3: Diálogo después de la elección
-    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
-    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
-    DialogueLine line6("John Barr", "Empiezo a recordar algo...", "id_john");
-    afterChoiceDialogue.dialogueLines.push_back(line5);
-    afterChoiceDialogue.dialogueLines.push_back(line6);
-    
     // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
     // El último en entrar (introDialogue) será el primero en ejecutarse.
-    dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+
     dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
 }

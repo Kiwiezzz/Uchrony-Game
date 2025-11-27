@@ -1,5 +1,6 @@
 #include "Pasts/PastA.hpp"
 #include <iostream>
+#include "Scenes/loco1.hpp"
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
@@ -43,102 +44,22 @@ void PastA::init()
     pasilloRoom.addObject("escritorio", "assets/textures/PastA/escritorio.png", 16, 291);
     pasilloRoom.addObject("carrito", "assets/textures/PastA/carrito.png", 192, 361);
 
-    
-    //pasilloRoom.addObject("sillita", "assets/textures/PastA/sillita.png", 552, 299);
-    
-    // --- Objetos decorativos en el pasillo ---
-    /*ObjectRoom* mesa = new ObjectRoom("assets/textures/mesa.png");
-    mesa->sprite.setPosition(397, 494);
-    mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
-    mesa->setlayer(0);  // Layer 0 = detrás del jugador
-    pasilloRoom.addEntity("mesa", mesa);
-    
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
-    mesa2->sprite.setPosition(667, 326);
-    mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
-    mesa2->setlayer(0);
-    pasilloRoom.addEntity("mesa2", mesa2);
 
-    ObjectRoom* botella = new ObjectRoom("assets/textures/PastA/botella.png");
-    botella->sprite.setPosition(597, 185);
-    botella->setlayer(1);  // Layer 1 = delante del jugador
-    pasilloRoom.addEntity("botella", botella);
-
-    // ============================================================
-    // HABITACIÓN 3: BAÑO (Bathroom)
-    // ============================================================
-    auto& bathroomRoom = rooms["bathroom"] = Room();
-    bathroomRoom.setBackground("assets/textures/PastA/bath.png");
-    bathroomRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    bathroomRoom.getBackground().sprite.setPosition(0, 0);
-    bathroomRoom.setCollisionAndGrid("assets/textures/PastA/Colisiones/bath_colision.png");
-    bathroomRoom.setGame(this->game);
-
-    ObjectRoom* bathtub = new ObjectRoom("assets/textures/PastA/bathtub.png");
-    bathtub->sprite.setPosition(0, 391);
-    bathtub->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("bathtub", bathtub);
-
-    ObjectRoom* plant = new ObjectRoom("assets/textures/PastA/Plant.png");
-    plant->sprite.setPosition(703, 386);
-    plant->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("plant", plant);
-
-// ============================================================
-    // HABITACIÓN 4: PATIO (Yard)
-    // ============================================================
-    auto& yardRoom = rooms["yard"] = Room();
-    yardRoom.setBackground("assets/textures/PastA/yard.png");
-    yardRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    yardRoom.getBackground().sprite.setPosition(0, 0);
-    yardRoom.setCollisionAndGrid("assets/textures/PastA/Colisiones/yard_colision.png");
-    yardRoom.setGame(this->game);
-
-    NPC neighbor_npc;
-    neighbor_npc.init("assets/textures/PastA/neighbor_npc.png", Vec2f(520.f, 250.f), true);
-    yardRoom.addNpc("neighbor", neighbor_npc);
-
-    rooms["yard"].getNpc("neighbor").getSprite().setPosition(520.f, 250.f);
-    rooms["yard"].getNpc("neighbor").getSprite().setScale(2.0f, 2.0f);
-    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Espalda", 0, 1, 3.0f, false, 2);
-    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Espalda2", 0, 1, 3.0f, false, 5);
-    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Pectorales", 2, 1, 3.0f, false, 6);
-    rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Contento", 3, 1, 5.0f, false, 2);
-                            //row(r), frameCount(fc), duration(d), loop(l), startColumn(sc)
-
-    // ============================================================
-    // HABITACIÓN 5: GARAGE
-    // ============================================================
-    auto& garageRoom = rooms["garage"] = Room();
-    garageRoom.setBackground("assets/textures/PastA/garage.png");
-    garageRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    garageRoom.getBackground().sprite.setPosition(0, 0);
-    garageRoom.setCollisionAndGrid("assets/textures/PastA/Colisiones/garage_colision.png");
-    garageRoom.setGame(this->game);
-
-    ObjectRoom* capo = new ObjectRoom("assets/textures/PastA/Capo.png");
-    capo->sprite.setPosition(273, 204);
-    capo->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("capo", capo);
-
-    ObjectRoom* esquina = new ObjectRoom("assets/textures/PastA/Esquina1.png");
-    esquina->sprite.setPosition(26, 254);
-    esquina->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina", esquina);
-
-    ObjectRoom* esquina2 = new ObjectRoom("assets/textures/PastA/Esquina2.png");
-    esquina2->sprite.setPosition(628, 261);
-    esquina2->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina2", esquina2);*/
-
-    // ============================================================
-    // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
-    // ============================================================
     doorTriggers["pasillo"] = sf::FloatRect(305.f, 518.f, 150.f, 120.f);
     doorTriggers["cuarto"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);
    
     currentRoom = &rooms["cuarto"];
     
+    NPC doctor;
+    doctor.init("assets/textures/PastA/doctor_spritesheet.png", Vec2f(250.f, 400.f), true);
+    doctor.getSprite().setPosition(250.f, 400.f); // <--- Coordenadas del salón
+    pasilloRoom.addNpc("doctor", doctor);
+
+    rooms["pasillo"].getNpc("doctor").getSprite().setScale(1.0f, 1.0f);
+    pasilloRoom.setInteractionToNpc("doctor", [this](){
+        showDialogue = true;
+    });
+
     auto& GM = GameManager::get();
     GM.getPlayer().setPosition(400.f, 300.f);
     GM.getPlayer().getSprite().setScale(2.0f, 2.0f);
@@ -148,7 +69,7 @@ void PastA::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
     //GameUtils::testSpritePosition(rooms["pasillo"].getEntity("carrito").sprite, window);
     auto& GM = GameManager::get();
-
+    sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
     //Click izquierdo
     
@@ -162,6 +83,21 @@ void PastA::handleEvent(sf::Event& event, sf::RenderWindow& window)
             return;
         }
         
+        if (currentRoom == &rooms["pasillo"]) {
+            NPC& doctor = currentRoom->getNpc("doctor");
+            if (doctor.getSprite().getGlobalBounds().contains(clickPos)) {
+                doctor.interact();
+            }
+
+            for(auto& pair : rooms["pasillo"].getEntities()){
+                Entity& entity = *pair.second;
+                if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["pasillo"]) {
+                    entity.interact();
+                    break;
+                }
+            }
+        }
+
         if (!showDialogue) {
             sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseWinPos);
             
@@ -250,7 +186,8 @@ void PastA::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (chosenIndex >= 0) {
                 std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
                 std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                
+                //CAMBIAR ESTO
+                this->game->changeState(new loco1());
                 if (dialogueStack->isStackEmpty()) {
                     showDialogue = false;
                 }
@@ -263,6 +200,22 @@ void PastA::handleEvent(sf::Event& event, sf::RenderWindow& window)
         if (dialogueStack->isStackEmpty()) {
             showDialogue = false;
         }
+
+        if (dialogueUI.wasAdvanceClicked()) {
+        if (dialogueStack->isStackEmpty()) {
+            this->game->changeState(new loco1());
+            return;
+        }
+        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
+       
+        if (currentDialogue.getLines()[0].getPortraitID() == "Last_line") {
+            // Obtener la opción elegida
+                this->game->changeState(new loco1());
+            }
+            return;
+        }
+        // Si es diálogo normal, avanza la línea
+        dialogueStack->advanceLine();
     }
 }
 
@@ -316,7 +269,7 @@ void PastA::update(sf::Time dt)
 void PastA::render(sf::RenderWindow& window)
 {
     window.clear();
-    
+
     currentRoom->render(window);
     
     auto prevView = window.getView();
@@ -347,17 +300,15 @@ void PastA::render(sf::RenderWindow& window)
 
 void PastA::loadDialogs() {
     // 💡 Paso 1: Crea y puebla los DialogueLine.
-    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
-    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
-    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
-    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
+    DialogueLine line1("Doctor", "¡Oh! Hola John, veo que despertaste... ¿Cómo te sientes?", "Pause");
+    DialogueLine line2("John Barr", "Confundido... ¿Por qué estoy aquí? ¿Y mi esposa?", "Niña_01");
+    DialogueLine line3("Doctor", "Claro, tu esposa... ¿Quieres?... ¿Saber que pasó con ella?.", "Main_Character");
     
     // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
     DialogueSequence introDialogue(DialogueType::NORMAL);
     introDialogue.dialogueLines.emplace_back(line1);
     introDialogue.dialogueLines.emplace_back(line2);
     introDialogue.dialogueLines.emplace_back(line3);
-    introDialogue.dialogueLines.emplace_back(line4);
     
     // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
@@ -365,22 +316,4 @@ void PastA::loadDialogs() {
     // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
     DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
     choiceDialogue.dialogueLines.push_back(questionLine);
-    
-    // Define las opciones de la elección (este formato push_back está bien)
-    choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
-    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
-    
-    // --- Secuencia 3: Diálogo después de la elección
-    DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
-    DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
-    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
-    afterChoiceDialogue.dialogueLines.push_back(line5);
-    afterChoiceDialogue.dialogueLines.push_back(line6);
-    
-    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
-    // El último en entrar (introDialogue) será el primero en ejecutarse.
-    dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
-    dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
-
 }

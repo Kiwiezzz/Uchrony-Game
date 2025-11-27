@@ -35,7 +35,7 @@ void loco3::init(){
 }
 
 void loco3::handleEvent(sf::Event& event, sf::RenderWindow& window) {
-
+    // Evento al clickar continuar en el diálogo
     // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
     

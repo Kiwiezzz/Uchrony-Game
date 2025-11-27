@@ -17,6 +17,7 @@ public:
     PastB() {}
     ~PastB() {}
 
+    bool approachEntity(const NavGrid& navGrid, Vec2f targetPos, float stopDistance);
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
     void update(sf::Time dt) override;

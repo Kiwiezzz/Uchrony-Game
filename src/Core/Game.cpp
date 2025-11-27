@@ -55,6 +55,9 @@ Game::~Game() {
     if (currentState != nullptr) {
         delete currentState;
     }
+    if (nextState != nullptr) {
+        delete nextState;
+    }
 
     // Limpiar los recursos de ImGui-SFML
     ImGui::SFML::Shutdown();
@@ -62,19 +65,24 @@ Game::~Game() {
 
 /// @brief Función para cambiar de nivel desde cualquier lado
 void Game::changeState(GameState* newScene) {
-    if (currentState != nullptr) {
-        delete currentState;
-    }
-    currentState = newScene;
     
-    currentState->setGame(this); 
-
-    currentState->init();
+    nextState = newScene;
+    //delete[] currentState;
 }
 
 void Game::run() {
     // Loop principal del juego (Game Loop)
     while (window.isOpen()) {
+        if (nextState != nullptr) {
+            if (currentState != nullptr) {
+                delete currentState;
+            }
+            currentState = nextState;
+            currentState->setGame(this);
+            currentState->init();
+            nextState = nullptr;
+        }
+
         // 1. Calcular Delta Time (dt)
         sf::Time dt = clock.restart();
 

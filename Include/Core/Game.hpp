@@ -13,6 +13,7 @@ private:
     sf::RenderWindow window;
     sf::Clock clock;
     GameState* currentState = nullptr;
+    GameState* nextState = nullptr;
     ImFont* m_Font = nullptr;
     sf::Font m_SFMLFont;
 

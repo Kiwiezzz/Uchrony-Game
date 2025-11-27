@@ -38,6 +38,7 @@ void End_pan2::init(){
 void End_pan2::handleEvent(sf::Event& event, sf::RenderWindow& window) {
 
     // Evento al clickar continuar en el diálogo
+    // Evento al clickar continuar en el diálogo
     if(dialogueUI.wasAdvanceClicked()){
     
         // Lógica normal de avance
@@ -47,7 +48,6 @@ void End_pan2::handleEvent(sf::Event& event, sf::RenderWindow& window) {
         // 3. Ir al NODO CORRESPONDIENTE (Destruye el objeto MainMenu, pero ahora está limpio)
         // Si la pila ya está vacía antes de avanzar, cambiar al siguiente estado
             if (!dialogueStack || dialogueStack->isStackEmpty()){
-                m_sceneMusic.stop(); 
                 this->game->changeState(new End_pan3());
                 showDialogue = false;
                 return;
