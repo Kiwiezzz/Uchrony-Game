@@ -259,7 +259,7 @@ void PastB::update(sf::Time dt)
 void PastB::render(sf::RenderWindow& window)
 {
     window.clear();
-    
+
     currentRoom->render(window);
     
     // ============================================================
@@ -342,17 +342,16 @@ void PastB::loadDialogs() {
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
     
     // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
-    DialogueLine questionLine("Narrador", "¿A dónde irás?", "id_retrato_heroe"); 
+    DialogueLine questionLine("Narrador", "Creo que se te viene a la mente algo...", "id_narrador"); 
     choiceDialogue.dialogueLines.push_back(questionLine);
     
     // Define las opciones de la elección (este formato push_back está bien)
     choiceDialogue.options.push_back({"Ir al bosque", "scene_forest_id"}); 
-    choiceDialogue.options.push_back({"Entrar a la tienda", "scene_shop_id"});
     
     // --- Secuencia 3: Diálogo después de la elección
     DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
     DialogueLine line5("Narrador", "Excelente elección. Tu aventura continúa...", "id_narrador");
-    DialogueLine line6("John Barr", "Espero que sea una buena idea.", "id_john");
+    DialogueLine line6("John Barr", "Empiezo a recordar algo...", "id_john");
     afterChoiceDialogue.dialogueLines.push_back(line5);
     afterChoiceDialogue.dialogueLines.push_back(line6);
     

@@ -4,6 +4,7 @@
 #include "Core/Game.hpp"
 #include <iostream>
 #include <SFML/System/Time.hpp>
+#include "Scenes/End_pan1.hpp"
 #include "../Include/Utils/DialogueSequence.hpp"
 
 
@@ -143,7 +144,14 @@ void Past0::init()
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1);  // Layer 1 = delante del jugador
     secondRoom.addEntity("botella", std::move(botella));
-    
+    secondRoom.setInteractionToEntity("botella", 
+        [this]()
+        {
+            auto& pos = rooms["second"].getEntity("botella").sprite.getPosition();
+            approachEntity(rooms["second"].getNavGrid(), Vec2f(pos.x, pos.y), 30.f);
+            //game->getWindow().close();
+        }
+    );
     
     // ============================================================
     // HABITACIÓN 3: BAÑO (Bathroom)
