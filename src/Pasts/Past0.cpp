@@ -3,7 +3,14 @@
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
-
+/**
+ * @brief Inicializa todas las habitaciones (rooms) del Past0
+ * 
+ * Este método se llama una sola vez al inicio para configurar:
+ * - Las 5 habitaciones del juego (cuarto, laboratorio, baño, patio, garage)
+ * - Los triggers de puertas que permiten cambiar entre habitaciones
+ * - La posición inicial del jugador
+ */
 void Past0::init()
 {
     // ============================================================
