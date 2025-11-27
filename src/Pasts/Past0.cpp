@@ -1,11 +1,14 @@
 #include "Pasts/Past0.hpp"
+#include "Pasts/PastB.hpp"
+#include "Pasts/PastA.hpp"
+#include "Core/Game.hpp"
 #include <iostream>
 #include <SFML/System/Time.hpp>
 #include "../Include/Utils/DialogueSequence.hpp"
 
 
 /// @brief Si logra encontrar camino para aproximarse retorna true
-bool Past0::approachEntity(const NavGrid& navGrid, Vec2f targetPos)
+bool Past0::approachEntity(const NavGrid& navGrid, Vec2f targetPos, float stopDistance)
 {
     Vec2f playerPos = GameManager::get().getPlayer().getPosition(); // Singleton, todo bien
     
@@ -67,23 +70,26 @@ void Past0::init()
     firstRoom.addObject("mesa_cuarto", "assets/textures/Past0/mesa_cuarto.png", 621, 283);
     firstRoom.addObject("sillita", "assets/textures/Past0/sillita.png", 552, 299);
 
-    auto red_key = std::make_unique<ObjectRoom>("assets/textures/Past0/llave_roja.png");
-    red_key->sprite.setPosition(152, 189);
-    red_key->sprite.setScale(0.05f, 0.05f);
-    red_key->setlayer(1);  // Layer 1 = delante del jugador
-    firstRoom.addEntity("red_key", std::move(red_key));
-    firstRoom.setInteractionToEntity("red_key", 
-        [this]()
-        {
-           items["red_key"] = TextureAsset("assets/textures/Past0/llave_roja.png");
-            Item red_keyItem(1, red_key.texture);
-            bool added = GameManager::get().getInventory()->add(red_keyItem);
+    if(!GameManager::get().getInventory().hasItem(1))
+    {
+        auto red_key = std::make_unique<ObjectRoom>("assets/textures/Past0/llave_roja.png");
+        red_key->sprite.setPosition(152, 189);
+        red_key->sprite.setScale(0.05f, 0.05f);
+        red_key->setlayer(1);  // Layer 1 = delante del jugador
+        firstRoom.addEntity("red_key", std::move(red_key));
+        firstRoom.setInteractionToEntity("red_key", 
+            [this]()
+            {
+                std::cout << "Interaccion con llave roja" << std::endl;
+                items["red_key"] = TextureAsset("assets/textures/Past0/llave_roja.png");
+                Item red_keyItem(1, items["red_key"].texture);
+                bool added = GameManager::get().getInventory().add(red_keyItem);
 
-            firstRoom.removeEntity("red_key");
-            
-        }
-    );
-
+                rooms["first"].removeEntity("red_key");
+                
+            }
+        );
+    }
     // ============================================================
     // HABITACIÓN 2: LABORATORIO (Lab)
     // ============================================================
@@ -107,6 +113,25 @@ void Past0::init()
             //showDialogue = true;
         }
     );
+
+    if(!GameManager::get().getInventory().hasItem(3))
+    {
+        auto ocarina = std::make_unique<ObjectRoom>("assets/textures/Ocarina.png");
+        ocarina->sprite.setPosition(397, 380);
+        ocarina->sprite.setScale(0.05f, 0.05f);
+        ocarina->setlayer(0);  // Layer 0 = detrás del jugador
+        secondRoom.addEntity("ocarina", std::move(ocarina));
+        secondRoom.setInteractionToEntity("ocarina", 
+            [this]()
+        {
+            items["ocarina"] = TextureAsset("assets/textures/Ocarina.png");
+            Item ocarinaItem(3, items["ocarina"].texture);
+            bool added = GameManager::get().getInventory().add(ocarinaItem);
+
+            rooms["second"].removeEntity("ocarina");
+        }
+    );
+    }
     
     auto mesa2 = std::make_unique<ObjectRoom>("assets/textures/mesa_2.png");
     mesa2->sprite.setPosition(667, 326);
@@ -155,6 +180,26 @@ void Past0::init()
     yardRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/yard_colision.png");
     yardRoom.setGame(this->game);
 
+    if(!GameManager::get().getInventory().hasItem(2))
+    {
+        auto blue_key = std::make_unique<ObjectRoom>("assets/textures/Past0/llave_azul.png");
+        blue_key->sprite.setPosition(152, 500);
+        blue_key->sprite.setScale(0.05f, 0.05f);
+        blue_key->setlayer(1);  // Layer 1 = delante del jugador
+        yardRoom.addEntity("blue_key", std::move(blue_key));
+        yardRoom.setInteractionToEntity("blue_key", 
+            [this]()
+            {
+                std::cout << "Interaccion con llave azul" << std::endl;
+            items["blue_key"] = TextureAsset("assets/textures/Past0/llave_azul.png");
+                Item blue_keyItem(2, items["blue_key"].texture);
+                bool added = GameManager::get().getInventory().add(blue_keyItem);
+
+                rooms["yard"].removeEntity("blue_key");
+                
+            }
+        );
+    }
     NPC neighbor_npc;
     neighbor_npc.init("assets/textures/Past0/neighbor_npc.png", Vec2f(520.f, 250.f), true);
     
@@ -179,10 +224,6 @@ void Past0::init()
         m_approachingEntity = approachEntity(navGrid, targetPos, 80.f);
     });
     
-
-    
-
-
     rooms["yard"].getNpc("neighbor").getSprite().setPosition(520.f, 250.f);
     rooms["yard"].getNpc("neighbor").getSprite().setScale(2.0f, 2.0f);
     rooms["yard"].getNpc("neighbor").addAnimation("Posicion_Espalda", 0, 1, 3.0f, false, 2);
@@ -217,8 +258,9 @@ void Past0::init()
     garageRoom.addEntity("esquina2", std::move(esquina2));
 
     auto machine = std::make_unique<ObjectRoom>("assets/textures/Past0/maquina_del_tiempo.png");
-    machine->sprite.setPosition(334, 450);
+    machine->sprite.setPosition(379, 450);
     machine->sprite.setScale(0.13f, 0.13f);
+    machine->sprite.setOrigin(machine->texture.getSize().x / 2.f, machine->texture.getSize().y / 2.f);
     garageRoom.addEntity("machine", std::move(machine));
 
     rooms["garage"].getEntity("machine").setInteraction([this]()
@@ -258,6 +300,13 @@ void Past0::init()
     auto& GM = GameManager::get();
     GM.getPlayer().setPosition(400.f, 300.f);
     GM.getPlayer().getSprite().setScale(2.0f, 2.0f);
+
+
+    if (!ocarinaBuffer.loadFromFile("assets/sounds/ocarina.mp3")) {
+        std::cerr << "Warning: no se cargo assets/sounds/ocarina.mp3" << std::endl;
+    }
+    
+    ocarinaSound.setBuffer(ocarinaBuffer);
 }
 
 void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
@@ -269,7 +318,14 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         int uiIdx = GameManager::get().getInventory().indexAtScreenPos(mouseWinPos, window);
         if (uiIdx >= 0) {
             const Item* it = GameManager::get().getInventory().itemAt((unsigned)uiIdx);
-            if (it) it->onClick();
+            if (it) {
+                it->onClick();
+        
+                if (it->id() == 3) {
+                    ocarinaSound.stop();
+                    ocarinaSound.play();
+                }
+            }
             return;
         }
         
@@ -345,11 +401,21 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
 
 
+        if(currentRoom == &rooms["first"]){
+            for(auto& pair : rooms["first"].getEntities()){
+                Entity& entity = *pair.second;
+                if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["first"]) {
+                    entity.interact();
+                    break;
+                }
+            }
+        }
         /// Aquí todas las interacciones de second
         for(auto& pair : rooms["second"].getEntities()){
             Entity& entity = *pair.second;
             if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["second"]) {
                 entity.interact();
+                break;
             }
         } 
 
@@ -358,6 +424,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             Entity& entity = *pair.second;
             if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["garage"]) {
                 entity.interact();
+                break;
             }
         } 
 
@@ -366,6 +433,14 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             NPC& neighbor = currentRoom->getNpc("neighbor");
             if (neighbor.getSprite().getGlobalBounds().contains(clickPos)) {
                 neighbor.interact();
+                
+            }
+            for(auto& pair : rooms["yard"].getEntities()){
+                Entity& entity = *pair.second;
+                if(entity.sprite.getGlobalBounds().contains(clickPos) && currentRoom == &rooms["yard"]) {
+                    entity.interact();
+                    break;
+                }
             }
         }
     }
@@ -384,33 +459,22 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
     
     // Evento al clickar continuar en el diálogo
     if (dialogueUI.wasAdvanceClicked()) {
+        
+        // 1. Diálogo General (Narrador / Intro)
         if (showDialogue) {
             if (dialogueStack->isStackEmpty()) {
                 showDialogue = false;
                 return;
             }
-            const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
-            
-            if (currentDialogue.getType() == DialogueType::CHOICE) {
-                // Obtener la opción elegida
-                int chosenIndex = dialogueUI.getChosenOption();
-                if (chosenIndex >= 0) {
-                    std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
-                    std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                    
-                    if (dialogueStack->isStackEmpty()) {
-                        showDialogue = false;
-                    }
-                }
-                return;
-            }
-            // Si es diálogo normal, avanza la línea
+            // Avance normal para el diálogo general
             dialogueStack->advanceLine();
 
             if (dialogueStack->isStackEmpty()) {
                 showDialogue = false;
             }
-        } else if (showNeighborDialogue) {
+        } 
+        // 2. Diálogo del Vecino
+        else if (showNeighborDialogue) {
              if (dialogueStack_npc->isStackEmpty()) {
                 showNeighborDialogue = false;
                 if (currentRoom == &rooms["yard"]) {
@@ -418,9 +482,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 }
                 return;
             }
-            const DialogueSequence& currentDialogue = dialogueStack_npc->getCurrentDialogue();
             
-            // Si es diálogo normal, avanza la línea
             dialogueStack_npc->advanceLine();
 
             if (dialogueStack_npc->isStackEmpty()) {
@@ -430,6 +492,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 }
             }
         }
+        // 3. Diálogo de la Máquina (Aquí va la lógica de elección)
         else if (showMachineDialogue) {
             if (dialogueStack_machine->isStackEmpty()) {
                 showMachineDialogue = false;
@@ -437,6 +500,29 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             }
             const DialogueSequence& currentDialogue = dialogueStack_machine->getCurrentDialogue();
             
+            // Lógica de elección específica para la máquina
+            if (currentDialogue.getType() == DialogueType::CHOICE) {
+                int chosenIndex = dialogueUI.getChosenOption();
+                if (chosenIndex >= 0) {
+                    // Usamos dialogueStack_machine aquí, que es el correcto
+                    std::string nextSceneID = dialogueStack_machine->chooseOption(chosenIndex);
+                    std::cout << "Opción elegida Maquina: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
+                    
+                    if (nextSceneID == "past_a_id") {
+                        this->game->changeState(new PastA()); 
+                        std::cout << ">>> Viajando al Pasado A..." << std::endl;
+                    } else if (nextSceneID == "past_b_id") {
+                        this->game->changeState(new PastB()); 
+                        std::cout << ">>> Viajando al Pasado B..." << std::endl;
+                    }
+
+                    if (dialogueStack_machine->isStackEmpty()) {
+                        showMachineDialogue = false;
+                    }
+                }
+                return; // Importante retornar para no avanzar línea inmediatamente
+            }
+
             // Si es diálogo normal, avanza la línea
             dialogueStack_machine->advanceLine();
 
@@ -548,6 +634,7 @@ void Past0::render(sf::RenderWindow& window)
     if (draggingItem) {
         sf::Vector2i mp = sf::Mouse::getPosition(window);
         sf::Sprite s = draggingItem->sprite();
+         s.setScale(0.05f, 0.05f);
         sf::FloatRect gb = s.getGlobalBounds();
         s.setPosition(float(mp.x) - gb.width/2.f, float(mp.y) - gb.height/2.f);
         window.draw(s);
@@ -633,26 +720,44 @@ void Past0::loadNeighborDialogs() {
 }
 
 void Past0::loadMachineDialogs() {
-    // --- Secuencia 2: Diálogo de Opción (tipo CHOICE)
+    bool hasRedKey = false;
+    bool hasBlueKey = false;
+    
+    auto& inventory = GameManager::get().getInventory();
+    for (unsigned i = 0; i < inventory.size(); ++i) {
+        const Item* item = inventory.itemAt(i);
+        if (item) {
+            if (item->id() == 1) hasRedKey = true; 
+            if (item->id() == 2) hasBlueKey = true; 
+        }
+    }
+
+    if (!hasRedKey && !hasBlueKey) {
+
+        DialogueSequence noKeyDialogue(DialogueType::NORMAL);
+        noKeyDialogue.dialogueLines.emplace_back("Maquina del tiempo", "Necesito una llave para activar esto...", "id_retrato_heroe");
+        dialogueStack_machine->pushDialogue(noKeyDialogue);
+        return;
+    }
+
     DialogueSequence choiceDialogue(DialogueType::CHOICE);
     
-    // Inicialización explícita para garantizar que el texto de la pregunta no esté vacío.
     DialogueLine questionLine("Maquina del tiempo", "¿A dónde irás?", "id_retrato_heroe"); 
     choiceDialogue.dialogueLines.push_back(questionLine);
     
-    // Define las opciones de la elección (este formato push_back está bien)
-    choiceDialogue.options.push_back({"Ir al Hospital", "hospital_id"}); 
-    choiceDialogue.options.push_back({"Entrar a la Escuela", "school_id"});
+    if (hasBlueKey) {
+        choiceDialogue.options.push_back({"Ir al Pasado A", "past_a_id"}); 
+    }
+    if (hasRedKey) {
+        choiceDialogue.options.push_back({"Ir al Pasado B", "past_b_id"});
+    }
     
-    // --- Secuencia 3: Diálogo después de la elección
     DialogueSequence afterChoiceDialogue(DialogueType::NORMAL);
     DialogueLine line1("Maquina del tiempo", "Excelente elección. Que tengas buen viaje", "id_narrador");
     DialogueLine line2("John Barr", "Espero que esto sea una buena idea.", "id_john");
     afterChoiceDialogue.dialogueLines.push_back(line1);
     afterChoiceDialogue.dialogueLines.push_back(line2);
     
-    // 💡 Paso 3: Empuja las secuencias. (Orden de ejecución: introDialogue -> choiceDialogue -> afterChoiceDialogue)
-    // El último en entrar (introDialogue) será el primero en ejecutarse.
-    dialogueStack_machine->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
-    dialogueStack_machine->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
+    dialogueStack_machine->pushDialogue(afterChoiceDialogue); 
+    dialogueStack_machine->pushDialogue(choiceDialogue);       
 }
