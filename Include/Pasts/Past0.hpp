@@ -22,6 +22,7 @@ public:
     void update(sf::Time dt) override;
     void render(sf::RenderWindow& window) override;
     virtual void loadDialogs() override;
+    void loadNeighborDialogs();
 
 private:
 
@@ -40,6 +41,11 @@ private:
     // UI de Diálogos
     DialogueUI dialogueUI;
     bool showDialogue = false;
+    bool showNeighborDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
     DialogueStack* dialogueStack;
+    DialogueStack* dialogueStack_npc;
+    
+    // Estado para interacción con NPC
+    bool m_approachingNPC = false;
 };

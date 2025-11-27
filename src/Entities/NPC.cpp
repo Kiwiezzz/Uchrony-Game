@@ -245,6 +245,30 @@ void NPC::playAction(std::string name, float duration) {
     m_currentAnimation = name;
 }
 
+void NPC::stopMovement() {
+    m_isMoving = false;
+    m_worldPath.clear();
+    m_currentIndex = 0;
+    m_walkable = false; // Stop patrolling
+    startIdle();
+}
+
+void NPC::setWalkable(bool walkable) {
+    m_walkable = walkable;
+}
+
+void NPC::faceDirection(Vec2f direction) {
+    Vec2f normDir = direction.normalized();
+    if (std::abs(normDir.x) > std::abs(normDir.y)) {
+        if (normDir.x > 0) m_lastDirection = ROW_NPC_IDLE_RIGHT;
+        else m_lastDirection = ROW_NPC_IDLE_LEFT;
+    } else {
+        if (normDir.y > 0) m_lastDirection = ROW_NPC_IDLE_DOWN;
+        else m_lastDirection = ROW_NPC_IDLE_UP;
+    }
+    playIdleAnimation();
+}
+
 NPCState NPC::getState() const {
     return m_state;
 }

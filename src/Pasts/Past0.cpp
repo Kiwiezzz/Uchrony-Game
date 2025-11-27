@@ -11,6 +11,7 @@ void Past0::init()
     // ============================================================
     dialogueUI.setGame(this->game);
     dialogueStack = new DialogueStack(*game);
+    dialogueStack_npc = new DialogueStack(*game);
 
     loadDialogs();
 
@@ -146,8 +147,6 @@ void Past0::init()
 
 void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
-    //GameUtils::logPosition(GameUtils::getMouseWorldPosition(window));
-    //GameUtils::debugFollowMouse(rooms["first"].getEntity("sillita").sprite, window);
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mouseWinPos(event.mouseButton.x, event.mouseButton.y);
@@ -158,6 +157,7 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
             if (it) it->onClick();
             return;
         }
+        
         
         if (!showDialogue) {
             sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mouseWinPos);
@@ -234,6 +234,38 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
                 showDialogue = true;
         } 
+
+        // Interacción con NPC Neighbor en Yard
+        if (currentRoom == &rooms["yard"]) {
+            NPC& neighbor = currentRoom->getNpc("neighbor");
+            if (neighbor.getSprite().getGlobalBounds().contains(clickPos)) {
+                std::cout << "Clic en Neighbor!" << std::endl;
+                
+                // 1. Detener al NPC
+                neighbor.stopMovement();
+
+                // 2. Mover al jugador cerca del NPC
+                auto& navGrid = currentRoom->getNavGrid();
+                Vec2f npcPos = neighbor.getPosition();
+                Vec2f playerPos = GameManager::get().getPlayer().getPosition();
+                
+                // Encontrar un punto cercano al NPC que sea caminable
+                // Intentamos acercarnos a 80px de distancia
+                Vec2f dirToPlayer = (playerPos - npcPos).normalized();
+                Vec2f targetPos = npcPos + dirToPlayer * 80.f;
+                
+                Point start = navGrid.worldToGrid(playerPos);
+                Point end = navGrid.worldToGrid(targetPos);
+                
+                if (navGrid.isWalkable(end)) {
+                    std::vector<Point> path = pathfinder.findPath(navGrid, start, end);
+                    if (!path.empty()) {
+                        GameManager::get().getPlayer().setPath(path, navGrid);
+                        m_approachingNPC = true;
+                    }
+                }
+            }
+        }
     }
 
     if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right && draggingItem) {
@@ -250,30 +282,51 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
     
     // Evento al clickar continuar en el diálogo
     if (dialogueUI.wasAdvanceClicked()) {
-        if (dialogueStack->isStackEmpty()) {
-            showDialogue = false;
-            return;
-        }
-        const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
-        
-        if (currentDialogue.getType() == DialogueType::CHOICE) {
-            // Obtener la opción elegida
-            int chosenIndex = dialogueUI.getChosenOption();
-            if (chosenIndex >= 0) {
-                std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
-                std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
-                
-                if (dialogueStack->isStackEmpty()) {
-                    showDialogue = false;
+        if (showDialogue) {
+            if (dialogueStack->isStackEmpty()) {
+                showDialogue = false;
+                return;
+            }
+            const DialogueSequence& currentDialogue = dialogueStack->getCurrentDialogue();
+            
+            if (currentDialogue.getType() == DialogueType::CHOICE) {
+                // Obtener la opción elegida
+                int chosenIndex = dialogueUI.getChosenOption();
+                if (chosenIndex >= 0) {
+                    std::string nextSceneID = dialogueStack->chooseOption(chosenIndex);
+                    std::cout << "Opción elegida: " << chosenIndex << ", nextScene: " << nextSceneID << std::endl;
+                    
+                    if (dialogueStack->isStackEmpty()) {
+                        showDialogue = false;
+                    }
+                }
+                return;
+            }
+            // Si es diálogo normal, avanza la línea
+            dialogueStack->advanceLine();
+
+            if (dialogueStack->isStackEmpty()) {
+                showDialogue = false;
+            }
+        } else if (showNeighborDialogue) {
+             if (dialogueStack_npc->isStackEmpty()) {
+                showNeighborDialogue = false;
+                if (currentRoom == &rooms["yard"]) {
+                    currentRoom->getNpc("neighbor").setWalkable(true);
+                }
+                return;
+            }
+            const DialogueSequence& currentDialogue = dialogueStack_npc->getCurrentDialogue();
+            
+            // Si es diálogo normal, avanza la línea
+            dialogueStack_npc->advanceLine();
+
+            if (dialogueStack_npc->isStackEmpty()) {
+                showNeighborDialogue = false;
+                if (currentRoom == &rooms["yard"]) {
+                    currentRoom->getNpc("neighbor").setWalkable(true);
                 }
             }
-            return;
-        }
-        // Si es diálogo normal, avanza la línea
-        dialogueStack->advanceLine();
-
-        if (dialogueStack->isStackEmpty()) {
-            showDialogue = false;
         }
     }
 }
@@ -305,7 +358,32 @@ void Past0::update(sf::Time dt)
         currentRoom->getNpc("neighbor").update(dt, currentRoom->getNavGrid());
     }
 
-    
+    // Lógica de acercamiento al NPC
+    if (m_approachingNPC) {
+        auto& player = GameManager::get().getPlayer();
+        if (!player.isMoving()) {
+            // El jugador ha llegado (o se ha detenido)
+            m_approachingNPC = false;
+            
+            if (currentRoom == &rooms["yard"]) {
+                NPC& neighbor = currentRoom->getNpc("neighbor");
+                
+                // Calcular direcciones para mirarse mutuamente
+                Vec2f playerPos = player.getPosition();
+                Vec2f npcPos = neighbor.getPosition();
+                
+                Vec2f dirToNPC = npcPos - playerPos;
+                Vec2f dirToPlayer = playerPos - npcPos;
+                
+                player.faceDirection(dirToNPC);
+                neighbor.faceDirection(dirToPlayer);
+                
+                loadNeighborDialogs();
+
+                showNeighborDialogue = true;
+            }
+        }
+    }
     
     if (m_pendingRoomSwitch && !GameManager::get().getPlayer().isMoving()) {
         if (m_pendingNextRoom) {
@@ -365,6 +443,13 @@ void Past0::render(sf::RenderWindow& window)
 
         dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack->getCurrentLineIndex()); 
     }
+
+    if (showNeighborDialogue && !dialogueStack_npc->isStackEmpty()) {
+
+        const DialogueSequence& currentDialogue = dialogueStack_npc->getCurrentDialogue(); 
+
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack_npc->getCurrentLineIndex()); 
+    }
 }
 
 void Past0::loadDialogs() {
@@ -404,5 +489,19 @@ void Past0::loadDialogs() {
     dialogueStack->pushDialogue(afterChoiceDialogue); // Se ejecuta TERCERO (después de elegir)
     dialogueStack->pushDialogue(choiceDialogue);       // Se ejecuta SEGUNDO
     dialogueStack->pushDialogue(introDialogue);        // Se ejecuta PRIMERO
+}
 
+void Past0::loadNeighborDialogs() {
+    DialogueLine line1("Vecino", "Hola!", "id_vecino");
+    DialogueLine line2("Vecino", "Gracias por prestarme tu patio para mis poses de Fisicoculturismo", "id_vecino");
+    DialogueLine line3("Vecino", "Ya sabes, en mi casa se burlan de mi", "id_vecino");
+    DialogueLine line4("Vecino", "Por cierto, que tal tu esposa, ¿Tenias una, no es asi?", "id_vecino");
+
+    DialogueSequence neighborDialogue(DialogueType::NORMAL);
+    neighborDialogue.dialogueLines.emplace_back(line1);
+    neighborDialogue.dialogueLines.emplace_back(line2);
+    neighborDialogue.dialogueLines.emplace_back(line3);
+    neighborDialogue.dialogueLines.emplace_back(line4);
+
+    dialogueStack_npc->pushDialogue(neighborDialogue);
 }
