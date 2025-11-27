@@ -11,7 +11,7 @@ bool Past0::approachEntity(const NavGrid& navGrid, Vec2f targetPos)
     
     // Calcular punto destino (80px cerca)
     Vec2f dirToPlayer = (playerPos - targetPos).normalized();
-    targetPos = targetPos + dirToPlayer * 80.f;
+    targetPos = targetPos + dirToPlayer * stopDistance;
     
     Point start = navGrid.worldToGrid(playerPos);
     Point end = navGrid.worldToGrid(targetPos);
@@ -46,6 +46,7 @@ void Past0::init()
     dialogueUI.setGame(this->game);
     dialogueStack = std::make_unique<DialogueStack>(*game);
     dialogueStack_npc = std::make_unique<DialogueStack>(*game);
+    dialogueStack_machine = std::make_unique<DialogueStack>(*game);
     showDialogue = true;
 
     loadDialogs();
@@ -67,17 +68,18 @@ void Past0::init()
     firstRoom.addObject("sillita", "assets/textures/Past0/sillita.png", 552, 299);
 
     auto red_key = std::make_unique<ObjectRoom>("assets/textures/Past0/llave_roja.png");
-    red_key->sprite.setPosition(0, 391);
+    red_key->sprite.setPosition(152, 189);
+    red_key->sprite.setScale(0.05f, 0.05f);
     red_key->setlayer(1);  // Layer 1 = delante del jugador
     firstRoom.addEntity("red_key", std::move(red_key));
     firstRoom.setInteractionToEntity("red_key", 
         [this]()
         {
-           /* items["red_key"] = TextureAsset("assets/textures/Past0/llave_roja.png");
+           items["red_key"] = TextureAsset("assets/textures/Past0/llave_roja.png");
             Item red_keyItem(1, red_key.texture);
             bool added = GameManager::get().getInventory()->add(red_keyItem);
 
-            firstRoom.removeEntity("red_key");*/
+            firstRoom.removeEntity("red_key");
             
         }
     );
@@ -174,7 +176,7 @@ void Past0::init()
         
         Vec2f targetPos = neighbor_npc.getPosition();
 
-        m_approachingEntity = approachEntity(navGrid, targetPos);
+        m_approachingEntity = approachEntity(navGrid, targetPos, 80.f);
     });
     
 
@@ -215,22 +217,28 @@ void Past0::init()
     garageRoom.addEntity("esquina2", std::move(esquina2));
 
     auto machine = std::make_unique<ObjectRoom>("assets/textures/Past0/maquina_del_tiempo.png");
-    machine->sprite.setPosition(334, 400);
+    machine->sprite.setPosition(334, 450);
     machine->sprite.setScale(0.13f, 0.13f);
-    machine->setlayer(1);  // Layer 1 = delante del jugador
     garageRoom.addEntity("machine", std::move(machine));
 
     rooms["garage"].getEntity("machine").setInteraction([this]()
     {
+        std::cout << "Hola, hiciste click en la maquina, sí sirve" << std::endl;
         auto& machine = rooms["garage"].getEntity("machine");
         auto& navGrid = currentRoom->getNavGrid(); 
         
         Vec2f targetPos = GameUtils::toVec2f(machine.sprite.getPosition());
 
-        m_approachingEntity = approachEntity(navGrid, targetPos);
-
-        loadMachineDialogs();
-        showMachineDialogue = true;
+         // Intentar acercarse
+        if (approachEntity(navGrid, targetPos, 100.f)) {
+            m_approachingMachine = true;
+            // El diálogo se cargará en update() cuando termine de caminar
+        } else {
+            // Si no puede caminar (muy cerca o bloqueado), mostrar diálogo directo
+            std::cout << "No se pudo encontrar camino, mostrando diálogo directo." << std::endl;
+            loadMachineDialogs();
+            showMachineDialogue = true;
+        }
     });
 
     // ============================================================
@@ -489,6 +497,9 @@ void Past0::update(sf::Time dt)
                 loadNeighborDialogs();
 
                 showNeighborDialogue = true;
+            } else if (currentRoom == &rooms["garage"] && m_approachingMachine) {
+                loadMachineDialogs();
+                showMachineDialogue = true;
             }
         }
     }
@@ -557,6 +568,13 @@ void Past0::render(sf::RenderWindow& window)
         const DialogueSequence& currentDialogue = dialogueStack_npc->getCurrentDialogue(); 
         
         dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack_npc->getCurrentLineIndex()); 
+    }
+
+    if (showMachineDialogue && !dialogueStack_machine->isStackEmpty()) {
+
+        const DialogueSequence& currentDialogue = dialogueStack_machine->getCurrentDialogue(); 
+        
+        dialogueUI.render(window, currentDialogue, currentDialogue.options, game->getSFMLFont(), dialogueStack_machine->getCurrentLineIndex()); 
     }
 }
 
