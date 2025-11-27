@@ -101,7 +101,7 @@ void Past0::init()
     secondRoom.setInteractionToEntity("mesa", 
         [this]()
         {
-            std::cout << "Hola, hiciste click en la mesa, sí sirve" << std::endl;
+            //std::cout << "Hola, hiciste click en la mesa, sí sirve" << std::endl;
             //showDialogue = true;
         }
     );
@@ -121,7 +121,7 @@ void Past0::init()
         {
             auto& pos = rooms["second"].getEntity("botella").sprite.getPosition();
             approachEntity(rooms["second"].getNavGrid(), Vec2f(pos.x, pos.y));
-            game->getWindow().close();
+            //game->getWindow().close();
         }
     );
     
