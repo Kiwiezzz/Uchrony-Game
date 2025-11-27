@@ -143,14 +143,7 @@ void Past0::init()
     botella->sprite.setPosition(597, 185);
     botella->setlayer(1);  // Layer 1 = delante del jugador
     secondRoom.addEntity("botella", std::move(botella));
-    secondRoom.setInteractionToEntity("botella", 
-        [this]()
-        {
-            auto& pos = rooms["second"].getEntity("botella").sprite.getPosition();
-            approachEntity(rooms["second"].getNavGrid(), Vec2f(pos.x, pos.y));
-            //game->getWindow().close();
-        }
-    );
+    
     
     // ============================================================
     // HABITACIÓN 3: BAÑO (Bathroom)
