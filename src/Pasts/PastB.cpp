@@ -1,16 +1,16 @@
-#include "Pasts/Past0.hpp"
+#include "Pasts/PastB.hpp"
 #include <iostream>
 #include "../Include/Utils/DialogueSequence.hpp"
 
 /**
- * @brief Inicializa todas las habitaciones (rooms) del Past0
+ * @brief Inicializa todas las habitaciones (rooms) del PastB
  * 
  * Este método se llama una sola vez al inicio para configurar:
- * - Las 5 habitaciones del juego (cuarto, laboratorio, baño, patio, garage)
+ * - Las 2 habitaciones del juego (salon y parquesito)
  * - Los triggers de puertas que permiten cambiar entre habitaciones
  * - La posición inicial del jugador
  */
-void Past0::init()
+void PastB::init()
 {
     // ============================================================
     // Carga de Diálogos
@@ -20,32 +20,51 @@ void Past0::init()
     loadDialogs();
 
     // ============================================================
-    // HABITACIÓN 1: CUARTO (Bedroom)
+    // HABITACIÓN 1: SALÓN (Classroom)
     // ============================================================
     auto& firstRoom = rooms["first"] = Room();
-    firstRoom.setBackground("assets/textures/Past0/Cuarto.png");
+    firstRoom.setBackground("assets/textures/PastB/salon.png");
     firstRoom.getBackground().sprite.setScale(1.0f, 1.0f);
     firstRoom.getBackground().sprite.setPosition(0, 0);
     // El mapa de colisiones define qué áreas son caminables (blanco) y cuáles no (negro)
-    firstRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/cuarto_colision.png");
+    firstRoom.setCollisionAndGrid("assets/textures/PastB/Colisiones/salon_colision.png");
     firstRoom.setGame(this->game);
-
-    // ============================================================
-    // HABITACIÓN 2: LABORATORIO (Lab)
-    // ============================================================
-    auto& secondRoom = rooms["second"] = Room();
-    secondRoom.setBackground("assets/textures/Past0/laboratorio.png");
-    secondRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    secondRoom.getBackground().sprite.setPosition(0, 0);
-    secondRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/laboratorio_colision.png");
-    secondRoom.setGame(this->game);
     
-    // --- Objetos decorativos en el laboratorio ---
-    ObjectRoom* mesa = new ObjectRoom("assets/textures/mesa.png");
+    // --- Objetos decorativos en el salón ---
+    ObjectRoom* mesa = new ObjectRoom("assets/textures/PastB/silla_1.png");
     mesa->sprite.setPosition(397, 494);
     mesa->sprite.setOrigin(float(mesa->texture.getSize().x) / 2.f, float(mesa->texture.getSize().y));
-    mesa->setlayer(0);  // Layer 0 = detrás del jugador
-    secondRoom.addEntity("mesa", mesa);
+    mesa->setlayer(1);  // Layer 0 = detrás del jugador
+    firstRoom.addEntity("mesa", mesa);
+
+    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/PastB/mesa_2.png");
+    mesa2->sprite.setPosition(667, 326);
+    mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
+    mesa2->setlayer(1);
+    firstRoom.addEntity("mesa2", mesa2);
+
+    ObjectRoom* mesa3 = new ObjectRoom("assets/textures/PastB/mesa_3.png");
+    mesa3->sprite.setPosition(667, 326);
+    mesa3->sprite.setOrigin(float(mesa3->texture.getSize().x) / 2.f, float(mesa3->texture.getSize().y));
+    mesa3->setlayer(1);
+    firstRoom.addEntity("mesa3", mesa3);
+
+    ObjectRoom* mesa4 = new ObjectRoom("assets/textures/PastB/mesa_4.png");
+    mesa4->sprite.setPosition(667, 326);
+    mesa4->sprite.setOrigin(float(mesa4->texture.getSize().x) / 2.f, float(mesa4->texture.getSize().y));
+    mesa4->setlayer(1);
+    firstRoom.addEntity("mesa4", mesa4);
+
+    // ============================================================
+    // HABITACIÓN 2: PARQUESITO (Park)
+    // ============================================================
+
+    auto& secondRoom = rooms["second"] = Room();
+    secondRoom.setBackground("assets/textures/PastB/parquesito.png");
+    secondRoom.getBackground().sprite.setScale(1.0f, 1.0f);
+    secondRoom.getBackground().sprite.setPosition(0, 0);
+    secondRoom.setCollisionAndGrid("assets/textures/PastB/Colisiones/parquesito_colision.png");
+    secondRoom.setGame(this->game);
     
     // ============================================================
     // SISTEMA DE DEBUG DE SPRITES
@@ -58,76 +77,7 @@ void Past0::init()
     // 5. La consola mostrará las coordenadas en tiempo real
     // 6. Copia las coordenadas y pégalas en setPosition()
     // 7. Comenta de nuevo las líneas y recompila
-    //
-    
     // ============================================================
-    
-    ObjectRoom* mesa2 = new ObjectRoom("assets/textures/mesa_2.png");
-    mesa2->sprite.setPosition(667, 326);
-    mesa2->sprite.setOrigin(float(mesa2->texture.getSize().x) / 2.f, float(mesa2->texture.getSize().y));
-    mesa2->setlayer(0);
-    secondRoom.addEntity("mesa2", mesa2);
-
-    ObjectRoom* botella = new ObjectRoom("assets/textures/Past0/botella.png");
-    botella->sprite.setPosition(597, 185);
-    botella->setlayer(1);  // Layer 1 = delante del jugador
-    secondRoom.addEntity("botella", botella);
-
-    // ============================================================
-    // HABITACIÓN 3: BAÑO (Bathroom)
-    // ============================================================
-    auto& bathroomRoom = rooms["bathroom"] = Room();
-    bathroomRoom.setBackground("assets/textures/Past0/bath.png");
-    bathroomRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    bathroomRoom.getBackground().sprite.setPosition(0, 0);
-    bathroomRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/bath_colision.png");
-    bathroomRoom.setGame(this->game);
-
-    ObjectRoom* bathtub = new ObjectRoom("assets/textures/Past0/bathtub.png");
-    bathtub->sprite.setPosition(0, 391);
-    bathtub->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("bathtub", bathtub);
-
-    ObjectRoom* plant = new ObjectRoom("assets/textures/Past0/Plant.png");
-    plant->sprite.setPosition(703, 386);
-    plant->setlayer(1);  // Layer 1 = delante del jugador
-    bathroomRoom.addEntity("plant", plant);
-
-// ============================================================
-    // HABITACIÓN 4: PATIO (Yard)
-    // ============================================================
-    auto& patioRoom = rooms["patio"] = Room();
-    patioRoom.setBackground("assets/textures/Past0/yard.png");
-    patioRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    patioRoom.getBackground().sprite.setPosition(0, 0);
-    patioRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/yard_colision.png");
-    patioRoom.setGame(this->game);
-
-    // ============================================================
-    // HABITACIÓN 5: GARAGE
-    // ============================================================
-    auto& garageRoom = rooms["garage"] = Room();
-    garageRoom.setBackground("assets/textures/Past0/garage.png");
-    garageRoom.getBackground().sprite.setScale(1.0f, 1.0f);
-    garageRoom.getBackground().sprite.setPosition(0, 0);
-    garageRoom.setCollisionAndGrid("assets/textures/Past0/Colisiones/garage_colision.png");
-    garageRoom.setGame(this->game);
-
-    ObjectRoom* capo = new ObjectRoom("assets/textures/Past0/Capo.png");
-    capo->sprite.setPosition(273, 204);
-    capo->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("capo", capo);
-
-    ObjectRoom* esquina = new ObjectRoom("assets/textures/Past0/Esquina1.png");
-    esquina->sprite.setPosition(26, 254);
-    esquina->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina", esquina);
-
-    ObjectRoom* esquina2 = new ObjectRoom("assets/textures/Past0/Esquina2.png");
-    esquina2->sprite.setPosition(628, 261);
-    esquina2->setlayer(1);  // Layer 1 = delante del jugador
-    garageRoom.addEntity("esquina2", esquina2);
-
 
     //debugSprite = &esquina2->sprite;
     //debugSpriteName = "esquina2";
@@ -135,24 +85,29 @@ void Past0::init()
     // ============================================================
     // CONFIGURACIÓN DE TRIGGERS DE PUERTAS
     // ============================================================
-    doorTriggers["first"] = sf::FloatRect(477.f, 446.f, 150.f, 120.f);
-    doorTriggers["second_up"] = sf::FloatRect(358.f, 93.f, 80.f, 120.f);
+    doorTriggers["first"] = sf::FloatRect(546.f, 211.f, 123.f, 62.f);
+    doorTriggers["second_up"] = sf::FloatRect(358.f, 93.f, 223.f, 72.f);
     doorTriggers["second_right"] = sf::FloatRect(720.f, 250.f, 80.f, 600.f);
     doorTriggers["second_down"] = sf::FloatRect(230.f, 520.f, 400.f, 80.f);
     doorTriggers["second_left"] = sf::FloatRect(0.f, 250.f, 80.f, 600.f);
-    doorTriggers["bathroom"] = sf::FloatRect(0.f, 250.f, 100.f, 300.f);
-    doorTriggers["patio"] = sf::FloatRect(520.f, 100.f, 100.f, 110.f);
-    doorTriggers["garage"] = sf::FloatRect(720.f, 250.f, 80.f, 80.f);
    
     currentRoom = &rooms["first"];
     
     auto& GM = GameManager::get();
     GM.getPlayer().setPosition(400.f, 300.f);
     GM.getPlayer().getSprite().setScale(2.0f, 2.0f);
+
+    NPC nina;
+    nina.init("assets/textures/PastB/Personajes/nina_spritesheet.png", Vec2f(250.f, 400.f), true);
+    nina.getSprite().setPosition(250.f, 400.f); // <--- Coordenadas del salón
+    firstRoom.addNpc("nina", nina);
+
+    rooms["first"].getNpc("nina").getSprite().setScale(1.0f, 1.0f);
 }
 
-void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
+void PastB::handleEvent(sf::Event& event, sf::RenderWindow& window)
 {
+    GameUtils::logPosition(GameUtils::getMouseWorldPosition(window));
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D) {
         isDebugPlacing = !isDebugPlacing;        std::cout << "Debug mode: " << (isDebugPlacing ? "ON" : "OFF") << std::endl;
     }
@@ -178,12 +133,6 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                 currentRoomTriggers.push_back("second_right");
                 currentRoomTriggers.push_back("second_down");
                 currentRoomTriggers.push_back("second_left");
-            } else if (currentRoom == &rooms["bathroom"]) {
-                currentRoomTriggers.push_back("bathroom");
-            } else if (currentRoom == &rooms["patio"]) {
-                currentRoomTriggers.push_back("patio");
-            } else if (currentRoom == &rooms["garage"]) {
-                currentRoomTriggers.push_back("garage");
             }
             
             for (const auto& triggerName : currentRoomTriggers) {
@@ -191,14 +140,11 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
                     Vec2f targetPos(mouseWorldPos.x, mouseWorldPos.y);
                     Room* nextRoomPtr = nullptr;
 
+                    // Si el trigger es el primer salón va al parquesito
                     if (triggerName == "first") nextRoomPtr = &rooms["second"];
-                    else if (triggerName == "second_up") nextRoomPtr = &rooms["first"];
-                    else if (triggerName == "second_right") nextRoomPtr = &rooms["bathroom"];
-                    else if (triggerName == "second_down") nextRoomPtr = &rooms["patio"];
-                    else if (triggerName == "second_left") nextRoomPtr = &rooms["garage"];
-                    else if (triggerName == "bathroom") nextRoomPtr = &rooms["second"];
-                    else if (triggerName == "patio") nextRoomPtr = &rooms["second"];
-                    else if (triggerName == "garage") nextRoomPtr = &rooms["second"];
+                    // Si el trigger es la parte de abajo del parquesito va al salón
+                    else if (triggerName == "second_down") nextRoomPtr = &rooms["first"];
+                    // else if (triggerName == "second_left") nextRoomPtr = &rooms["garage"]; por ver a la izq del parquesito
 
                     if (nextRoomPtr) {
                         auto& navGrid = currentRoom->getNavGrid();
@@ -236,12 +182,13 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
     // Eventos de presionar botón izquierdo
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f clickPos = GameUtils::getMouseWorldPosition(window);
-
+        
+        /* evento al clickar algo o alguien POR MODIFICAR
         if (rooms["second"].getEntity("mesa").sprite.getGlobalBounds().contains(clickPos)) {
                 std::cout << "Clic en la mesa!" << std::endl;
                 // Tocar la mesa desencadena el evento de un cuadro de diálogo
                 showDialogue = true;
-        } 
+        } */
     }
 
     if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right && draggingItem) {
@@ -280,10 +227,14 @@ void Past0::handleEvent(sf::Event& event, sf::RenderWindow& window)
     }
 }
 
-void Past0::update(sf::Time dt)
+void PastB::update(sf::Time dt)
 {
     currentRoom->update(dt);
     GameManager::get().getPlayer().update(dt);
+
+    if(currentRoom == &rooms["first"]){
+        currentRoom->getNpc("nina").update(dt, currentRoom->getNavGrid());
+    }
 
     if (m_pendingRoomSwitch && !GameManager::get().getPlayer().isMoving()) {
         if (m_pendingNextRoom) {
@@ -295,29 +246,17 @@ void Past0::update(sf::Time dt)
             } else if (currentRoom == &rooms["second"]) {
                 if (m_previousRoom == &rooms["first"]) {
                     GameManager::get().getPlayer().setPosition(398.f, 200.f);
-                } else if (m_previousRoom == &rooms["bathroom"]) {
-                    GameManager::get().getPlayer().setPosition(680.f, 400.f);
-                } else if (m_previousRoom == &rooms["patio"]) {
-                    GameManager::get().getPlayer().setPosition(400.f, 520.f);
-                } else if (m_previousRoom == &rooms["garage"]) {
-                    GameManager::get().getPlayer().setPosition(120.f, 450.f);
                 }
-            } else if (currentRoom == &rooms["bathroom"]) {
-                GameManager::get().getPlayer().setPosition(100.f, 450.f);
-            } else if (currentRoom == &rooms["patio"]) {
-                GameManager::get().getPlayer().setPosition(570.f, 140.f);
-            } else if (currentRoom == &rooms["garage"]) {
-                GameManager::get().getPlayer().setPosition(700.f, 300.f);
-            }
             
             std::cout << "Switched room!" << std::endl;
-        }
+            }
+    }
         m_pendingRoomSwitch = false;
         m_pendingNextRoom = nullptr;
     }
 }
 
-void Past0::render(sf::RenderWindow& window)
+void PastB::render(sf::RenderWindow& window)
 {
     currentRoom->render(window);
     
@@ -340,17 +279,9 @@ void Past0::render(sf::RenderWindow& window)
         if (currentRoom == &rooms["first"]) {
             currentRoomTriggers.push_back("first");
         } else if (currentRoom == &rooms["second"]) {
-            currentRoomTriggers.push_back("second_up");
-            currentRoomTriggers.push_back("second_right");
             currentRoomTriggers.push_back("second_down");
-            currentRoomTriggers.push_back("second_left");
-        } else if (currentRoom == &rooms["bathroom"]) {
-            currentRoomTriggers.push_back("bathroom");
-        } else if (currentRoom == &rooms["patio"]) {
-            currentRoomTriggers.push_back("patio");
-        } else if (currentRoom == &rooms["garage"]) {
-            currentRoomTriggers.push_back("garage");
         }
+            //currentRoomTriggers.push_back("second_left"); // por ver a la izq del parquesito
         
         for (const auto& triggerName : currentRoomTriggers) {
             if (doorTriggers.count(triggerName)) {
@@ -391,12 +322,12 @@ void Past0::render(sf::RenderWindow& window)
     }
 }
 
-void Past0::loadDialogs() {
+void PastB::loadDialogs() {
     // 💡 Paso 1: Crea y puebla los DialogueLine.
-    DialogueLine line1("Narrador", "Bienvenido a Uchrony Game! Esta es la primera parte del juego.", "237273");
-    DialogueLine line2("Narrador", "Mi querido John Barr, creo que te encuentras algo perdido.", "6969");
-    DialogueLine line3("John Barr", "Eh? Qué? Dónde estoy?", "237273");
-    DialogueLine line4("Narrador", "Tendrás que averiguarlo por tí mismo...", "6969");
+    DialogueLine line1("", "...", "Pause");
+    DialogueLine line2("Niña", "Hey, John! Vamos a jugar!", "Niña_01");
+    DialogueLine line3("John Barr", "Jugar? Dónde estoy? Creo recordar algunas cosas...", "Main_Character");
+    DialogueLine line4("", "Parece que suena el timbre del recreo... Todos deben salir de aquí.", "Sonido");
     
     // --- Secuencia 1: Diálogo Normal (tipo MONOLOGUE o NORMAL)
     DialogueSequence introDialogue(DialogueType::NORMAL);

@@ -4,6 +4,7 @@
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 #include "Pasts/Past0.hpp"
+#include "Pasts/PastB.hpp"
 #include "GameStates/Dialogue1.hpp"
 #include "Core/Game.hpp"
 #include "GameStates/Screen1.hpp"
@@ -143,7 +144,7 @@ void MainMenu::render(sf::RenderWindow& window) {
     m_menuMusic.stop();
 
     // 3. CAMBIO DE ESTADO (Destruye el objeto MainMenu, pero ahora está limpio)
-    this->game->changeState(new Past0());
+    this->game->changeState(new PastB());
 
     // 4. Salir: Terminamos la función render() para que no se ejecuten
     //    las líneas de ImGui::End() y PopFont() de más abajo.
