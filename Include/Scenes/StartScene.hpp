@@ -2,22 +2,21 @@
 
 #pragma once
 
-#include "Classes/Past.hpp"
-#include "Entities/NPC.hpp"
+#include "Core/GameState.hpp"
 #include "Classes/GameManager.hpp"
-#include "Entities/Item.hpp"
 #include "Utils/DialogueUI.hpp"
 #include "Utils/DialogueStack.hpp"
+#include "Classes/Room.hpp"
 #include <memory>
 #include <optional>
 #include <map>
 
-class StartScene : public Past
+class StartScene : public GameState
 {
 public:
     // Constructor y destructor
     StartScene() : dialogueStack(nullptr) {}
-    ~StartScene() { if (dialogueStack) delete dialogueStack; }
+    ~StartScene() {}
 
     void init() override;
     void handleEvent(sf::Event& event, sf::RenderWindow& window) override;
@@ -28,26 +27,20 @@ public:
 
 private:
 
-    std::optional<Item> draggingItem;
-    int draggingFrom = -1;
-
-    std::map<std::string, sf::FloatRect> doorTriggers;
-    
-    bool m_pendingRoomSwitch = false;
-    Room* m_pendingNextRoom = nullptr;
-    Room* m_previousRoom = nullptr;
-    Pathfinder pathfinder;
-    sf::Time m_npcAnimationTimer;
+    DialogueType m_type;
+    std::string m_speakerName;
+    std::string m_dialogueText;
+    bool m_advanceClicked;
+    ImFont* m_customFont = nullptr;
+    sf::Texture m_backgroundTexture;
+    sf::Sprite m_backgroundSprite;
+    sf::Music m_sceneMusic;
 
     // Diálogos
     // UI de Diálogos
     DialogueUI dialogueUI;
     bool showDialogue = false;
-    bool showNeighborDialogue = false;
     // Pila de diálogos (se inicializa en init() con new)
     DialogueStack* dialogueStack;
-    DialogueStack* dialogueStack_npc;
-    
-    // Estado para interacción con NPC
-    bool m_approachingNPC = false;
+
 };
