@@ -133,54 +133,36 @@ void End_pan3::render(sf::RenderWindow& window) {
 
 }
 
-void End_pan3::loadDialogs() {
+void EscenaConclusion::loadDialogs() {
 
-    // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
-    const std::string ID_JOHN = "John_Barr_Neutral";
-    const std::string ID_WIFE_PORTRAIT = "Wife_Portrait_Focus"; // Retrato de la esposa
-
-    // ============================================================
-    // 💡 Paso 1: Crea y puebla los DialogueLine (Diálogo del Retrato).
-    // ============================================================
-
-    // Líneas de John Barr (Monólogo)
-    DialogueLine line1("John Barr", "...", ID_JOHN); // Pausa inicial
-    DialogueLine line2("Narrador", "John mira fijamente el retrato sobre la repisa. Es una mujer joven, sonriendo.", ID_WIFE_PORTRAIT);
-    DialogueLine line3("John Barr", "Esta mujer... Sé que la conozco. Su rostro... me causa una punzada.", ID_JOHN);
-    DialogueLine line4("John Barr", "Pero, ¿Quién es? Mi mente es un lienzo en blanco. Un nombre, un recuerdo... nada.", ID_JOHN);
-    DialogueLine line5("Narrador", "El recuerdo es una sombra escurridiza, pero la sensación de pérdida es real.", ID_WIFE_PORTRAIT);
-    DialogueLine line6("Narrador", "Un escalofrío recorre su espalda al darse cuenta de la soledad que lo rodea.", ID_JOHN);
-    
-    // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
-    DialogueSequence portraitDialogue(DialogueType::NORMAL);
-    portraitDialogue.dialogueLines.emplace_back(line1);
-    portraitDialogue.dialogueLines.emplace_back(line2);
-    portraitDialogue.dialogueLines.emplace_back(line3);
-    portraitDialogue.dialogueLines.emplace_back(line4);
-    portraitDialogue.dialogueLines.emplace_back(line5);
-    portraitDialogue.dialogueLines.emplace_back(line6);
-    
-    // ============================================================
-    // 💡 Paso 2: Crear el Diálogo de Transición (El misterio).
-    // ============================================================
-
-    // Líneas de transición
-    DialogueLine line8("Narrador", "De repente, un ruido metálico sordo proviene de la cochera.", "id_narrador");
-    DialogueLine line9("John Barr", "Un momento... ¿Qué fue eso? Tendré que averiguarlo...", ID_JOHN);
-    
-    DialogueSequence noiseDialogue(DialogueType::NORMAL);
-    noiseDialogue.dialogueLines.emplace_back(line8);
-    noiseDialogue.dialogueLines.emplace_back(line9);
+    // IDs de Retratos (Asegurando la coherencia)
+    const std::string ID_JOHN = "John_Barr_Determinado"; 
+    const std::string ID_MAQUINA = "Maquina_Misteriosa_Focus"; // Retrato o foco en la máquina
+    const std::string ID_NARRADOR = "NARRADOR_FINAL"; 
 
     // ============================================================
-    // 💡 Paso 3: Empuja las secuencias a la pila (El último en entrar es el primero en ejecutarse).
+    // 💡 Paso 1: Secuencia de la Misión (3 líneas de Legado Oculto).
     // ============================================================
     
-    // El juego ejecutará primero noiseDialogue, y luego portraitDialogue.
+    // 1. John Barr establece que la máquina no es un objeto, sino un mensaje o un desafío que le dejaron.
+    DialogueLine line1("John Barr", "Esta máquina no es solo un artefacto. Es el último problema que me dejó, codificado en circuitos y líneas temporales.", ID_JOHN);
     
-    dialogueStack->pushDialogue(noiseDialogue);      // Se ejecuta SEGUNDO (Lo que lo saca de la habitación)
-    dialogueStack->pushDialogue(portraitDialogue);   // Se ejecuta PRIMERO (El monólogo del retrato)
+    // 2. El narrador sella la alusión: la máquina es la manifestación de su legado.
+    DialogueLine line2("Narrador", "El amor de su vida no le había dejado una nota, le había heredado la pregunta más grande jamás construida.", ID_NARRADOR); 
+    
+    // 3. John Barr reafirma su propósito: descifrar ese legado.
+    DialogueLine line3("John Barr", "Y no pararé hasta resolverlo. Ese es mi juramento. Descifrar por qué ella me dejó la clave para volver a empezar...", ID_JOHN); 
+    
+    DialogueSequence legacyResolve(DialogueType::NORMAL);
+    legacyResolve.dialogueLines.emplace_back(line1);
+    legacyResolve.dialogueLines.emplace_back(line2);
+    legacyResolve.dialogueLines.emplace_back(line3);
 
+    // ============================================================
+    // 💡 Paso 2: Empuja la secuencia a la pila.
+    // ============================================================
+    
+    dialogueStack->pushDialogue(legacyResolve);
 }
 
 void End_pan3::loadNeighborDialogs() {};

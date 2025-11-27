@@ -19,7 +19,7 @@ void loco3::init(){
     m_backgroundSprite.setTexture(m_backgroundTexture);
 
     // 1. Cargar el archivo de música
-    if (!m_sceneMusic.openFromFile("assets/music/Justice.mp3")) {
+    if (!m_sceneMusic.openFromFile("assets/music/Last_Dance.mp3")) {
 
         std::cerr << "Error al cargar la música del menú." << std::endl;
 

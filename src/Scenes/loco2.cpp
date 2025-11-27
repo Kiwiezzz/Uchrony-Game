@@ -13,13 +13,13 @@ void loco2::init(){
 
     if (!m_backgroundTexture.loadFromFile("assets/textures/Scenes/loco2.png")) {
         // Nota: El escalado lo haremos en la función render
-        std::cerr << "ERROR: No se pudo cargar el fondo '1.png'.\n";
+        std::cerr << "ERROR: No se pudo cargar el fondo 'loco2.png'.\n";
     }
     
     m_backgroundSprite.setTexture(m_backgroundTexture);
 
     // 1. Cargar el archivo de música
-    if (!m_sceneMusic.openFromFile("assets/music/Justice.mp3")) {
+    if (!m_sceneMusic.openFromFile("assets/music/Last_Dance.mp3")) {
 
         std::cerr << "Error al cargar la música del menú." << std::endl;
 

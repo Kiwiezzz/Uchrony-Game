@@ -132,54 +132,36 @@ void End_pan2::render(sf::RenderWindow& window) {
 
 }
 
-void End_pan2::loadDialogs() {
+void PastEncuentro::loadDialogs() {
 
-    // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
-    const std::string ID_JOHN = "John_Barr_Neutral";
-    const std::string ID_WIFE_PORTRAIT = "Wife_Portrait_Focus"; // Retrato de la esposa
-
-    // ============================================================
-    // 💡 Paso 1: Crea y puebla los DialogueLine (Diálogo del Retrato).
-    // ============================================================
-
-    // Líneas de John Barr (Monólogo)
-    DialogueLine line1("John Barr", "...", ID_JOHN); // Pausa inicial
-    DialogueLine line2("Narrador", "John mira fijamente el retrato sobre la repisa. Es una mujer joven, sonriendo.", ID_WIFE_PORTRAIT);
-    DialogueLine line3("John Barr", "Esta mujer... Sé que la conozco. Su rostro... me causa una punzada.", ID_JOHN);
-    DialogueLine line4("John Barr", "Pero, ¿Quién es? Mi mente es un lienzo en blanco. Un nombre, un recuerdo... nada.", ID_JOHN);
-    DialogueLine line5("Narrador", "El recuerdo es una sombra escurridiza, pero la sensación de pérdida es real.", ID_WIFE_PORTRAIT);
-    DialogueLine line6("Narrador", "Un escalofrío recorre su espalda al darse cuenta de la soledad que lo rodea.", ID_JOHN);
-    
-    // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
-    DialogueSequence portraitDialogue(DialogueType::NORMAL);
-    portraitDialogue.dialogueLines.emplace_back(line1);
-    portraitDialogue.dialogueLines.emplace_back(line2);
-    portraitDialogue.dialogueLines.emplace_back(line3);
-    portraitDialogue.dialogueLines.emplace_back(line4);
-    portraitDialogue.dialogueLines.emplace_back(line5);
-    portraitDialogue.dialogueLines.emplace_back(line6);
-    
-    // ============================================================
-    // 💡 Paso 2: Crear el Diálogo de Transición (El misterio).
-    // ============================================================
-
-    // Líneas de transición
-    DialogueLine line8("Narrador", "De repente, un ruido metálico sordo proviene de la cochera.", "id_narrador");
-    DialogueLine line9("John Barr", "Un momento... ¿Qué fue eso? Tendré que averiguarlo...", ID_JOHN);
-    
-    DialogueSequence noiseDialogue(DialogueType::NORMAL);
-    noiseDialogue.dialogueLines.emplace_back(line8);
-    noiseDialogue.dialogueLines.emplace_back(line9);
+    // IDs de Retratos (Asegurando la coherencia)
+    const std::string ID_JOHN = "John_Barr_Neutral"; // John adulto (reflexión)
+    const std::string ID_CHICA_MISTERIOSA = "Chica_Misteriosa_Amable";
+    const std::string ID_NARRADOR_PAST = "Cofre_Memoria"; 
 
     // ============================================================
-    // 💡 Paso 3: Empuja las secuencias a la pila (El último en entrar es el primero en ejecutarse).
+    // 💡 Paso 1: Secuencia del Encuentro (3 líneas de Contraste).
     // ============================================================
     
-    // El juego ejecutará primero noiseDialogue, y luego portraitDialogue.
+    // 1. La chica ofrece comida, enfocándose en la amabilidad y aceptándolo.
+    DialogueLine line1("Chica", "Ellos son tontos, John. A mí no me importa. Prueba esta mermelada de guayaba, está pepona.", ID_CHICA_MISTERIOSA);
     
-    dialogueStack->pushDialogue(noiseDialogue);      // Se ejecuta SEGUNDO (Lo que lo saca de la habitación)
-    dialogueStack->pushDialogue(portraitDialogue);   // Se ejecuta PRIMERO (El monólogo del retrato)
+    // 2. John Barr (adulto) reflexiona sobre el inmenso impacto emocional.
+    DialogueLine line2("John Barr", "Ella fue la primera persona que vio más allá de mi apodo. Su afecto era tan sincero que me salvó...", ID_JOHN); 
+    
+    // 3. El narrador sella el recuerdo con la sátira de los carbohidratos.
+    DialogueLine line3("Narrador", "Sin embargo, el aprecio de esa chica, aunque incondicional, no fue tanto como para lograr que John Barr bajara su dosis de carbohidratos.", ID_NARRADOR_PAST); 
+    
+    DialogueSequence memoryEncounter(DialogueType::NORMAL);
+    memoryEncounter.dialogueLines.emplace_back(line1);
+    memoryEncounter.dialogueLines.emplace_back(line2);
+    memoryEncounter.dialogueLines.emplace_back(line3);
 
+    // ============================================================
+    // 💡 Paso 2: Empuja la secuencia a la pila.
+    // ============================================================
+    
+    dialogueStack->pushDialogue(memoryEncounter);
 }
 
 void End_pan2::loadNeighborDialogs() {};

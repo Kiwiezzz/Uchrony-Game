@@ -19,7 +19,7 @@ void loco1::init(){
     m_backgroundSprite.setTexture(m_backgroundTexture);
 
     // 1. Cargar el archivo de música
-    if (!m_sceneMusic.openFromFile("assets/music/Justice.mp3")) {
+    if (!m_sceneMusic.openFromFile("assets/music/Last_Dance.mp3")) {
 
         std::cerr << "Error al cargar la música del menú." << std::endl;
 
@@ -143,9 +143,9 @@ void loco1::loadDialogs() {
     // ============================================================
 
     // Líneas de John Barr (Monólogo)
-    DialogueLine line1("Narrador", "No lo recuerda pero", ID_JOHN); // Pausa inicial
+    DialogueLine line1("Narrador", "No lo recuerda pero...", ID_JOHN); // Pausa inicial
     DialogueLine line2("Narrador", "En realidad nunca tuvo esposa.", ID_WIFE_PORTRAIT);
-    DialogueLine line3("Narrador", "Estuvo varios meses internado por su condición mental", ID_JOHN);
+    DialogueLine line3("Narrador", "Estuvo varios meses internado por su condición mental.", ID_JOHN);
     
     // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
     DialogueSequence portraitDialogue(DialogueType::NORMAL);

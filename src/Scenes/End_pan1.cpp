@@ -132,54 +132,33 @@ void End_pan1::render(sf::RenderWindow& window) {
 
 }
 
-void End_pan1::loadDialogs() {
-
-    // Asegúrate de que los IDs de los retratos estén definidos o sean rutas válidas
+void PastRecuerdo::loadDialogs() {
+    // IDs de personajes (Asumiendo que ya están definidos y cargados)
     const std::string ID_JOHN = "John_Barr_Neutral";
-    const std::string ID_WIFE_PORTRAIT = "Wife_Portrait_Focus"; // Retrato de la esposa
+    const std::string ID_JOVEN_JOHN = "John_Barr_Joven_Avergonzado";
+    const std::string ID_MATON = "Maton_Clasico_Risa";
+    const std::string ID_NARRADOR_PAST = "Cofre_Memoria";
 
     // ============================================================
-    // 💡 Paso 1: Crea y puebla los DialogueLine (Diálogo del Retrato).
+    // 💡 Paso 1: Crea y puebla los DialogueLine (Solo 3 líneas).
     // ============================================================
 
-    // Líneas de John Barr (Monólogo)
-    DialogueLine line1("John Barr", "...", ID_JOHN); // Pausa inicial
-    DialogueLine line2("Narrador", "John mira fijamente el retrato sobre la repisa. Es una mujer joven, sonriendo.", ID_WIFE_PORTRAIT);
-    DialogueLine line3("John Barr", "Esta mujer... Sé que la conozco. Su rostro... me causa una punzada.", ID_JOHN);
-    DialogueLine line4("John Barr", "Pero, ¿Quién es? Mi mente es un lienzo en blanco. Un nombre, un recuerdo... nada.", ID_JOHN);
-    DialogueLine line5("Narrador", "El recuerdo es una sombra escurridiza, pero la sensación de pérdida es real.", ID_WIFE_PORTRAIT);
-    DialogueLine line6("Narrador", "Un escalofrío recorre su espalda al darse cuenta de la soledad que lo rodea.", ID_JOHN);
-    
-    // --- Secuencia 1: Diálogo Monólogo (Para dar contexto emocional)
-    DialogueSequence portraitDialogue(DialogueType::NORMAL);
-    portraitDialogue.dialogueLines.emplace_back(line1);
-    portraitDialogue.dialogueLines.emplace_back(line2);
-    portraitDialogue.dialogueLines.emplace_back(line3);
-    portraitDialogue.dialogueLines.emplace_back(line4);
-    portraitDialogue.dialogueLines.emplace_back(line5);
-    portraitDialogue.dialogueLines.emplace_back(line6);
-    
-    // ============================================================
-    // 💡 Paso 2: Crear el Diálogo de Transición (El misterio).
-    // ============================================================
+    // Líneas del recuerdo satírico
+    DialogueLine line1("Hombre Promedio", "¡Abran paso al 'Pan Barr'! ¿Esos son tus libros o dos hogazas de centeno?", ID_MATON);
+    DialogueLine line2("John Barr (Joven)", "¡Es pan integral! Su densidad es matemáticamente superior a tu coeficiente intelectual.", ID_JOVEN_JOHN);
+    DialogueLine line3("Narrador", "El trauma persiste. La única variable que John nunca pudo reducir fue su ingesta de carbohidratos.", ID_NARRADOR_PAST);
 
-    // Líneas de transición
-    DialogueLine line8("Narrador", "De repente, un ruido metálico sordo proviene de la cochera.", "id_narrador");
-    DialogueLine line9("John Barr", "Un momento... ¿Qué fue eso? Tendré que averiguarlo...", ID_JOHN);
+    // --- Secuencia 1: El Recuerdo Satírico
+    DialogueSequence bullyDialogue(DialogueType::NORMAL);
+    bullyDialogue.dialogueLines.emplace_back(line1);
+    bullyDialogue.dialogueLines.emplace_back(line2);
+    bullyDialogue.dialogueLines.emplace_back(line3);
     
-    DialogueSequence noiseDialogue(DialogueType::NORMAL);
-    noiseDialogue.dialogueLines.emplace_back(line8);
-    noiseDialogue.dialogueLines.emplace_back(line9);
-
     // ============================================================
-    // 💡 Paso 3: Empuja las secuencias a la pila (El último en entrar es el primero en ejecutarse).
+    // 💡 Paso 2: Empuja la secuencia a la pila.
     // ============================================================
     
-    // El juego ejecutará primero noiseDialogue, y luego portraitDialogue.
-    
-    dialogueStack->pushDialogue(noiseDialogue);      // Se ejecuta SEGUNDO (Lo que lo saca de la habitación)
-    dialogueStack->pushDialogue(portraitDialogue);   // Se ejecuta PRIMERO (El monólogo del retrato)
-
+    dialogueStack->pushDialogue(bullyDialogue);
 }
 
 void End_pan1::loadNeighborDialogs() {};
